@@ -33,6 +33,12 @@ namespace EC3CarbonCalculator
             return this.SendGetRequest(fullUrl);
         }
 
+        public string GetCategoryTree()
+        {
+            var url = "https://buildingtransparency.org/api/categories/root";
+            return this.SendGetRequest(url);
+        }
+
         private string SendGetRequest(string url)
         {
             string response = null;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -55,6 +56,46 @@ namespace EC3CarbonCalculator
             }
             return gwps;
         }
+
+        public static float GetFloatAttribute(JObject mat, string attribute)
+        {
+            string attrStr = mat[attribute]?.ToString();
+            if (attrStr == null) return 0;
+            float flt = float.Parse(attrStr.Split(' ')[0]);
+            return flt;
+        }
+
+        public static float ParseFloatWithUnit (JObject mat, string attribute, out string unit)
+        {
+            string attrStr = mat[attribute]?.ToString();
+            float flt;
+
+            if (attrStr == null)
+            {
+                unit = null;
+                return 0;
+            }
+
+            string[] splitAttr = attrStr.Split(' ');
+            try
+            {
+                flt = float.Parse(splitAttr[0]);
+            } catch (FormatException)
+            {
+                unit = null;
+                return 0;
+            }
+
+            unit = string.Join("", splitAttr, 1, splitAttr.Length-1);
+            return flt;
+        }
+
+        public static float ParseFloatWithUnit(JObject mat, string attribute)
+        {
+            string unit;
+            return ParseFloatWithUnit(mat, attribute, out unit);
+        }
+
 
         public float GetAverageGwp()
         {

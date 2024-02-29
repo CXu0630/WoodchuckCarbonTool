@@ -7,6 +7,8 @@ using System.Security.Policy;
 using Newtonsoft.Json.Linq;
 using Rhino;
 using Rhino.Commands;
+using UnitsNet;
+using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
@@ -24,7 +26,7 @@ namespace EC3CarbonCalculator
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            this.TestMaterialParser();
+            this.TestUnitConversion();
             return Result.Success;
         }
 
@@ -45,7 +47,7 @@ namespace EC3CarbonCalculator
                 materialData = request.GetMaterialData(
                     "!pragma eMF(\"2.0/1\"), " +
                     "lcia(\"TRACI 2.1\") " +
-                    "category:\"RebarSteel\" " +
+                    "category:\"03 21 00 Reinforcement Bars\" " +
                     "epd__date_validity_ends:>\"2024-10-31\" " +
                     "jurisdiction:IN(\"US-NY\")"
                     );
@@ -125,6 +127,35 @@ namespace EC3CarbonCalculator
             EC3MaterialParser matParser = new EC3MaterialParser(materialData);
             RhinoApp.WriteLine(matParser.GetMaterialCount().ToString());
             RhinoApp.WriteLine(matParser.GetAverageGwp().ToString());
+        }
+
+        private void TestCategoryParse()
+        {
+            EC3CategoryTree categories = new EC3CategoryTree("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+            categories.UpdateEC3CategoriesToFile();
+        }
+
+        private void TestCategoryFilePath()
+        {
+            EC3CategoryTree categories = new EC3CategoryTree("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+            RhinoApp.WriteLine(categories.GetFilePath());
+        }
+
+        private void TestUnitConversion()
+        {
+            string densityStr = "7.874 g/cm^3";
+
+            var gpercm3 = Quantity.GetUnitInfo(DensityUnit.GramPerCubicCentimeter);
+
+            try
+            {
+                IQuantity quantity = Quantity.Parse(typeof(Density), densityStr);
+                IQuantity newQuantity = quantity.ToUnit(DensityUnit.KilogramPerCubicMeter);
+                RhinoApp.WriteLine(newQuantity.Value.ToString());
+            } catch (Exception ex)
+            {
+                RhinoApp.Write(ex.Message);
+            }
         }
     }
 }
