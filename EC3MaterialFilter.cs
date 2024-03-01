@@ -8,6 +8,18 @@ namespace EC3CarbonCalculator
 {
     internal class EC3MaterialFilter
     {
+        EC3CategoryTree categoryTree = EC3CategoryTree.Instance;
+        string category = "ConstructionMaterials";
+
         public EC3MaterialFilter() { }
+
+        public bool SetCategory(string category)
+        {
+            int idx = categoryTree.GetCategoryIdx(category);
+            if (idx == -1) { return false; }
+
+            this.category = categoryTree.names[idx];
+            return true;
+        }
     }
 }

@@ -26,78 +26,141 @@ namespace EC3CarbonCalculator
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            this.TestUnitConversion();
+            try
+            {
+                this.TestEPDParse();
+            }catch (Exception e)
+            {
+                RhinoApp.WriteLine(e.Message);
+            }
             return Result.Success;
         }
 
-        private void TestGetCategory()
+        //private void TestGetCategory()
+        //{
+        //    EC3Request request = new EC3Request("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+        //    string categoryData = request.GetCategoryData("484df282d43f4b0e855fad6b351ce006");
+        //    RhinoApp.WriteLine(categoryData);
+        //}
+
+        //private void TestGetMaterial()
+        //{
+        //    string materialData = null;
+            
+        //    try
+        //    {
+        //        EC3Request request = new EC3Request("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+        //        materialData = request.GetMaterialData(
+        //            "!pragma eMF(\"2.0/1\"), " +
+        //            "lcia(\"TRACI 2.1\") " +
+        //            "category:\"03 21 00 Reinforcement Bars\" " +
+        //            "epd__date_validity_ends:>\"2024-10-31\" " +
+        //            "jurisdiction:IN(\"US-NY\")"
+        //            );
+        //        //RhinoApp.WriteLine(materialData.Length.ToString());
+        //    }
+        //    catch (WebException ex)
+        //    {
+        //        if (ex.Response is HttpWebResponse errorResponse)
+        //        {
+        //            HttpStatusCode statusCode = errorResponse.StatusCode;
+        //            // Handle the non-200 status code (e.g., log, throw, or return an error message)
+        //            RhinoApp.WriteLine($"Non-200 Status Code: {(int)statusCode} ({statusCode})");
+        //            RhinoApp.WriteLine($"Error: {ex.Message}");
+        //        }
+        //        else
+        //        {
+        //            // Handle other exceptions (e.g., network issues)
+        //            RhinoApp.WriteLine($"Error: {ex.Message}");
+        //        }
+        //    }
+
+        //    try
+        //    {
+        //        JArray matArray = JArray.Parse(materialData);
+        //        RhinoApp.WriteLine(matArray.Count.ToString());
+
+        //        JObject mat = matArray[0] as JObject;
+        //        if (mat != null)
+        //        {
+        //            string name = mat["name"]?.ToString();
+        //            string gwp = mat["gwp"]?.ToString();
+
+        //            RhinoApp.WriteLine(name);
+        //            RhinoApp.Write(gwp);
+        //        }
+        //    }catch(Exception ex)
+        //    {
+        //        RhinoApp.WriteLine($"{ex.Message}");
+        //    }
+            
+        //}
+
+        //private void TestMaterialParser()
+        //{
+        //    string materialData = null;
+
+        //    try
+        //    {
+        //        EC3Request request = new EC3Request("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+        //        materialData = request.GetMaterialData(
+        //            "!pragma eMF(\"2.0/1\"), " +
+        //            "lcia(\"TRACI 2.1\") " +
+        //            "category:\"RebarSteel\" " +
+        //            "epd__date_validity_ends:>\"2024-10-31\" " +
+        //            "jurisdiction:IN(\"US\")"
+        //            );
+        //        //RhinoApp.WriteLine(materialData.Length.ToString());
+        //    }
+        //    catch (WebException ex)
+        //    {
+        //        if (ex.Response is HttpWebResponse errorResponse)
+        //        {
+        //            HttpStatusCode statusCode = errorResponse.StatusCode;
+        //            // Handle the non-200 status code (e.g., log, throw, or return an error message)
+        //            RhinoApp.WriteLine($"Non-200 Status Code: {(int)statusCode} ({statusCode})");
+        //            RhinoApp.WriteLine($"Error: {ex.Message}");
+        //        }
+        //        else
+        //        {
+        //            // Handle other exceptions (e.g., network issues)
+        //            RhinoApp.WriteLine($"Error: {ex.Message}");
+        //        }
+        //    }
+
+        //    if (materialData == null) { return; }
+
+        //    EC3MaterialParser matParser = new EC3MaterialParser(materialData);
+        //    RhinoApp.WriteLine(matParser.GetMaterialCount().ToString());
+        //    RhinoApp.WriteLine(matParser.GetAverageGwp().ToString());
+        // }
+
+        //private void TestCategoryParse()
+        //{
+        //    EC3CategoryTree categories = new EC3CategoryTree("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+        //    categories.UpdateEC3CategoriesToFile();
+        //}
+
+        //private void TestCategoryFilePath()
+        //{
+        //    EC3CategoryTree categories = new EC3CategoryTree("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
+        //    RhinoApp.WriteLine(categories.GetFilePath());
+        //}
+
+        private void TestUnitConversion()
         {
-            EC3Request request = new EC3Request("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
-            string categoryData = request.GetCategoryData("484df282d43f4b0e855fad6b351ce006");
-            RhinoApp.WriteLine(categoryData);
+            EPD epd1 = new EPD("epd1", 125, "kg", 2.5, "kg/m3", "RebarSteel");
+            string type = epd1.unitMaterial.GetType().ToString();
+            RhinoApp.WriteLine(type);
         }
 
-        private void TestGetMaterial()
-        {
-            string materialData = null;
-            
-            try
-            {
-                EC3Request request = new EC3Request("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
-                materialData = request.GetMaterialData(
-                    "!pragma eMF(\"2.0/1\"), " +
-                    "lcia(\"TRACI 2.1\") " +
-                    "category:\"03 21 00 Reinforcement Bars\" " +
-                    "epd__date_validity_ends:>\"2024-10-31\" " +
-                    "jurisdiction:IN(\"US-NY\")"
-                    );
-                //RhinoApp.WriteLine(materialData.Length.ToString());
-            }
-            catch (WebException ex)
-            {
-                if (ex.Response is HttpWebResponse errorResponse)
-                {
-                    HttpStatusCode statusCode = errorResponse.StatusCode;
-                    // Handle the non-200 status code (e.g., log, throw, or return an error message)
-                    RhinoApp.WriteLine($"Non-200 Status Code: {(int)statusCode} ({statusCode})");
-                    RhinoApp.WriteLine($"Error: {ex.Message}");
-                }
-                else
-                {
-                    // Handle other exceptions (e.g., network issues)
-                    RhinoApp.WriteLine($"Error: {ex.Message}");
-                }
-            }
-
-            try
-            {
-                JArray matArray = JArray.Parse(materialData);
-                RhinoApp.WriteLine(matArray.Count.ToString());
-
-                JObject mat = matArray[0] as JObject;
-                if (mat != null)
-                {
-                    string name = mat["name"]?.ToString();
-                    string gwp = mat["gwp"]?.ToString();
-
-                    RhinoApp.WriteLine(name);
-                    RhinoApp.Write(gwp);
-                }
-            }catch(Exception ex)
-            {
-                RhinoApp.WriteLine($"{ex.Message}");
-            }
-            
-        }
-
-        private void TestMaterialParser()
+        private void TestEPDParse()
         {
             string materialData = null;
 
             try
             {
-                EC3Request request = new EC3Request("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
-                materialData = request.GetMaterialData(
+                materialData = EC3Request.GetMaterialData(
                     "!pragma eMF(\"2.0/1\"), " +
                     "lcia(\"TRACI 2.1\") " +
                     "category:\"RebarSteel\" " +
@@ -124,38 +187,24 @@ namespace EC3CarbonCalculator
 
             if (materialData == null) { return; }
 
-            EC3MaterialParser matParser = new EC3MaterialParser(materialData);
-            RhinoApp.WriteLine(matParser.GetMaterialCount().ToString());
-            RhinoApp.WriteLine(matParser.GetAverageGwp().ToString());
-        }
+            JArray matArray = JArray.Parse(materialData);
+            List<EPD> epds = EC3MaterialParser.ParseEPDs(matArray);
 
-        private void TestCategoryParse()
-        {
-            EC3CategoryTree categories = new EC3CategoryTree("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
-            categories.UpdateEC3CategoriesToFile();
-        }
+            Mass averageGwp = EPD.AverageGwp(epds, Volume.FromCubicMeters(2));
 
-        private void TestCategoryFilePath()
-        {
-            EC3CategoryTree categories = new EC3CategoryTree("suUNpZ8ORcN94YgEdDSxpf4YYmOiAw");
-            RhinoApp.WriteLine(categories.GetFilePath());
-        }
+            Density averageDenstiy = EPD.AverageDensity(epds);
 
-        private void TestUnitConversion()
-        {
-            string densityStr = "7.874 g/cm^3";
+            RhinoApp.WriteLine(averageGwp.ToString());
+            RhinoApp.WriteLine(averageDenstiy.ToString());
 
-            var gpercm3 = Quantity.GetUnitInfo(DensityUnit.GramPerCubicCentimeter);
-
-            try
-            {
-                IQuantity quantity = Quantity.Parse(typeof(Density), densityStr);
-                IQuantity newQuantity = quantity.ToUnit(DensityUnit.KilogramPerCubicMeter);
-                RhinoApp.WriteLine(newQuantity.Value.ToString());
-            } catch (Exception ex)
-            {
-                RhinoApp.Write(ex.Message);
-            }
+            //foreach(EPD epd in epds)
+            //{
+            //    List<string> epdData = epd.GetPrintableData();
+            //    foreach (string data in epdData)
+            //    {
+            //        RhinoApp.WriteLine(data);
+            //    }
+            //}
         }
     }
 }

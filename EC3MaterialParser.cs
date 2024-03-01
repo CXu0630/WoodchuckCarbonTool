@@ -10,76 +10,32 @@ namespace EC3CarbonCalculator
 {
     internal class EC3MaterialParser
     {
-        JArray matArray;
-        int matCount;
-
-        public EC3MaterialParser(string matData) 
+        public static List<EPD> ParseEPDs(JArray jsonArray, EC3MaterialFilter mf = null)
         {
-            matArray = JArray.Parse(matData);
-            matCount = matArray.Count;
-        }
-
-        public JToken[] GetAttributeForEach(string attribute) 
-        {
-            JToken[] attributes = new JToken[matCount];
-            for (int i = 0; i < matCount; i++)
+            List<EPD> epds = new List<EPD>();
+            foreach(JObject jobj in jsonArray)
             {
-                JObject mat = matArray[i] as JObject;
-                if (mat == null) { continue; }
-                attributes[i] = mat[attribute];
+                EPD epd = new EPD(jobj, mf);
+                epds.Add(epd);
             }
-            return attributes;
+            return epds;
         }
 
-        public string[] GetStringAttributeForEach(string attribute)
-        {
-            string[] attributes = new string[matCount];
-            for (int i = 0; i < matCount; i++)
-            {
-                JObject mat = matArray[i] as JObject;
-                if (mat == null) { continue; }
-                attributes[i] = mat[attribute]?.ToString();
-            }
-            return attributes;
-        }
-
-        public float[] GetGwpAttributeForEach(string attribute)
-        {
-            float[] gwps = new float[matCount];
-            for (int i = 0; i < matCount; i++)
-            {
-                JObject mat = matArray[i] as JObject;
-                if (mat == null) { continue; }
-                string attrStr = mat[attribute]?.ToString();
-                float gwp = float.Parse(attrStr.Split(' ')[0]);
-                gwps[i] = gwp;
-            }
-            return gwps;
-        }
-
-        public static float GetFloatAttribute(JObject mat, string attribute)
+        public static double ParseDoubleWithUnit (JObject mat, string attribute, out string unit)
         {
             string attrStr = mat[attribute]?.ToString();
-            if (attrStr == null) return 0;
-            float flt = float.Parse(attrStr.Split(' ')[0]);
-            return flt;
-        }
-
-        public static float ParseFloatWithUnit (JObject mat, string attribute, out string unit)
-        {
-            string attrStr = mat[attribute]?.ToString();
-            float flt;
+            double flt;
 
             if (attrStr == null)
             {
                 unit = null;
                 return 0;
             }
-
+            
             string[] splitAttr = attrStr.Split(' ');
             try
             {
-                flt = float.Parse(splitAttr[0]);
+                flt = double.Parse(splitAttr[0]);
             } catch (FormatException)
             {
                 unit = null;
@@ -90,20 +46,26 @@ namespace EC3CarbonCalculator
             return flt;
         }
 
-        public static float ParseFloatWithUnit(JObject mat, string attribute)
+        public static double ParseDoubleWithUnit(JObject mat, string attribute)
         {
             string unit;
-            return ParseFloatWithUnit(mat, attribute, out unit);
+            return ParseDoubleWithUnit(mat, attribute, out unit);
         }
 
-
-        public float GetAverageGwp()
+        public static string ParseDensityUnit(string densityUnit)
         {
-            float[] gwps = this.GetGwpAttributeForEach("gwp");
-            List<float> nonZero = gwps.Where(x => x > 0).ToList();
-            return nonZero.Average();
+            string newDensityUnit = null;
+            if (densityUnit == null) { return null; }
+            if (densityUnit[densityUnit.Length - 1] == '3' 
+                && densityUnit[densityUnit.Length - 2] != '^')
+            {
+                newDensityUnit = densityUnit.TrimEnd('3') + "^3";
+            }
+            if (densityUnit[0] == 't' && densityUnit[1] == '/')
+            {
+                newDensityUnit = "ton" + densityUnit.TrimStart('t');
+            }
+            return newDensityUnit;
         }
-
-        public int GetMaterialCount() { return this.matCount; }
     }
 }

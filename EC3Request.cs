@@ -12,34 +12,31 @@ namespace EC3CarbonCalculator
 {
     internal class EC3Request
     {
-        string apiKey;
+        static string apiKey = "suUNpZ8ORcN94YgEdDSxpf4YYmOiAw";
 
-        public EC3Request(string apiKey) 
-        { 
-            this.apiKey = apiKey;
-        }
+        public EC3Request() { }
 
-        public string GetCategoryData (string category)
+        public static string GetCategoryData (string category)
         {
             var url = "https://buildingtransparency.org/api/categories/" + category;
-            return this.SendGetRequest(url);
+            return SendGetRequest(url);
         }
 
-        public string GetMaterialData (string mf)
+        public static string GetMaterialData (string mf)
         {
             var baseUrl = "https://buildingtransparency.org/api/materials";
             var query = "?mf=" + mf;
             string fullUrl = baseUrl + query;
-            return this.SendGetRequest(fullUrl);
+            return SendGetRequest(fullUrl);
         }
 
-        public string GetCategoryTree()
+        public static string GetCategoryTree()
         {
             var url = "https://buildingtransparency.org/api/categories/root";
-            return this.SendGetRequest(url);
+            return  SendGetRequest(url);
         }
 
-        private string SendGetRequest(string url)
+        private static string SendGetRequest(string url)
         {
             string response = null;
             try
@@ -47,7 +44,7 @@ namespace EC3CarbonCalculator
                 using (var client = new WebClient())
                 {
                     client.Headers["Accept"] = "application/json";
-                    client.Headers["Authorization"] = "Bearer " + this.apiKey;
+                    client.Headers["Authorization"] = "Bearer " + apiKey;
 
                     response = client.DownloadString(url);
                 }

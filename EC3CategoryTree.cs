@@ -10,24 +10,31 @@ using System.Reflection;
 
 namespace EC3CarbonCalculator
 {
-    internal class EC3CategoryTree
+    internal sealed class EC3CategoryTree
     {
-        List<string> names = new List<string>();
-        List<string> masterformats = new List<string>();
-        List<string> ids = new List<string>();
+        public List<string> names = new List<string>();
+        public List<string> masterformats = new List<string>();
+        public List<string> ids = new List<string>();
         
-        string apiKey;
         string filePath;
 
-        public EC3CategoryTree(string apiKey) 
-        { 
-            this.apiKey = apiKey; 
+        private static readonly Lazy<EC3CategoryTree> _categoryTreeInstance = 
+            new Lazy<EC3CategoryTree>(() => new EC3CategoryTree());
 
+        public static EC3CategoryTree Instance => _categoryTreeInstance.Value;
+
+        private EC3CategoryTree() 
+        { 
             // update csv path to be in the same folder as the dll
             string rhpLocation = IOTools.GetRhpLocation();
             string[] locationSplit = rhpLocation.Split('/');
             locationSplit[locationSplit.Length - 1] = "EC3Categories.csv";
             filePath = string.Join("/", locationSplit);
+
+            if (!ReadCategoryCSV())
+            {
+                UpdateEC3Categories();
+            }
         }
 
         public bool ReadCategoryCSV()
@@ -53,8 +60,7 @@ namespace EC3CarbonCalculator
         public void UpdateEC3Categories()
         {
             // get category tree from API request
-            EC3Request treeReq = new EC3Request(apiKey);
-            string treeStr = treeReq.GetCategoryTree();
+            string treeStr = EC3Request.GetCategoryTree();
             JObject rootTree = JObject.Parse(treeStr);
 
             // reinitialize all data stored
@@ -108,6 +114,23 @@ namespace EC3CarbonCalculator
             {
                 this.ParseCategory(subcategory);
             }
+        }
+
+        public int GetCategoryIdx(string category)
+        {
+            if (this.names.Contains(category))
+            {
+                return this.names.IndexOf(category);
+            }
+            else if (this.masterformats.Contains(category))
+            {
+                return this.masterformats.IndexOf(category);
+            }
+            else if (this.ids.Contains(category))
+            {
+                return this.ids.IndexOf(category);
+            }
+            return -1;
         }
 
         public void SetFilePath(string newPath) { this.filePath = newPath; }
