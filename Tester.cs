@@ -28,7 +28,7 @@ namespace EC3CarbonCalculator
         {
             try
             {
-                this.TestEPDParse();
+                this.TestUserListOption();
             }catch (Exception e)
             {
                 RhinoApp.WriteLine(e.Message);
@@ -160,14 +160,17 @@ namespace EC3CarbonCalculator
 
             try
             {
+                EC3MaterialFilter filter = new EC3MaterialFilter();
+                filter.SetCategory("RebarSteel");
+                filter.SetExpirationDate("2027-10-31");
+                filter.SetCountry("US");
+                filter.SetState("NY");
+                RhinoApp.WriteLine(filter.GetMaterialFilter());
+
                 materialData = EC3Request.GetMaterialData(
-                    "!pragma eMF(\"2.0/1\"), " +
-                    "lcia(\"TRACI 2.1\") " +
-                    "category:\"RebarSteel\" " +
-                    "epd__date_validity_ends:>\"2024-10-31\" " +
-                    "jurisdiction:IN(\"US\")"
+                    filter.GetMaterialFilter()
                     );
-                //RhinoApp.WriteLine(materialData.Length.ToString());
+                RhinoApp.WriteLine(materialData);
             }
             catch (WebException ex)
             {
@@ -197,14 +200,40 @@ namespace EC3CarbonCalculator
             RhinoApp.WriteLine(averageGwp.ToString());
             RhinoApp.WriteLine(averageDenstiy.ToString());
 
-            //foreach(EPD epd in epds)
-            //{
-            //    List<string> epdData = epd.GetPrintableData();
-            //    foreach (string data in epdData)
-            //    {
-            //        RhinoApp.WriteLine(data);
-            //    }
-            //}
+            foreach (EPD epd in epds)
+            {
+                List<string> epdData = epd.GetPrintableData();
+                foreach (string data in epdData)
+                {
+                    RhinoApp.WriteLine(data);
+                }
+            }
+        }
+
+        private void TestMaterialFilter()
+        {
+            EC3MaterialFilter filter = new EC3MaterialFilter();
+            filter.SetCategory("RebarSteel");
+            filter.SetExpirationDate("2024-10-31");
+            filter.SetCountry("US");
+            filter.SetState("NY");
+
+            RhinoApp.WriteLine(filter.GetMaterialFilter());
+        }
+
+        private void TestGetInputText()
+        {
+            UserText ut = new UserText();
+            ut.SetPrompt("Set your category");
+            ut.UserInputText();
+            string input = ut.GetInputText();
+            RhinoApp.WriteLine("User input: " + input);
+        }
+
+        private void TestUserListOption()
+        {
+            EC3Selector selector = new EC3Selector(3);
+            selector.GetSelection();
         }
     }
 }

@@ -21,9 +21,8 @@ namespace EC3CarbonCalculator
             return epds;
         }
 
-        public static double ParseDoubleWithUnit (JObject mat, string attribute, out string unit)
+        public static double ParseDoubleWithUnit(string attrStr, out string unit)
         {
-            string attrStr = mat[attribute]?.ToString();
             double flt;
 
             if (attrStr == null)
@@ -31,19 +30,26 @@ namespace EC3CarbonCalculator
                 unit = null;
                 return 0;
             }
-            
+
             string[] splitAttr = attrStr.Split(' ');
             try
             {
                 flt = double.Parse(splitAttr[0]);
-            } catch (FormatException)
+            }
+            catch (FormatException)
             {
                 unit = null;
                 return 0;
             }
 
-            unit = string.Join("", splitAttr, 1, splitAttr.Length-1);
+            unit = string.Join("", splitAttr, 1, splitAttr.Length - 1);
             return flt;
+        }
+
+        public static double ParseDoubleWithUnit (JObject mat, string attribute, out string unit)
+        {
+            string attrStr = mat[attribute]?.ToString();
+            return ParseDoubleWithUnit(attrStr, out unit);
         }
 
         public static double ParseDoubleWithUnit(JObject mat, string attribute)

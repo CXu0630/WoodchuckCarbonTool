@@ -7,6 +7,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using Rhino.Input;
 using System.Reflection;
+using UnitsNet;
 
 namespace EC3CarbonCalculator
 {
@@ -15,6 +16,7 @@ namespace EC3CarbonCalculator
         public List<string> names = new List<string>();
         public List<string> masterformats = new List<string>();
         public List<string> ids = new List<string>();
+        public List<int> dimensions = new List<int>();
         
         string filePath;
 
@@ -45,10 +47,11 @@ namespace EC3CarbonCalculator
             foreach(string line in allLines)
             {
                 string[] catData = line.Split(',');
-                if (catData.Length != 3) continue;
+                if (catData.Length != 4) continue;
                 this.names.Add(catData[0]);
                 this.masterformats.Add(catData[1]);
                 this.ids.Add(catData[2]);
+                this.dimensions.Add(int.Parse(catData[3]));
             }
             return true;
         }
@@ -67,6 +70,7 @@ namespace EC3CarbonCalculator
             this.names = new List<string>();
             this.masterformats = new List<string>();
             this.ids = new List<string>();
+            this.dimensions = new List<int>();
 
             this.ParseCategory(rootTree);
         }
@@ -83,7 +87,8 @@ namespace EC3CarbonCalculator
 
             for (int i = 0; i < this.names.Count; i++)
             {
-                string[] cats = { this.names[i], this.masterformats[i], this.ids[i] };
+                string[] cats = { this.names[i], this.masterformats[i], this.ids[i], 
+                    this.dimensions[i].ToString() };
                 string catCSV = string.Join(",", cats);
 
                 allLines.Add(catCSV);
@@ -102,10 +107,35 @@ namespace EC3CarbonCalculator
             string name = catObj["name"]?.ToString();
             string masterformat = catObj["masterformat"]?.ToString();
             string id = catObj["id"]?.ToString();
+            string declaredUnit = catObj["declared_unit"]?.ToString();
 
             this.names.Add(name);
             this.masterformats.Add(masterformat);
             this.ids.Add(id);
+
+            IQuantity unitMaterial;
+            double unitMultiplier = EC3MaterialParser.ParseDoubleWithUnit(declaredUnit, out string unit);
+            // "t" could be different units and "ton" isn't recognized as an abbreviation
+            if (declaredUnit == "t" || declaredUnit == "ton")
+            {
+                declaredUnit = "t";
+                string unitMat = unitMultiplier.ToString() + " " + declaredUnit;
+                unitMaterial = Quantity.Parse(typeof(Mass), unitMat);
+            }
+            else
+            {
+                unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, declaredUnit);
+            }
+
+            if (unitMaterial.GetType() == typeof(Length))
+            {
+                this.dimensions.Add(1);
+            }
+            else if (unitMaterial.GetType() == typeof(Area))
+            {
+                this.dimensions.Add(2);
+            }
+            else { this.dimensions.Add(3); }
 
             JArray subcategories = (JArray)catObj["subcategories"];
             if (subcategories == null || subcategories.Count == 0) { return; }

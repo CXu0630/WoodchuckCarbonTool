@@ -229,6 +229,7 @@ namespace EC3CarbonCalculator
                 sumDensity += epd.density;
                 count++;
             }
+            if (count == 0) { return sumDensity; }
             return sumDensity / count;
         }
     }
