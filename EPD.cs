@@ -57,15 +57,36 @@ namespace EC3CarbonCalculator
             double unitMultiplier = EC3MaterialParser.ParseDoubleWithUnit(obj, "declared_unit", out string unit);
             if (unit == null) { this.valid = false; }
             // "t" could be different units and "ton" isn't recognized as an abbreviation
-            else if (unit == "t" || unit == "ton")
+            if (unit == "t" || unit == "ton")
             {
                 unit = "t";
                 string unitMat = unitMultiplier.ToString() + " " + unit;
-                this.unitMaterial = Quantity.Parse(typeof(Mass), unitMat);
+                unitMaterial = Quantity.Parse(typeof(Mass), unitMat);
+            }
+            else if (unit == "m")
+            {
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                unitMaterial = Quantity.Parse(typeof(Length), unitMat);
+            }
+            else if (unit == "sqft")
+            {
+                unit = "ft^2";
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                unitMaterial = Quantity.Parse(typeof(Area), unitMat);
+            }
+            else if (unit[unit.Length - 1] == '3')
+            {
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                unitMaterial = Quantity.Parse(typeof(Volume), unitMat);
+            }
+            else if (unit[unit.Length - 1] == '2')
+            {
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                unitMaterial = Quantity.Parse(typeof(Area), unitMat);
             }
             else
             {
-                this.unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
+                unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
             }
 
             // parse density

@@ -28,7 +28,7 @@ namespace EC3CarbonCalculator
         {
             try
             {
-                this.TestUserListOption();
+                this.TestCategoryTree();
             }catch (Exception e)
             {
                 RhinoApp.WriteLine(e.Message);
@@ -234,6 +234,12 @@ namespace EC3CarbonCalculator
         {
             EC3Selector selector = new EC3Selector(3);
             selector.GetSelection();
+        }
+
+        private void TestCategoryTree()
+        {
+            EC3CategoryTree tree = EC3CategoryTree.Instance;
+            RhinoApp.WriteLine(tree.masterformats.Count.ToString());
         }
     }
 }

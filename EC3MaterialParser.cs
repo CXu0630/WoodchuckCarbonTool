@@ -43,6 +43,14 @@ namespace EC3CarbonCalculator
             }
 
             unit = string.Join("", splitAttr, 1, splitAttr.Length - 1);
+            if (unit[unit.Length - 1] == '3')
+            {
+                unit = unit.Remove(unit.Length - 1) + "^3";
+            }
+            if (unit[unit.Length - 1] == '2')
+            {
+                unit = unit.Remove(unit.Length - 1) + "^2";
+            }
             return flt;
         }
 
@@ -60,13 +68,8 @@ namespace EC3CarbonCalculator
 
         public static string ParseDensityUnit(string densityUnit)
         {
-            string newDensityUnit = null;
+            string newDensityUnit = densityUnit;
             if (densityUnit == null) { return null; }
-            if (densityUnit[densityUnit.Length - 1] == '3' 
-                && densityUnit[densityUnit.Length - 2] != '^')
-            {
-                newDensityUnit = densityUnit.TrimEnd('3') + "^3";
-            }
             if (densityUnit[0] == 't' && densityUnit[1] == '/')
             {
                 newDensityUnit = "ton" + densityUnit.TrimStart('t');
