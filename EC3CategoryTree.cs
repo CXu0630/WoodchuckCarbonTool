@@ -113,40 +113,7 @@ namespace EC3CarbonCalculator
             this.masterformats.Add(masterformat);
             this.ids.Add(id);
 
-            IQuantity unitMaterial;
-            double unitMultiplier = EC3MaterialParser.ParseDoubleWithUnit(declaredUnit, out string unit);
-            // "t" could be different units and "ton" isn't recognized as an abbreviation
-            if (unit == "t" || unit == "ton")
-            {
-                unit = "t";
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Mass), unitMat);
-            }
-            else if (unit == "m")
-            {
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Length), unitMat);
-            }
-            else if (unit == "sqft")
-            {
-                unit = "ft^2";
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Area), unitMat);
-            }
-            else if (unit[unit.Length - 1] == '3')
-            {
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Volume), unitMat);
-            }
-            else if (unit[unit.Length - 1] == '2')
-            {
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Area), unitMat);
-            }
-            else
-            {
-                unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
-            }
+            IQuantity unitMaterial = EC3MaterialParser.ParseQuantity(declaredUnit, out bool valid);
 
             if (unitMaterial.GetType() == typeof(Length))
             {

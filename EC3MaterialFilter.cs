@@ -131,5 +131,23 @@ namespace EC3CarbonCalculator
             }
             return mf;
         }
+
+        public string[] GetPrintableData()
+        {
+            string category = $"category: {this.categoryName}";
+            string date = $"epd validity ends after: {this.expirationDate}";
+            string jurisdiction = null;
+            if (this.countryCode != null)
+            {
+                string jurisdictionCode = this.countryCode;
+                if (this.stateCode != null && this.countryCode == "US")
+                {
+                    jurisdictionCode += $"-{this.stateCode}";
+                }
+                jurisdiction = $"produced in: {jurisdictionCode}";
+            }
+            string[] mfArray = new string[] {category, date, jurisdiction };
+            return mfArray;
+        }
     }
 }

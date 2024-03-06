@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using UnitsNet;
 
 namespace EC3CarbonCalculator
 {
@@ -75,6 +76,63 @@ namespace EC3CarbonCalculator
                 newDensityUnit = "ton" + densityUnit.TrimStart('t');
             }
             return newDensityUnit;
+        }
+
+        public static IQuantity ParseQuantity (string attrstr, out bool valid)
+        {
+            double unitMultiplier = ParseDoubleWithUnit(attrstr, out string unit);
+            IQuantity unitMaterial = null;
+            valid = true;
+
+            if (unit == null) { valid = false; return unitMaterial; }
+            // "t" could be different units and "ton" isn't recognized as an abbreviation
+
+            string[] unitSplit = unit.Split('/');
+            if (unitSplit.Length == 2)
+            {
+                unit = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Density), unit, out unitMaterial);
+                return unitMaterial;
+            }
+
+            if (unit == "t" || unit == "ton")
+            {
+                unit = "t";
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Mass), unitMat, out unitMaterial);
+            }
+            else if (unit == "m")
+            {
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Length), unitMat, out unitMaterial);
+            }
+            else if (unit == "sqft")
+            {
+                unit = "ft^2";
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Area), unitMat, out unitMaterial);
+            }
+            else if (unit[unit.Length - 1] == '3')
+            {
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Volume), unitMat, out unitMaterial);
+            }
+            else if (unit[unit.Length - 1] == '2')
+            {
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Area), unitMat, out unitMaterial);
+            }
+            else
+            {
+                unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
+            }
+            return unitMaterial;
+        }
+
+        public static IQuantity ParseQuantity(JObject mat, string attribute, out bool valid)
+        {
+            string attrStr = mat[attribute]?.ToString();
+            return ParseQuantity(attrStr, out valid);
         }
     }
 }

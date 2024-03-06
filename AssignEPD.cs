@@ -32,8 +32,8 @@ namespace EC3CarbonCalculator
             // get material filter properties
             Result catRes = this.SetCategory(mf, out category, out dimension);
             if (catRes == Result.Failure) { return Result.Failure; }
-            this.SetJurisdiction(mf);
-            this.SetExpireDate(mf);
+            this.SetJurisdiction(mf, out string jurisdiction);
+            this.SetExpireDate(mf, out string date);
 
             // get document units
             string unitSystem = doc.GetUnitSystemName(true, false, true, true);
@@ -55,6 +55,14 @@ namespace EC3CarbonCalculator
                     break;
             }
 
+            // Print information to console
+            string[] mfPrintable = mf.GetPrintableData();
+            RhinoApp.WriteLine("Searching for materials that meet requirements:");
+            foreach (string str in mfPrintable)
+            {
+                RhinoApp.WriteLine(str);
+            }
+
             // send API request and get all EPDs
             string matData = EC3Request.GetMaterialData(mf.GetMaterialFilter());
             JArray matArray = JArray.Parse(matData);
@@ -65,12 +73,16 @@ namespace EC3CarbonCalculator
             // get averages for EPDs
             Density avgDensity = EPD.AverageDensity(epds);
             Mass avgGwp = EPD.AverageGwp(epds, unit);
-            EPD avgEpd = new EPD("Average EPD", avgGwp, unit, avgDensity, category, mf);
+            EPD avgEpd = new EPD(
+                $"Average of {category} products produced at {jurisdiction} valid after {date}", 
+                avgGwp, unit, avgDensity, category, mf);
 
             EC3Selector geoSelector = new EC3Selector(dimension);
             ObjRef[] geo = geoSelector.GetSelection();
 
             if (geo == null) { return Result.Cancel; }
+
+            double totalGwp = 0;
 
             foreach (ObjRef objRef in geo)
             {
@@ -78,13 +90,25 @@ namespace EC3CarbonCalculator
                 double geoData = GeometryProcessor.GetDimensionalInfo(objRef, dimension);
                 
                 double gwp = geoData * avgGwp.Value;
+                totalGwp += gwp;
 
                 RhinoObject obj = objRef.Object();
 
                 obj.Attributes.SetUserString("Category", category);
-                obj.Attributes.SetUserString("GWP", (geoData * avgGwp).ToString());
+                obj.Attributes.SetUserString("GWP", (geoData * avgGwp).ToString() + "CO2e");
                 obj.Attributes.SetUserString("MaterialFilter", mf.GetMaterialFilter());
+                obj.Attributes.SetUserString("GWP per unit " + unit.GetType().ToString().Split('.')[1], avgGwp.Value.ToString() + " kgCO2e");
+                obj.Attributes.SetUserString("Expiration date after", date);
+                obj.Attributes.SetUserString("Jurisdiction", jurisdiction);
             }
+            
+            string[] EPDPrintable = avgEpd.GetPrintableData().ToArray();
+            RhinoApp.WriteLine("Calculated following based on search:");
+            foreach (string str in EPDPrintable)
+            {
+                RhinoApp.WriteLine(str);
+            }
+            RhinoApp.WriteLine("Total GWP of selected objects: " + totalGwp.ToString() + " kgCO2e");
 
             return Result.Success;
         }
@@ -111,12 +135,12 @@ namespace EC3CarbonCalculator
             return Result.Success;
         }
 
-        private Result SetJurisdiction(EC3MaterialFilter mf)
+        private Result SetJurisdiction(EC3MaterialFilter mf, out string jurisdiction)
         {
             UserText userText = new UserText();
             userText.SetPrompt("Set material source jurisdiction");
             userText.UserInputText();
-            string jurisdiction = userText.GetInputText();
+            jurisdiction = userText.GetInputText();
 
             string[] splitJurisdiction= jurisdiction.Split('-');
             if (splitJurisdiction[0] == "US")
@@ -132,12 +156,12 @@ namespace EC3CarbonCalculator
             return Result.Success;
         }
 
-        private Result SetExpireDate(EC3MaterialFilter mf)
+        private Result SetExpireDate(EC3MaterialFilter mf, out string date)
         {
             UserText userText = new UserText();
             userText.SetPrompt("Set minimum expiration date of EPD in format yyyy-MM-dd");
             userText.UserInputText();
-            string date = userText.GetInputText();
+            date = userText.GetInputText();
 
             if (!mf.SetExpirationDate(date)) 
             {

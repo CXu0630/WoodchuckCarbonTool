@@ -54,54 +54,14 @@ namespace EC3CarbonCalculator
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwpVal, "kg");
 
             // get declared unit of the gwp
-            double unitMultiplier = EC3MaterialParser.ParseDoubleWithUnit(obj, "declared_unit", out string unit);
-            if (unit == null) { this.valid = false; }
-            // "t" could be different units and "ton" isn't recognized as an abbreviation
-            if (unit == "t" || unit == "ton")
-            {
-                unit = "t";
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Mass), unitMat);
-            }
-            else if (unit == "m")
-            {
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Length), unitMat);
-            }
-            else if (unit == "sqft")
-            {
-                unit = "ft^2";
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Area), unitMat);
-            }
-            else if (unit[unit.Length - 1] == '3')
-            {
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Volume), unitMat);
-            }
-            else if (unit[unit.Length - 1] == '2')
-            {
-                string unitMat = unitMultiplier.ToString() + " " + unit;
-                unitMaterial = Quantity.Parse(typeof(Area), unitMat);
-            }
-            else
-            {
-                unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
-            }
+            unitMaterial = EC3MaterialParser.ParseQuantity(obj, "declared_unit", out this.valid);
 
             // parse density
-            double densityVal = EC3MaterialParser.ParseDoubleWithUnit(obj, "density", out string densityUnit);
-            // parse the density unit separately as it sometimes needs formatting
-            densityUnit = EC3MaterialParser.ParseDensityUnit(densityUnit);
-            if (densityUnit == null)
+            IQuantity d = EC3MaterialParser.ParseQuantity(obj, "density", out bool validDensity);
+            if (validDensity) { this.density = (Density)d; }
+            if (!validDensity)
             {
                 if (unitMaterial.GetType() == typeof(Mass)) { this.valid = false; }
-            }
-            else 
-            {
-                // density doesn't parse unless we explicitly parse density :(
-                densityUnit = densityVal.ToString() + " " + densityUnit;
-                this.density = (Density)Quantity.Parse(typeof(Density), densityUnit); 
             }
             
             // if everything works out, refactor mass to volume
