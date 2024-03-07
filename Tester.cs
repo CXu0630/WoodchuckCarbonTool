@@ -28,7 +28,7 @@ namespace EC3CarbonCalculator
         {
             try
             {
-                this.TestCategoryTree();
+                
             }catch (Exception e)
             {
                 RhinoApp.WriteLine(e.Message);

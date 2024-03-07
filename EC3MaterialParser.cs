@@ -106,7 +106,7 @@ namespace EC3CarbonCalculator
                 string unitMat = unitMultiplier.ToString() + " " + unit;
                 valid = Quantity.TryParse(typeof(Length), unitMat, out unitMaterial);
             }
-            else if (unit == "sqft")
+            else if (unit == "sqft" || unit == "sf")
             {
                 unit = "ft^2";
                 string unitMat = unitMultiplier.ToString() + " " + unit;

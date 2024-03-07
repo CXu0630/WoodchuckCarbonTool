@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Rhino;
 using Rhino.Commands;
 using Rhino.DocObjects;
+using Rhino.DocObjects.Custom;
 using UnitsNet;
 using UnitsNet.Units;
 
@@ -66,9 +67,9 @@ namespace EC3CarbonCalculator
             // send API request and get all EPDs
             string matData = EC3Request.GetMaterialData(mf.GetMaterialFilter());
             JArray matArray = JArray.Parse(matData);
-            List<EPD> epds = EC3MaterialParser.ParseEPDs(matArray, mf);
+            List<EPD>  epds = EC3MaterialParser.ParseEPDs(matArray, mf);            
 
-            // RhinoApp.WriteLine(epds.Count.ToString());
+            RhinoApp.WriteLine("Total EPDs fount: " + epds.Count.ToString());
 
             // get averages for EPDs
             Density avgDensity = EPD.AverageDensity(epds);
@@ -77,13 +78,19 @@ namespace EC3CarbonCalculator
                 $"Average of {category} products produced at {jurisdiction} valid after {date}", 
                 avgGwp, unit, avgDensity, category, mf);
 
+            string[] EPDPrintable = avgEpd.GetPrintableData().ToArray();
+            RhinoApp.WriteLine("Calculated following based on search:");
+            foreach (string str in EPDPrintable)
+            {
+                RhinoApp.WriteLine(str);
+            }
+
             EC3Selector geoSelector = new EC3Selector(dimension);
             ObjRef[] geo = geoSelector.GetSelection();
 
             if (geo == null) { return Result.Cancel; }
 
             double totalGwp = 0;
-
             foreach (ObjRef objRef in geo)
             {
                 if (objRef == null) continue;
@@ -95,20 +102,15 @@ namespace EC3CarbonCalculator
                 RhinoObject obj = objRef.Object();
 
                 obj.Attributes.SetUserString("Category", category);
-                obj.Attributes.SetUserString("GWP", (geoData * avgGwp).ToString() + "CO2e");
+                obj.Attributes.SetUserString("GWP", (geoData * avgGwp).ToString("0.###") + "CO2e");
                 obj.Attributes.SetUserString("MaterialFilter", mf.GetMaterialFilter());
-                obj.Attributes.SetUserString("GWP per unit " + unit.GetType().ToString().Split('.')[1], avgGwp.Value.ToString() + " kgCO2e");
+                obj.Attributes.SetUserString("GWP per unit " + 
+                    unit.GetType().ToString().Split('.')[1], avgGwp.Value.ToString("0.###") + " kgCO2e");
                 obj.Attributes.SetUserString("Expiration date after", date);
                 obj.Attributes.SetUserString("Jurisdiction", jurisdiction);
             }
-            
-            string[] EPDPrintable = avgEpd.GetPrintableData().ToArray();
-            RhinoApp.WriteLine("Calculated following based on search:");
-            foreach (string str in EPDPrintable)
-            {
-                RhinoApp.WriteLine(str);
-            }
-            RhinoApp.WriteLine("Total GWP of selected objects: " + totalGwp.ToString() + " kgCO2e");
+
+            RhinoApp.WriteLine("Total GWP of selected objects: " + totalGwp.ToString("0.###") + " kgCO2e");
 
             return Result.Success;
         }
@@ -141,8 +143,10 @@ namespace EC3CarbonCalculator
             userText.SetPrompt("Set material source jurisdiction");
             userText.UserInputText();
             jurisdiction = userText.GetInputText();
+            
+            if (jurisdiction == null) { return Result.Success; }
 
-            string[] splitJurisdiction= jurisdiction.Split('-');
+            string[] splitJurisdiction = jurisdiction?.Split('-');
             if (splitJurisdiction[0] == "US")
             {
                 if (splitJurisdiction.Length == 2) { mf.SetState(splitJurisdiction[1]); }
