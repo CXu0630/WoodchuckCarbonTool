@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Policy;
+using EC3CarbonCalculator.UI;
 using Newtonsoft.Json.Linq;
 using Rhino;
 using Rhino.Commands;
+using Rhino.UI;
 using UnitsNet;
 using UnitsNet.Units;
 
@@ -14,6 +16,8 @@ namespace EC3CarbonCalculator
 {
     public class Tester : Command
     {
+        private SearchForm form {  get; set; }
+
         public Tester()
         {
             Instance = this;
@@ -28,7 +32,7 @@ namespace EC3CarbonCalculator
         {
             try
             {
-                
+                TestSearchForm1();
             }catch (Exception e)
             {
                 RhinoApp.WriteLine(e.Message);
@@ -240,6 +244,32 @@ namespace EC3CarbonCalculator
         {
             EC3CategoryTree tree = EC3CategoryTree.Instance;
             RhinoApp.WriteLine(tree.masterformats.Count.ToString());
+        }
+
+        private void TestEmbeddedCSV()
+        {
+            //SearchForm sf = new SearchForm();
+            //List<string> names;
+            //List<string> codes;
+            //sf.PopulateCountryLists(out names, out codes);
+
+            //RhinoApp.WriteLine(codes[0]);
+        }
+
+        private void TestSearchForm1()
+        {
+            if (form == null)
+            {
+                form = new SearchForm { Owner = RhinoEtoApp.MainWindow };
+                form.Closed += OnFormClosed;
+                form.Show();
+            }
+        }
+
+        private void OnFormClosed(object sender, EventArgs e)
+        {
+            form.Dispose();
+            form = null;
         }
     }
 }
