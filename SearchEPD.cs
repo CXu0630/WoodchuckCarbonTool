@@ -54,7 +54,6 @@ namespace EC3CarbonCalculator
             //{
             //    rhinoapp.writeline(str);
             //}
-
             //ec3selector geoselector = new ec3selector(dimension);
             //objref[] geo = geoselector.getselection();
 
