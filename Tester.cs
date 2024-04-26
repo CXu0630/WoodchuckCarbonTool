@@ -166,7 +166,7 @@ namespace EC3CarbonCalculator
             {
                 EC3MaterialFilter filter = new EC3MaterialFilter();
                 filter.SetCategory("RebarSteel");
-                filter.SetExpirationDate("2027-10-31");
+                /*filter.SetExpirationDate("2027-10-31");*/
                 filter.SetCountry("US");
                 filter.SetState("NY");
                 RhinoApp.WriteLine(filter.GetMaterialFilter());
@@ -218,7 +218,7 @@ namespace EC3CarbonCalculator
         {
             EC3MaterialFilter filter = new EC3MaterialFilter();
             filter.SetCategory("RebarSteel");
-            filter.SetExpirationDate("2024-10-31");
+            /*filter.SetExpirationDate("2024-10-31");*/
             filter.SetCountry("US");
             filter.SetState("NY");
 
@@ -260,7 +260,7 @@ namespace EC3CarbonCalculator
         {
             if (form == null)
             {
-                form = new SearchForm { Owner = RhinoEtoApp.MainWindow };
+                form = new SearchForm (new EC3MaterialFilter()) { Owner = RhinoEtoApp.MainWindow };
                 form.Closed += OnFormClosed;
                 form.Show();
             }

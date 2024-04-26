@@ -167,11 +167,11 @@ namespace EC3CarbonCalculator
             userText.UserInputText();
             date = userText.GetInputText();
 
-            if (!mf.SetExpirationDate(date)) 
+            /*if (!mf.SetExpirationDate(date)) 
             {
                 RhinoApp.WriteLine("Not a valid date, will proceed with current date.");
                 return Result.Failure; 
-            }
+            }*/
             return Result.Success;
         }
     }
