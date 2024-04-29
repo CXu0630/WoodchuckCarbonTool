@@ -113,17 +113,22 @@ namespace EC3CarbonCalculator
             this.masterformats.Add(masterformat);
             this.ids.Add(id);
 
-            IQuantity unitMaterial = EC3MaterialParser.ParseQuantity(declaredUnit, out bool valid);
+            if (declaredUnit.Contains("tkm")) 
+            { this.dimensions.Add(0); }
+            else
+            {
+                IQuantity unitMaterial = EC3MaterialParser.ParseQuantity(declaredUnit, out bool valid);
 
-            if (unitMaterial.GetType() == typeof(Length))
-            {
-                this.dimensions.Add(1);
+                if (unitMaterial.GetType() == typeof(Length))
+                {
+                    this.dimensions.Add(1);
+                }
+                else if (unitMaterial.GetType() == typeof(Area))
+                {
+                    this.dimensions.Add(2);
+                }
+                else { this.dimensions.Add(3); }
             }
-            else if (unitMaterial.GetType() == typeof(Area))
-            {
-                this.dimensions.Add(2);
-            }
-            else { this.dimensions.Add(3); }
 
             JArray subcategories = (JArray)catObj["subcategories"];
             if (subcategories == null || subcategories.Count == 0) { return; }

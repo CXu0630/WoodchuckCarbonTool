@@ -92,6 +92,9 @@ namespace EC3CarbonCalculator
 
         private List<EPD> RequestEC3 (RhinoDoc doc, EC3MaterialFilter mf, out EPD avgEPD)
         {
+            // this portion that calculates the unit system should be migrated to assigning
+            // epds...
+
             int dimension = 3;
             IQuantity unit;
 

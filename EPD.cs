@@ -22,6 +22,8 @@ namespace EC3CarbonCalculator
         public string id { get; }
         public string uuid { get; }
         public string category { get; }
+        public string manufacturer { get; }
+        
 
         // a material is invalid if it is defined by gwp per unit mass and does not have
         // density data to convert to per unit volume or if the material is missing critical
@@ -46,6 +48,7 @@ namespace EC3CarbonCalculator
             this.id = obj["id"]?.ToString();
             this.uuid = obj["open_xpd_uuid"]?.ToString();
             this.category = obj["category"]["name"]?.ToString();
+            this.manufacturer = obj["manufacturer"]["name"]?.ToString();
 
             // parse GWP
             double gwpVal = EC3MaterialParser.ParseDoubleWithUnit(obj, "gwp", out string gwpUnit);
@@ -112,11 +115,12 @@ namespace EC3CarbonCalculator
         }
 
         public EPD(string name, Mass gwp, IQuantity unitMat, Density density, 
-            string category, EC3MaterialFilter searchPar = null)
+            string category, EC3MaterialFilter searchPar = null, string manufacturer = null)
         {
             this.name = name;
             this.category = category;
             this.searchParameters = searchPar;
+            this.manufacturer = manufacturer;
 
             this.gwp = gwp;
             this.unitMaterial = unitMat;

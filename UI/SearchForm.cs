@@ -14,6 +14,7 @@ using Rhino.Geometry;
 using System.Runtime.Remoting.Channels;
 using Rhino;
 using static System.Net.Mime.MediaTypeNames;
+using UnitsNet;
 
 namespace EC3CarbonCalculator.UI
 {
@@ -26,6 +27,7 @@ namespace EC3CarbonCalculator.UI
         public delegate void SearchEventHandler(object sender, EventArgs e);
         public event SearchEventHandler SearchEvent;
         Panel resPanel;
+        IQuantity displayUnit;
 
         public SearchForm(EC3MaterialFilter mf)
         {
@@ -75,7 +77,7 @@ namespace EC3CarbonCalculator.UI
             };
 
             mfLayout.Add(this.CategoryLayout());
-            mfLayout.Add(this.Spacer());
+            mfLayout.Add(this.Spacer(Colors.DarkGray));
             mfLayout.Add(this.GeneralSearchLayout());
 
             mfLayout.Add(null);
@@ -237,42 +239,13 @@ namespace EC3CarbonCalculator.UI
             return cfLayout;
         }
 
-        // unused for now...
-        private DynamicLayout TwoColomnLayout (List<Control> column1, List<Control> column2)
-        {
-            DynamicLayout layout = new DynamicLayout { DefaultSpacing = new Size(5, 5) };
-
-            int max = Math.Max(column1.Count, column2.Count);
-
-            for (int i = 0; i < max; i++)
-            {
-                Control ctrl1;
-                try { ctrl1 = column1[i]; }
-                catch(Exception) { ctrl1 = null; }
-
-                Control ctrl2;
-                try { ctrl2 = column2[i]; }
-                catch (Exception) { ctrl2 = null; }
-
-                layout.BeginHorizontal();
-                layout.Add(ctrl1);
-                layout.Add(ctrl2);
-                layout.EndHorizontal();
-            }
-
-            return layout;
-        }
-
         private DynamicLayout SearchResultLayout(int count)
         {
-            Label countlbl = new Label { Text = "You pressed search " + count.ToString() + " times!" };
-
             DynamicLayout resLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
                 Padding = new Padding(10)
             };
-            resLayout.Add(countlbl);
             return resLayout;
         }
 
@@ -284,7 +257,9 @@ namespace EC3CarbonCalculator.UI
                 Padding = new Padding(10)
             };
 
+            this.displayUnit = avgEPD.unitMaterial;
             epdLayout.Add(EPDPanel(avgEPD));
+            epdLayout.Add(Spacer(Colors.WhiteSmoke));
 
             foreach(EPD epd in epds.Take(4))
             {
@@ -298,7 +273,7 @@ namespace EC3CarbonCalculator.UI
 
         private Panel EPDPanel(EPD epd)
         {
-            Panel bkg = new Panel { Height = 80 };
+            Panel bkg = new Panel { Height = 100 };
             bkg.BackgroundColor = Colors.WhiteSmoke;
 
             Label epdName = new Label 
@@ -306,20 +281,43 @@ namespace EC3CarbonCalculator.UI
                 Text = epd.name, 
                 Font = new Font(SystemFonts.Default().FamilyName, 12) 
             };
+            Label gwp = new Label
+            {
+                Text = epd.GetGwpConverted(this.displayUnit).ToString() 
+                + "/" + this.displayUnit.ToString(),
+                Font = new Font(SystemFonts.Default().FamilyName, 12)
+            };
+            Label manName = new Label { Text = epd.manufacturer };
+            Button browserView = new Button { Text = "View in Browser" };
+
+            browserView.Click += (s, e) =>
+            {
+                System.Diagnostics.Process.Start("https://buildingtransparency.org/ec3/epds/" + epd.id);
+            };
 
             DynamicLayout epdLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
                 Padding = new Padding(10)
             };
+            epdLayout.BeginHorizontal();
             epdLayout.Add(epdName);
+            epdLayout.Add(gwp);
+            epdLayout.EndHorizontal();
+            epdLayout.Add(null);
+            epdLayout.BeginHorizontal();
+            epdLayout.Add(null);
+            if(epd.id != null)
+            {
+                epdLayout.Add(browserView);
+            }
 
             bkg.Content = epdLayout;
 
             return bkg;
         }
 
-        private DynamicLayout Spacer()
+        private DynamicLayout Spacer(Color bkgColor)
         {
             DynamicLayout spacer = new DynamicLayout();
 
@@ -328,7 +326,7 @@ namespace EC3CarbonCalculator.UI
             Panel line = new Panel
             {
                 Height = 1,
-                BackgroundColor = Colors.DarkGray
+                BackgroundColor = bkgColor
             };
 
             spacer.Add(blank1);
@@ -353,6 +351,32 @@ namespace EC3CarbonCalculator.UI
         public EC3MaterialFilter GetMaterialFilter()
         {
             return this.mf;
+        }
+
+        // unused for now...
+        private DynamicLayout TwoColomnLayout(List<Control> column1, List<Control> column2)
+        {
+            DynamicLayout layout = new DynamicLayout { DefaultSpacing = new Size(5, 5) };
+
+            int max = Math.Max(column1.Count, column2.Count);
+
+            for (int i = 0; i < max; i++)
+            {
+                Control ctrl1;
+                try { ctrl1 = column1[i]; }
+                catch (Exception) { ctrl1 = null; }
+
+                Control ctrl2;
+                try { ctrl2 = column2[i]; }
+                catch (Exception) { ctrl2 = null; }
+
+                layout.BeginHorizontal();
+                layout.Add(ctrl1);
+                layout.Add(ctrl2);
+                layout.EndHorizontal();
+            }
+
+            return layout;
         }
     }
 }
