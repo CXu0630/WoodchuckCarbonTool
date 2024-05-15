@@ -12,7 +12,7 @@ namespace EC3CarbonCalculator
 {
     internal class EC3Request
     {
-        static string apiKey = "GHrkEq5gkWl2vdIiCMDptSS1A32Brh";
+        static string apiKey = "zjQ5yUsKYWTiAaQWMWoJSz7c4LnZOU";
 
         public EC3Request() { }
 

@@ -11,17 +11,30 @@ using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
-    public class AssignEPD
+    public class AssignEPD : Command
     {
 
-        public AssignEPD() { }
+        public AssignEPD()
+        {
+            Instance = this;
+        }
 
-        protected Result RunCommand(RhinoDoc doc, EPD epd)
+        ///<summary>The only instance of the MyCommand command.</summary>
+        public static AssignEPD Instance { get; private set; }
+        public override string EnglishName => "AssignEPD";
+
+        protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
             EC3MaterialFilter mf = new EC3MaterialFilter();
             int dimension = 3;
             IQuantity unit;
             string category;
+
+            // get material filter properties
+            Result catRes = this.SetCategory(mf, out category, out dimension);
+            if (catRes == Result.Failure) { return Result.Failure; }
+            this.SetJurisdiction(mf, out string jurisdiction);
+            this.SetExpireDate(mf, out string date);
 
             // get document units
             string unitSystem = doc.GetUnitSystemName(true, false, true, true);
@@ -99,6 +112,66 @@ namespace EC3CarbonCalculator
 
             RhinoApp.WriteLine("Total GWP of selected objects: " + totalGwp.ToString("0.###") + " kgCO2e");
 
+            return Result.Success;
+        }
+
+        private Result SetCategory(EC3MaterialFilter mf, out string category, out int dimension)
+        {
+            UserText userText = new UserText();
+            userText.SetPrompt("Set material category");
+            userText.UserInputText();
+            category = userText.GetInputText();
+
+            EC3CategoryTree categoryTree = EC3CategoryTree.Instance;
+            int catIdx = categoryTree.GetCategoryIdx(category);
+            if (catIdx == -1) 
+            {
+                RhinoApp.WriteLine("Entered category is not a valid EC3 category.");
+                dimension = 0;
+                return Result.Failure;
+            }
+            mf.SetCategory(categoryTree.names[catIdx]);
+
+            dimension = categoryTree.dimensions[catIdx];
+
+            return Result.Success;
+        }
+
+        private Result SetJurisdiction(EC3MaterialFilter mf, out string jurisdiction)
+        {
+            UserText userText = new UserText();
+            userText.SetPrompt("Set material source jurisdiction");
+            userText.UserInputText();
+            jurisdiction = userText.GetInputText();
+            
+            if (jurisdiction == null) { return Result.Success; }
+
+            string[] splitJurisdiction = jurisdiction?.Split('-');
+            if (splitJurisdiction[0] == "US")
+            {
+                if (splitJurisdiction.Length == 2) { mf.SetState(splitJurisdiction[1]); }
+            }
+            if (!mf.SetCountry(splitJurisdiction[0]))
+            {
+                RhinoApp.WriteLine("Not a valid jurisdiction, will proceed with Global" +
+                    "calculation.");
+                return Result.Failure;
+            }
+            return Result.Success;
+        }
+
+        private Result SetExpireDate(EC3MaterialFilter mf, out string date)
+        {
+            UserText userText = new UserText();
+            userText.SetPrompt("Set minimum expiration date of EPD in format yyyy-MM-dd");
+            userText.UserInputText();
+            date = userText.GetInputText();
+
+            /*if (!mf.SetExpirationDate(date)) 
+            {
+                RhinoApp.WriteLine("Not a valid date, will proceed with current date.");
+                return Result.Failure; 
+            }*/
             return Result.Success;
         }
     }

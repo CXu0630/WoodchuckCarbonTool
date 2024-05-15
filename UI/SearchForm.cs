@@ -20,14 +20,21 @@ namespace EC3CarbonCalculator.UI
 {
      internal class SearchForm : Form
     {
+        // All search prameters are stored in the mf instead of individually
         EC3MaterialFilter mf;
         Button search = new Button { Text = "Search" };
-        int searchCount = 0;
 
+        // This is public as it needs to be edditable by multiple methods.
+        Scrollable resPanel;
+        IQuantity displayUnit;
+
+        // This event is used to signal when the search button has been pressed:
+        // search parameters are locked in and an EPD search is performed.
         public delegate void SearchEventHandler(object sender, EventArgs e);
         public event SearchEventHandler SearchEvent;
-        Panel resPanel;
-        IQuantity displayUnit;
+
+        public delegate void AssignEventHandler(object sender, EventArgs e);
+        public event AssignEventHandler AssignEvent;
 
         public SearchForm(EC3MaterialFilter mf)
         {
@@ -41,12 +48,20 @@ namespace EC3CarbonCalculator.UI
             Title = "EC3 Material GWP Search";
             MinimumSize = new Size(900, 500);
 
+            // Twwo basic layouts: one for search parameters, one for search results
             DynamicLayout mfLayout = this.MaterialFilterLayout();
-            DynamicLayout resLayout = this.SearchResultLayout(searchCount);
+            DynamicLayout resLayout = this.SearchResultLayout();
 
-            resPanel = new Panel { Content = resLayout };
+            // Results exist in a panel to be updated with new content each search
+            resPanel = new Scrollable
+            {
+                Content = resLayout,
+                ExpandContentWidth = true
+            };
             resPanel.BackgroundColor = Colors.LightGrey;
 
+            // Sends an event signal to listeners in other classes when a search is 
+            // performed.
             search.Click += (s, e) =>
             {
                 SearchEvent?.Invoke(this, e);
@@ -133,12 +148,19 @@ namespace EC3CarbonCalculator.UI
             return catLayout;
         }
 
+        /// <summary>
+        /// Material search parameters that are used accross all searches
+        /// Preliminary search parameter layout used in our prototype.
+        /// </summary>
+        /// <returns> dynamic layout of search fields </returns>
         private DynamicLayout GeneralSearchLayout()
         {
             GeographyCodes gc = GeographyCodes.Instance;
             
             // country options dropdown
             List<ListItem> countryOptions = new List<ListItem>();
+            // blank option for default
+            countryOptions.Add(new ListItem { Key = null, Text = "Global" });
             for (int i = 0; i < gc.CountryCodes.Count; i++)
             {
                 countryOptions.Add(new ListItem 
@@ -150,7 +172,7 @@ namespace EC3CarbonCalculator.UI
             DropDown countryDD = new DropDown();
             countryDD.DataStore = countryOptions;
             // set default value
-            countryDD.SelectedIndex = 235;
+            countryDD.SelectedKey = "US";
             mf.SetCountry(countryDD.SelectedKey);
             // set listener
             countryDD.SelectedKeyChanged += (s, e) =>
@@ -161,6 +183,8 @@ namespace EC3CarbonCalculator.UI
 
             // state options dropdown
             List<ListItem> stateOptions = new List<ListItem>();
+            // blank option for default
+            stateOptions.Add(new ListItem { Key = null, Text = "None" });
             for (int i = 0; i < gc.StateCodes.Count; i++)
             {
                 stateOptions.Add(new ListItem
@@ -172,7 +196,7 @@ namespace EC3CarbonCalculator.UI
             DropDown stateDD = new DropDown();
             stateDD.DataStore = stateOptions;
             // set default value
-            stateDD.SelectedIndex = 34;
+            stateDD.SelectedKey = "NY";
             mf.SetState(stateDD.SelectedKey);
             // set listener
             stateDD.SelectedKeyChanged += (s, e) =>
@@ -228,6 +252,10 @@ namespace EC3CarbonCalculator.UI
             return genLayout;
         }
 
+        /// <summary>
+        /// A separate dynamic layout for the confirm search button
+        /// </summary>
+        /// <returns> A dynamic layout containing just the confirm button </returns>
         private DynamicLayout ConfirmLayout()
         {
             DynamicLayout cfLayout = new DynamicLayout();
@@ -239,7 +267,8 @@ namespace EC3CarbonCalculator.UI
             return cfLayout;
         }
 
-        private DynamicLayout SearchResultLayout(int count)
+        // default search result layout
+        private DynamicLayout SearchResultLayout()
         {
             DynamicLayout resLayout = new DynamicLayout
             {
@@ -249,6 +278,14 @@ namespace EC3CarbonCalculator.UI
             return resLayout;
         }
 
+        /// <summary>
+        /// Repopulates the search result panel with EPD search results from
+        /// the EC3 API. This method should never be called from inside the
+        /// SearchForm class but instead in whichever class is performing the
+        /// searching...
+        /// </summary>
+        /// <param name="epds"></param>
+        /// <param name="avgEPD"></param>
         public void RepopulateSearchResult(List<EPD> epds, EPD avgEPD)
         {
             DynamicLayout epdLayout = new DynamicLayout
@@ -261,7 +298,8 @@ namespace EC3CarbonCalculator.UI
             epdLayout.Add(EPDPanel(avgEPD));
             epdLayout.Add(Spacer(Colors.WhiteSmoke));
 
-            foreach(EPD epd in epds.Take(4))
+            // NOTE: right now only 20 EPDs are displayed per search
+            foreach(EPD epd in epds.Take(20))
             {
                 epdLayout.Add(EPDPanel(epd));
             }
@@ -271,46 +309,96 @@ namespace EC3CarbonCalculator.UI
             this.resPanel.Content = epdLayout;
         }
 
+        /// <summary>
+        /// Used to display an error message to the user in the search result
+        /// panel
+        /// </summary>
+        /// <param name="msg"></param>
+        public void RepopulateResultError(string msg)
+        {
+            DynamicLayout msgLayout = new DynamicLayout
+            {
+                DefaultSpacing = new Size(5, 5),
+                Padding = new Padding(10)
+            };
+            Label msgLabel = new Label 
+            { 
+                Text = msg,
+                Font = new Font(SystemFonts.Default().FamilyName, 12),
+                TextColor = Colors.Red
+            };
+            msgLayout.BeginHorizontal();
+            msgLayout.Add(null);
+            msgLayout.Add(msgLabel);
+            msgLayout.Add(null);
+
+            this.resPanel.Content = msgLayout;
+        }
+
         private Panel EPDPanel(EPD epd)
         {
-            Panel bkg = new Panel { Height = 100 };
+            Panel bkg = new Panel { Width = resPanel.Width - 40};
             bkg.BackgroundColor = Colors.WhiteSmoke;
 
-            Label epdName = new Label 
-            { 
-                Text = epd.name, 
-                Font = new Font(SystemFonts.Default().FamilyName, 12) 
-            };
             Label gwp = new Label
             {
-                Text = epd.GetGwpConverted(this.displayUnit).ToString() 
+                Text = epd.GetGwpConverted(this.displayUnit).ToString()
                 + "/" + this.displayUnit.ToString(),
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
+            Label epdName = new Label 
+            { 
+                Text = epd.name, 
+                Font = new Font(SystemFonts.Default().FamilyName, 12)
+            };
+
             Label manName = new Label { Text = epd.manufacturer };
             Button browserView = new Button { Text = "View in Browser" };
+            Button assignButton = new Button { Text = "Assign to Object" };
 
             browserView.Click += (s, e) =>
             {
                 System.Diagnostics.Process.Start("https://buildingtransparency.org/ec3/epds/" + epd.id);
             };
 
-            DynamicLayout epdLayout = new DynamicLayout
+            assignButton.Click += (s, e) =>
+            {
+                AssignEvent?.Invoke(this, e);
+            };
+
+            // General container
+            DynamicLayout epdLayout = new DynamicLayout();
+
+            // Container for display information
+            DynamicLayout infoLayout = new DynamicLayout
+            {
+                DefaultSpacing = new Size(5, 5),
+                Padding = new Padding(10),
+                Size = new Size(-1, -1)
+            };
+            infoLayout.BeginHorizontal();
+            infoLayout.Add(epdName);
+            infoLayout.Add(gwp);
+            infoLayout.EndBeginHorizontal();
+            infoLayout.Add(null);
+            infoLayout.Add(new Panel());
+
+            DynamicLayout buttonLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
                 Padding = new Padding(10)
             };
-            epdLayout.BeginHorizontal();
-            epdLayout.Add(epdName);
-            epdLayout.Add(gwp);
-            epdLayout.EndHorizontal();
-            epdLayout.Add(null);
-            epdLayout.BeginHorizontal();
-            epdLayout.Add(null);
+            buttonLayout.BeginHorizontal();
+            buttonLayout.Add(null);
             if(epd.id != null)
             {
-                epdLayout.Add(browserView);
+                buttonLayout.Add(browserView);
             }
+            buttonLayout.Add(assignButton);
+
+            epdLayout.Add(infoLayout);
+            epdLayout.Add(null);
+            epdLayout.Add(buttonLayout);
 
             bkg.Content = epdLayout;
 

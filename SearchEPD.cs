@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using EC3CarbonCalculator.UI;
 using Eto.Forms;
 using Newtonsoft.Json.Linq;
@@ -45,41 +46,31 @@ namespace EC3CarbonCalculator
             {
                 mf = form.GetMaterialFilter();
                 epds = RequestEC3(doc, mf, out avgEPD);
+                // ERROR: the server did not return anything, most likely than not an
+                // authentication error.
+                if (epds == null)
+                {
+                    form.RepopulateResultError("There was an error accessing the EC3" +
+                        "server.");
+                    return;
+                }
+                // NO RES: there weren't any EPDs found with these particular 
+                // parameters.
+                if (epds.Count == 0)
+                {
+                    form.RepopulateResultError("No results were found for your " +
+                        "input parameters.\nTry broadening your search.");
+                    return;
+                }
                 form.RepopulateSearchResult(epds, avgEPD);
             };
 
-            //string[] epdprintable = avgepd.getprintabledata().toarray();
-            //rhinoapp.writeline("calculated following based on search:");
-            //foreach (string str in epdprintable)
-            //{
-            //    rhinoapp.writeline(str);
-            //}
-            //ec3selector geoselector = new ec3selector(dimension);
-            //objref[] geo = geoselector.getselection();
-
-            //if (geo == null) { return result.cancel; }
-
-            //double totalgwp = 0;
-            //foreach (objref objref in geo)
-            //{
-            //    if (objref == null) continue;
-            //    double geodata = geometryprocessor.getdimensionalinfo(objref, dimension);
-                
-            //    double gwp = geodata * avggwp.value;
-            //    totalgwp += gwp;
-
-            //    rhinoobject obj = objref.object();
-
-            //    obj.attributes.setuserstring("category", mf.categoryname);
-            //    obj.attributes.setuserstring("gwp", (geodata * avggwp).tostring("0.###") + "co2e");
-            //    obj.attributes.setuserstring("materialfilter", mf.getmaterialfilter());
-            //    obj.attributes.setuserstring("gwp per unit " + 
-            //        unit.gettype().tostring().split('.')[1], avggwp.value.tostring("0.###") + " kgco2e");
-            //    obj.attributes.setuserstring("expiration date after", mf.expirationdate);
-            //    obj.attributes.setuserstring("jurisdiction", jurisdiction);
-            //}
-
-            //rhinoapp.writeline("total gwp of selected objects: " + totalgwp.tostring("0.###") + " kgco2e");
+            form.AssignEvent += (s, e) =>
+            {
+                form.WindowState = WindowState.Minimized;
+                Thread.Sleep(500);
+                form.WindowState = WindowState.Normal;
+            };
 
             return Result.Success;
         }
@@ -126,6 +117,13 @@ namespace EC3CarbonCalculator
             }
 
             string matData = EC3Request.GetMaterialData(mf.GetMaterialFilter());
+            // this mostly happens when there is an authentication error. Error is
+            // handled by the "main method" of the command
+            if(matData  == null)
+            {
+                avgEPD = null;
+                return null;
+            }
             JArray matArray = JArray.Parse(matData);
             List<EPD> epds = EC3MaterialParser.ParseEPDs(matArray, mf);
 
@@ -137,7 +135,7 @@ namespace EC3CarbonCalculator
             string jurisdiction = mf.countryCode;
             if (mf.stateCode != null) { jurisdiction += ("-" + mf.stateCode); }
             avgEPD = new EPD(
-                $"Average of  products produced at {jurisdiction} valid after {mf.expirationDate}",
+                $"Average of Search Result",
                 avgGwp, unit, avgDensity, mf.categoryName, mf);
 
             return epds;

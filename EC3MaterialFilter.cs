@@ -36,6 +36,10 @@ namespace EC3CarbonCalculator
             {
                 this.countryCode = countryCode;
                 return true;
+            } 
+            else
+            {
+                this.countryCode = null;
             }
             return false;
         }
@@ -46,6 +50,10 @@ namespace EC3CarbonCalculator
             {
                 this.stateCode = stateCode;
                 return true;
+            }
+            else
+            {
+                this.stateCode = null;
             }
             return false;
         }
