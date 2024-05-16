@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -113,7 +113,7 @@ namespace EC3CarbonCalculator
             this.masterformats.Add(masterformat);
             this.ids.Add(id);
 
-            if (declaredUnit.Contains("tkm")) 
+            if (declaredUnit.Contains("tkm"))
             { this.dimensions.Add(0); }
             else
             {
@@ -127,7 +127,12 @@ namespace EC3CarbonCalculator
                 {
                     this.dimensions.Add(2);
                 }
-                else { this.dimensions.Add(3); }
+                else if (unitMaterial.GetType() == typeof(Volume) || 
+                    unitMaterial.GetType() == typeof(Mass))
+                {
+                    this.dimensions.Add(3);
+                }
+                else { this.dimensions.Add(0); }
             }
 
             JArray subcategories = (JArray)catObj["subcategories"];
@@ -154,6 +159,11 @@ namespace EC3CarbonCalculator
                 return this.ids.IndexOf(category);
             }
             return -1;
+        }
+
+        public int GetCategoryDimension(string category)
+        {
+            return this.dimensions[GetCategoryIdx(category)];
         }
 
         public void SetFilePath(string newPath) { this.filePath = newPath; }

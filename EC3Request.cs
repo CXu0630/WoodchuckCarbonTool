@@ -1,6 +1,7 @@
-﻿using Rhino;
+using Rhino;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -41,12 +42,14 @@ namespace EC3CarbonCalculator
             string response = null;
             try
             {
-                using (var client = new WebClient())
-                {
-                    client.Headers["Accept"] = "application/json";
-                    client.Headers["Authorization"] = "Bearer " + apiKey;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Accept = "application/json";
+                request.Headers["Authorization"] = "Bearer " + apiKey;
 
-                    response = client.DownloadString(url);
+                using (HttpWebResponse webResponse = (HttpWebResponse)request.GetResponse())
+                using (StreamReader reader = new StreamReader(webResponse.GetResponseStream(), Encoding.UTF8)) // Use UTF-16 here
+                {
+                    response = reader.ReadToEnd();
                 }
             }
             catch (WebException ex)
@@ -64,11 +67,6 @@ namespace EC3CarbonCalculator
                     RhinoApp.WriteLine($"Error: {ex.Message}");
                 }
             }
-
-            // -----NOTE-----
-            // Error handling that involves writing to the Rhino console should be written
-            // in the RHINO COMMAND portion of the code so that this class stays independent
-            // of Rhinocommon.
 
             return response;
         }

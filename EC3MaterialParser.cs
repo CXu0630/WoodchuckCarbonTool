@@ -124,7 +124,15 @@ namespace EC3CarbonCalculator
             }
             else
             {
-                unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
+                try
+                {
+                    unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
+                } catch (Exception)
+                {
+                    valid = false;
+                    return null;
+                }
+                
             }
             return unitMaterial;
         }
@@ -132,6 +140,14 @@ namespace EC3CarbonCalculator
         public static IQuantity ParseQuantity(JObject mat, string attribute, out bool valid)
         {
             string attrStr = mat[attribute]?.ToString();
+            try
+            {
+                string qty = mat[attribute]["qty"]?.ToString();
+                string unit = mat[attribute]["unit"]?.ToString();
+                if (qty != null && unit != null) { attrStr = qty + " " + unit; }
+            }
+            catch (Exception) { }
+            
             return ParseQuantity(attrStr, out valid);
         }
     }

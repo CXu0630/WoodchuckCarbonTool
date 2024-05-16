@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using Rhino;
 using System;
 using System.Collections.Generic;
@@ -23,6 +23,7 @@ namespace EC3CarbonCalculator
         public string uuid { get; }
         public string category { get; }
         public string manufacturer { get; }
+        public int dimension {  get; }
         
 
         // a material is invalid if it is defined by gwp per unit mass and does not have
@@ -30,7 +31,7 @@ namespace EC3CarbonCalculator
         // data like gwp or declaired unit.
         public bool valid = true;
 
-        public EC3MaterialFilter searchParameters { get; }
+        public EC3MaterialFilter mf { get; }
 
         /// <summary>
         /// Constructor used to create an EPD from a JObject retreived from the EC3
@@ -42,6 +43,7 @@ namespace EC3CarbonCalculator
         public EPD(JObject obj, EC3MaterialFilter searchPar = null)
         {
             this.JObj = obj;
+            this.mf = searchPar;
 
             // basic stuff
             this.name = obj["name"]?.ToString();
@@ -49,6 +51,7 @@ namespace EC3CarbonCalculator
             this.uuid = obj["open_xpd_uuid"]?.ToString();
             this.category = obj["category"]["name"]?.ToString();
             this.manufacturer = obj["manufacturer"]["name"]?.ToString();
+            this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
 
             // parse GWP
             double gwpVal = EC3MaterialParser.ParseDoubleWithUnit(obj, "gwp", out string gwpUnit);
@@ -62,7 +65,8 @@ namespace EC3CarbonCalculator
             // parse density
             IQuantity d = EC3MaterialParser.ParseQuantity(obj, "density", out bool validDensity);
             if (validDensity) { this.density = (Density)d; }
-            if (!validDensity)
+            if (unitMaterial == null) { this.valid = false; }
+            if (!validDensity && unitMaterial != null)
             {
                 if (unitMaterial.GetType() == typeof(Mass)) { this.valid = false; }
             }
@@ -76,7 +80,8 @@ namespace EC3CarbonCalculator
 
         /// <summary>
         /// Constructor for EPD based on user-defined inputs. Should be used to construct
-        /// custom industry average EPDs.
+        /// custom industry average EPDs or to recreate EPDs that have been reduced to 
+        /// string format.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="gwp"></param>
@@ -86,11 +91,12 @@ namespace EC3CarbonCalculator
         /// <param name="category"></param>
         /// <param name="searchPar"></param>
         public EPD(string name, double gwp, string unit, double density, string densityUnit, 
-            string category, EC3MaterialFilter searchPar = null)
+            string category, EC3MaterialFilter searchPar = null, string manufacturer = null)
         {
             this.name = name;
             this.category = category;
-            this.searchParameters = searchPar;
+            this.mf = searchPar;
+            this.manufacturer = manufacturer;
 
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg"); 
 
@@ -119,7 +125,7 @@ namespace EC3CarbonCalculator
         {
             this.name = name;
             this.category = category;
-            this.searchParameters = searchPar;
+            this.mf = searchPar;
             this.manufacturer = manufacturer;
 
             this.gwp = gwp;
@@ -149,6 +155,7 @@ namespace EC3CarbonCalculator
 
         public Mass GetGwpConverted(IQuantity unitReq)
         {
+            if(this.unitMaterial == null) { return new Mass(); }
             if (unitReq.GetType() != this.unitMaterial.GetType()) { return new Mass(); }
             IQuantity convertedUnit = this.unitMaterial.ToUnit(unitReq.Unit);
             return gwp * (double)unitReq.Value / (double)convertedUnit.Value;

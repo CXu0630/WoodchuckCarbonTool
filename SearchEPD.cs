@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -50,25 +50,26 @@ namespace EC3CarbonCalculator
                 // authentication error.
                 if (epds == null)
                 {
-                    form.RepopulateResultError("There was an error accessing the EC3" +
-                        "server.");
+                    Application.Instance.Invoke(() => 
+                    form.RepopulateResultMessage("There was an error accessing the EC3 server."));
                     return;
                 }
                 // NO RES: there weren't any EPDs found with these particular 
                 // parameters.
                 if (epds.Count == 0)
                 {
-                    form.RepopulateResultError("No results were found for your " +
-                        "input parameters.\nTry broadening your search.");
+                    Application.Instance.Invoke(() =>
+                    form.RepopulateResultMessage("No results were found for your " +
+                        "input parameters.\nTry broadening your search."));
                     return;
                 }
-                form.RepopulateSearchResult(epds, avgEPD);
+                Application.Instance.Invoke(() => form.RepopulateSearchResult(epds, avgEPD));
             };
 
             form.AssignEvent += (s, e) =>
             {
                 form.WindowState = WindowState.Minimized;
-                Thread.Sleep(500);
+                EPDManager.SelectAssign(e.Epd);
                 form.WindowState = WindowState.Normal;
             };
 
@@ -86,7 +87,7 @@ namespace EC3CarbonCalculator
             // this portion that calculates the unit system should be migrated to assigning
             // epds...
 
-            int dimension = 3;
+            int dimension = EC3CategoryTree.Instance.GetCategoryDimension(mf.categoryName);
             IQuantity unit;
 
             // get document units

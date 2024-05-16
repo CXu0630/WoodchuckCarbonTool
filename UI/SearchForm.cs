@@ -1,4 +1,4 @@
-﻿using Eto.Drawing;
+using Eto.Drawing;
 using Eto.Forms;
 using System;
 using System.Collections.Generic;
@@ -27,13 +27,15 @@ namespace EC3CarbonCalculator.UI
         // This is public as it needs to be edditable by multiple methods.
         Scrollable resPanel;
         IQuantity displayUnit;
+        string displayUnitStr;
+        string displayUnitDimStr;
 
         // This event is used to signal when the search button has been pressed:
         // search parameters are locked in and an EPD search is performed.
         public delegate void SearchEventHandler(object sender, EventArgs e);
         public event SearchEventHandler SearchEvent;
 
-        public delegate void AssignEventHandler(object sender, EventArgs e);
+        public delegate void AssignEventHandler(object sender, AssignEventArgs e);
         public event AssignEventHandler AssignEvent;
 
         public SearchForm(EC3MaterialFilter mf)
@@ -48,23 +50,24 @@ namespace EC3CarbonCalculator.UI
             Title = "EC3 Material GWP Search";
             MinimumSize = new Size(900, 500);
 
+            this.displayUnitStr = RhinoDoc.ActiveDoc.GetUnitSystemName(true, false, true, true);
+
             // Twwo basic layouts: one for search parameters, one for search results
             DynamicLayout mfLayout = this.MaterialFilterLayout();
-            DynamicLayout resLayout = this.SearchResultLayout();
 
             // Results exist in a panel to be updated with new content each search
             resPanel = new Scrollable
             {
-                Content = resLayout,
                 ExpandContentWidth = true
             };
             resPanel.BackgroundColor = Colors.LightGrey;
 
             // Sends an event signal to listeners in other classes when a search is 
             // performed.
-            search.Click += (s, e) =>
+            search.Click += async (s, e) =>
             {
-                SearchEvent?.Invoke(this, e);
+                RepopulateResultMessage("Loading...");
+                await Task.Run(() => SearchEvent?.Invoke(this, e));
             };
 
             DynamicLayout layout = new DynamicLayout
@@ -267,17 +270,6 @@ namespace EC3CarbonCalculator.UI
             return cfLayout;
         }
 
-        // default search result layout
-        private DynamicLayout SearchResultLayout()
-        {
-            DynamicLayout resLayout = new DynamicLayout
-            {
-                DefaultSpacing = new Size(5, 5),
-                Padding = new Padding(10)
-            };
-            return resLayout;
-        }
-
         /// <summary>
         /// Repopulates the search result panel with EPD search results from
         /// the EC3 API. This method should never be called from inside the
@@ -295,6 +287,15 @@ namespace EC3CarbonCalculator.UI
             };
 
             this.displayUnit = avgEPD.unitMaterial;
+            switch (avgEPD.unitMaterial.Dimensions.Length)
+            {
+                case 2:
+                    displayUnitDimStr = "\u00B2";
+                    break;
+                case 3:
+                    displayUnitDimStr = "\u00B3";
+                    break;
+            }
             epdLayout.Add(EPDPanel(avgEPD));
             epdLayout.Add(Spacer(Colors.WhiteSmoke));
 
@@ -314,7 +315,7 @@ namespace EC3CarbonCalculator.UI
         /// panel
         /// </summary>
         /// <param name="msg"></param>
-        public void RepopulateResultError(string msg)
+        public void RepopulateResultMessage(string msg)
         {
             DynamicLayout msgLayout = new DynamicLayout
             {
@@ -324,8 +325,7 @@ namespace EC3CarbonCalculator.UI
             Label msgLabel = new Label 
             { 
                 Text = msg,
-                Font = new Font(SystemFonts.Default().FamilyName, 12),
-                TextColor = Colors.Red
+                Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
             msgLayout.BeginHorizontal();
             msgLayout.Add(null);
@@ -343,7 +343,7 @@ namespace EC3CarbonCalculator.UI
             Label gwp = new Label
             {
                 Text = epd.GetGwpConverted(this.displayUnit).ToString()
-                + "/" + this.displayUnit.ToString(),
+                + "/" + this.displayUnitStr + this.displayUnitDimStr,
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
             Label epdName = new Label 
@@ -363,7 +363,7 @@ namespace EC3CarbonCalculator.UI
 
             assignButton.Click += (s, e) =>
             {
-                AssignEvent?.Invoke(this, e);
+                AssignEvent?.Invoke(this, new AssignEventArgs(epd));
             };
 
             // General container
@@ -465,6 +465,15 @@ namespace EC3CarbonCalculator.UI
             }
 
             return layout;
+        }
+
+        internal class AssignEventArgs: EventArgs
+        {
+            public EPD Epd { get; set; }
+            public AssignEventArgs(EPD epd)
+            {
+                Epd = epd;
+            }
         }
     }
 }

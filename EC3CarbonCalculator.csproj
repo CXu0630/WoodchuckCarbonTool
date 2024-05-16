@@ -18,12 +18,17 @@
 
   <ItemGroup>
     <None Include="Archive\AssignEPD.cs" />
+    <None Include="C:\Users\chloe.xu\source\repos\EC3CarbonCalculator\.editorconfig" />
   </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RhinoCommon" Version="7.13.21348.13001" IncludeAssets="compile;build" />
     <PackageReference Include="UnitsNet" Version="5.48.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\chloe.xu\source\repos\EC3CarbonCalculator\.editorconfig" />
   </ItemGroup>
   
 </Project>
