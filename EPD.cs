@@ -10,7 +10,7 @@ using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
-    internal class EPD
+    public class EPD
     {
         JObject JObj;
         public string name { get; set; }
@@ -49,21 +49,21 @@ namespace EC3CarbonCalculator
             this.name = obj["name"]?.ToString();
             this.id = obj["id"]?.ToString();
             this.uuid = obj["open_xpd_uuid"]?.ToString();
-            this.category = obj["category"]["name"]?.ToString();
+            this.category = mf.categoryName?.ToString();
             this.manufacturer = obj["manufacturer"]["name"]?.ToString();
             this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
 
             // parse GWP
-            double gwpVal = EC3MaterialParser.ParseDoubleWithUnit(obj, "gwp", out string gwpUnit);
+            double gwpVal = UnitManager.ParseDoubleWithUnit(obj, "gwp", out string gwpUnit);
             if (gwpUnit == null) { this.valid = false; }
             // GWP always assumed to be defined in kgCO2e (MAYBE UPGRADE TO OTHER MASS UNITS)
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwpVal, "kg");
 
             // get declared unit of the gwp
-            unitMaterial = EC3MaterialParser.ParseQuantity(obj, "declared_unit", out this.valid);
+            unitMaterial = UnitManager.ParseQuantity(obj, "declared_unit", out this.valid);
 
             // parse density
-            IQuantity d = EC3MaterialParser.ParseQuantity(obj, "density", out bool validDensity);
+            IQuantity d = UnitManager.ParseQuantity(obj, "density", out bool validDensity);
             if (validDensity) { this.density = (Density)d; }
             if (unitMaterial == null) { this.valid = false; }
             if (!validDensity && unitMaterial != null)
@@ -97,6 +97,7 @@ namespace EC3CarbonCalculator
             this.category = category;
             this.mf = searchPar;
             this.manufacturer = manufacturer;
+            this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
 
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg"); 
 
@@ -106,7 +107,7 @@ namespace EC3CarbonCalculator
             if (density != 0 &&  densityUnit != null) 
             {
                 densityUnit = density.ToString() + " " + densityUnit;
-                densityUnit = EC3MaterialParser.ParseDensityUnit(densityUnit);
+                densityUnit = UnitManager.ParseDensityUnit(densityUnit);
                 this.density = (Density)Quantity.Parse(typeof(Density), densityUnit);
             } 
             else if (densityUnit == null && unitMaterial.GetType() == typeof(Mass))
@@ -127,6 +128,7 @@ namespace EC3CarbonCalculator
             this.category = category;
             this.mf = searchPar;
             this.manufacturer = manufacturer;
+            this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
 
             this.gwp = gwp;
             this.unitMaterial = unitMat;

@@ -1,4 +1,4 @@
-﻿using Rhino.Input.Custom;
+using Rhino.Input.Custom;
 using Rhino.DocObjects;
 using System;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace EC3CarbonCalculator
             RhinoApp.WriteLine(prompt);
 
             getObject.SubObjectSelect = true;
-            getObject.SetCommandPrompt("Select geometry to calculate carbon for");
+            getObject.SetCommandPrompt("Select geometry to assign EPD to");
             getObject.GroupSelect = true;
             getObject.EnableClearObjectsOnEntry(false);
             getObject.EnableUnselectObjectsOnExit(false);

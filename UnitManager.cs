@@ -1,27 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Rhino;
+using Rhino.Geometry;
 using UnitsNet;
 
 namespace EC3CarbonCalculator
 {
-    internal class EC3MaterialParser
+    internal class UnitManager
     {
-        public static List<EPD> ParseEPDs(JArray jsonArray, EC3MaterialFilter mf = null)
-        {
-            List<EPD> epds = new List<EPD>();
-            foreach(JObject jobj in jsonArray)
-            {
-                EPD epd = new EPD(jobj, mf);
-                epds.Add(epd);
-            }
-            return epds;
-        }
-
         public static double ParseDoubleWithUnit(string attrStr, out string unit)
         {
             double flt;
@@ -149,6 +140,49 @@ namespace EC3CarbonCalculator
             catch (Exception) { }
             
             return ParseQuantity(attrStr, out valid);
+        }
+
+        public static IQuantity GetSystemUnit(RhinoDoc doc, int dimension)
+        {
+            IQuantity unit = null;
+            
+            string unitSystem = doc.GetUnitSystemName(true, false, true, true);
+
+            Length lengthUnit = (Length)Quantity.Parse(typeof(Length), "1 " + unitSystem);
+            Area areaUnit = lengthUnit * lengthUnit;
+            Volume volumeUnit = lengthUnit * lengthUnit * lengthUnit;
+
+            switch (dimension)
+            {
+                case 3:
+                    unit = volumeUnit;
+                    break;
+                case 2:
+                    unit = areaUnit;
+                    break;
+                default:
+                    unit = lengthUnit;
+                    break;
+            }
+
+            return unit;
+        }
+
+        public static string GetSystemUnitStr(RhinoDoc doc, int dimension) 
+        {
+            string unit = doc.GetUnitSystemName(true, false, true, true);
+
+            switch (dimension)
+            {
+                case 2:
+                    unit += "\u00B2";
+                    break;
+                case 3:
+                    unit += "\u00B3";
+                    break;
+            }
+
+            return unit;
         }
     }
 }

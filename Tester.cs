@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -195,7 +195,7 @@ namespace EC3CarbonCalculator
             if (materialData == null) { return; }
 
             JArray matArray = JArray.Parse(materialData);
-            List<EPD> epds = EC3MaterialParser.ParseEPDs(matArray);
+            List<EPD> epds = UnitManager.ParseEPDs(matArray);
 
             Mass averageGwp = EPD.AverageGwp(epds, Volume.FromCubicMeters(2));
 

@@ -117,7 +117,7 @@ namespace EC3CarbonCalculator
             { this.dimensions.Add(0); }
             else
             {
-                IQuantity unitMaterial = EC3MaterialParser.ParseQuantity(declaredUnit, out bool valid);
+                IQuantity unitMaterial = UnitManager.ParseQuantity(declaredUnit, out bool valid);
 
                 if (unitMaterial.GetType() == typeof(Length))
                 {

@@ -1,4 +1,4 @@
-﻿using Eto.Forms;
+using Eto.Forms;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EC3CarbonCalculator
 {
-    internal class EC3MaterialFilter
+    public class EC3MaterialFilter
     {
         EC3CategoryTree categoryTree = EC3CategoryTree.Instance;
         GeographyCodes geoCodes = GeographyCodes.Instance;

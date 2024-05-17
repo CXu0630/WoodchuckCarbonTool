@@ -59,7 +59,7 @@ namespace EC3CarbonCalculator
                 if (epds.Count == 0)
                 {
                     Application.Instance.Invoke(() =>
-                    form.RepopulateResultMessage("No results were found for your " +
+                    form.RepopulateResultMessage("No valid results were found for your " +
                         "input parameters.\nTry broadening your search."));
                     return;
                 }
@@ -88,27 +88,7 @@ namespace EC3CarbonCalculator
             // epds...
 
             int dimension = EC3CategoryTree.Instance.GetCategoryDimension(mf.categoryName);
-            IQuantity unit;
-
-            // get document units
-            string unitSystem = doc.GetUnitSystemName(true, false, true, true);
-
-            Length lengthUnit = (Length)Quantity.Parse(typeof(Length), "1 " + unitSystem);
-            Area areaUnit = lengthUnit * lengthUnit;
-            Volume volumeUnit = lengthUnit * lengthUnit * lengthUnit;
-
-            switch (dimension)
-            {
-                case 3:
-                    unit = volumeUnit;
-                    break;
-                case 2:
-                    unit = areaUnit;
-                    break;
-                default:
-                    unit = lengthUnit;
-                    break;
-            }
+            IQuantity unit = UnitManager.GetSystemUnit(doc, dimension);
 
             string[] mfPrintable = mf.GetPrintableData();
             RhinoApp.WriteLine("Searching for materials that meet requirements:");
@@ -126,7 +106,7 @@ namespace EC3CarbonCalculator
                 return null;
             }
             JArray matArray = JArray.Parse(matData);
-            List<EPD> epds = EC3MaterialParser.ParseEPDs(matArray, mf);
+            List<EPD> epds = ParseEPDs(matArray, true, mf);
 
             RhinoApp.WriteLine("Total EPDs fount: " + epds.Count.ToString());
 
@@ -137,8 +117,19 @@ namespace EC3CarbonCalculator
             if (mf.stateCode != null) { jurisdiction += ("-" + mf.stateCode); }
             avgEPD = new EPD(
                 $"Average of Search Result",
-                avgGwp, unit, avgDensity, mf.categoryName, mf);
+                avgGwp, unit, avgDensity, mf.categoryName, mf, "None");
 
+            return epds;
+        }
+
+        public static List<EPD> ParseEPDs(JArray jsonArray, bool discardInvalid, EC3MaterialFilter mf = null)
+        {
+            List<EPD> epds = new List<EPD>();
+            foreach (JObject jobj in jsonArray)
+            {
+                EPD epd = new EPD(jobj, mf);
+                if (epd.valid) {  epds.Add(epd); }
+            }
             return epds;
         }
     }

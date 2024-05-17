@@ -14,11 +14,13 @@
 
   <ItemGroup>
     <Compile Remove="Archive\AssignEPD.cs" />
+    <Compile Remove="Tester.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Archive\AssignEPD.cs" />
     <None Include="C:\Users\chloe.xu\source\repos\EC3CarbonCalculator\.editorconfig" />
+    <None Include="Tester.cs" />
   </ItemGroup>
   
   <ItemGroup>

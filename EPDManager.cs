@@ -20,7 +20,9 @@ namespace EC3CarbonCalculator
                 if(objRef == null) continue;
 
                 RhinoObject obj = objRef.Object();
-                obj.UserData.Add(new EPDData(epd));
+                EPDData epdData = new EPDData();
+                epdData.epd = epd;
+                obj.UserData.Add(epdData);
             }
 
             return Result.Success;
@@ -34,13 +36,16 @@ namespace EC3CarbonCalculator
             return Assign(objRefs, epd);
         }
 
-        internal class EPDData: UserData
+        public static EPD Get(ObjRef objRef)
         {
-            public EPD epd;
-            public EPDData(EPD epd) 
-            {
-                this.epd = epd;
-            }
+            if (objRef == null) return null;
+
+            RhinoObject obj = objRef.Object();
+            EPDData data = obj.UserData.Find(typeof(EPDData)) as EPDData;
+
+            if (data != null) { return data.epd; }
+
+            return null;
         }
     }
 }

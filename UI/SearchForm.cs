@@ -28,7 +28,6 @@ namespace EC3CarbonCalculator.UI
         Scrollable resPanel;
         IQuantity displayUnit;
         string displayUnitStr;
-        string displayUnitDimStr;
 
         // This event is used to signal when the search button has been pressed:
         // search parameters are locked in and an EPD search is performed.
@@ -49,8 +48,6 @@ namespace EC3CarbonCalculator.UI
             ShowInTaskbar = true;
             Title = "EC3 Material GWP Search";
             MinimumSize = new Size(900, 500);
-
-            this.displayUnitStr = RhinoDoc.ActiveDoc.GetUnitSystemName(true, false, true, true);
 
             // Twwo basic layouts: one for search parameters, one for search results
             DynamicLayout mfLayout = this.MaterialFilterLayout();
@@ -286,16 +283,8 @@ namespace EC3CarbonCalculator.UI
                 Padding = new Padding(10)
             };
 
-            this.displayUnit = avgEPD.unitMaterial;
-            switch (avgEPD.unitMaterial.Dimensions.Length)
-            {
-                case 2:
-                    displayUnitDimStr = "\u00B2";
-                    break;
-                case 3:
-                    displayUnitDimStr = "\u00B3";
-                    break;
-            }
+            this.displayUnit = UnitManager.GetSystemUnit(RhinoDoc.ActiveDoc, avgEPD.dimension);
+            this.displayUnitStr = UnitManager.GetSystemUnitStr(RhinoDoc.ActiveDoc, avgEPD.dimension);
             epdLayout.Add(EPDPanel(avgEPD));
             epdLayout.Add(Spacer(Colors.WhiteSmoke));
 
@@ -343,13 +332,19 @@ namespace EC3CarbonCalculator.UI
             Label gwp = new Label
             {
                 Text = epd.GetGwpConverted(this.displayUnit).ToString()
-                + "/" + this.displayUnitStr + this.displayUnitDimStr,
+                + "/" + this.displayUnitStr,
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
             Label epdName = new Label 
             { 
                 Text = epd.name, 
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
+            };
+            Label manufacturer = new Label
+            {
+                Text = "Manufacturer: " + epd.manufacturer,
+                Font = new Font(SystemFonts.Default().FamilyName, 10),
+                TextColor = Colors.DarkSlateGray
             };
 
             Label manName = new Label { Text = epd.manufacturer };
@@ -379,6 +374,8 @@ namespace EC3CarbonCalculator.UI
             infoLayout.BeginHorizontal();
             infoLayout.Add(epdName);
             infoLayout.Add(gwp);
+            infoLayout.EndBeginHorizontal();
+            infoLayout.Add(manufacturer);
             infoLayout.EndBeginHorizontal();
             infoLayout.Add(null);
             infoLayout.Add(new Panel());
