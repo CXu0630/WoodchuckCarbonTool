@@ -10,6 +10,7 @@ using Rhino.Input;
 
 namespace EC3CarbonCalculator
 {
+    // WARNING: something will likely go wrong with this code when used on blocks
     internal class EC3Selector : SimpleSelector
     {
         int dimension = 3;

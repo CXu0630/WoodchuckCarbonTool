@@ -18,6 +18,12 @@ using UnitsNet;
 
 namespace EC3CarbonCalculator.UI
 {
+    /// <summary>
+    /// This class defines an ETO form used to search the EC3 database for EPDs and
+    /// and provides an interface for assigning EPDs to Rhino geometry. This class only
+    /// defines the UI aspect of the search. Calculations and assignment are handled by
+    /// SearchEPD.
+    /// </summary>
      internal class SearchForm : Form
     {
         // All search prameters are stored in the mf instead of individually
@@ -34,9 +40,16 @@ namespace EC3CarbonCalculator.UI
         public delegate void SearchEventHandler(object sender, EventArgs e);
         public event SearchEventHandler SearchEvent;
 
+        // This event is used to signal when the assign button has been pressed, actions
+        // relating to this event are delt with by the SearchEPD class
         public delegate void AssignEventHandler(object sender, AssignEventArgs e);
         public event AssignEventHandler AssignEvent;
 
+        /// <summary>
+        /// Constructs an instance of SearchForm. 
+        /// </summary>
+        /// <param name="mf"> Material Filter object in which search criteria for EPDs 
+        /// will be stored. </param>
         public SearchForm(EC3MaterialFilter mf)
         {
             this.mf = mf;
@@ -73,6 +86,8 @@ namespace EC3CarbonCalculator.UI
                 Padding = new Padding(10)
             };
 
+            // The contents of the panel is divided in two, with search parameters and 
+            // criteria on the left, and search results on the right.
             layout.BeginHorizontal();
             layout.Add(mfLayout); 
             layout.Add(resPanel);
@@ -81,9 +96,12 @@ namespace EC3CarbonCalculator.UI
             Content = layout;
         }
 
+        /// <summary>
+        /// This method creates a dynamic layout for selecting a category, inputting 
+        /// material search parameters and a search confirm button.
+        /// </summary>
         private DynamicLayout MaterialFilterLayout()
         {
-            // add options to layout
             DynamicLayout mfLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
@@ -101,14 +119,20 @@ namespace EC3CarbonCalculator.UI
             return mfLayout;
         }
 
+        /// <summary>
+        /// This method creates a dynamic layout for material search parameters.
+        /// </summary>
         private DynamicLayout CategoryLayout()
         {
+            // Use category names retreived from EC3 by the Category Tree as dropdown
+            // option names.
             EC3CategoryTree ct = EC3CategoryTree.Instance;
 
             List<ListItem> catOptions = new List<ListItem>();
             for (int i = 0; i < ct.names.Count; i++)
             {
-                // TODO: implement a display names field for the csv?
+                // TODO: Add Masterformat code to the display names and sort in order of
+                // masterformat?
                 string strdName;
                 if (string.IsNullOrWhiteSpace(ct.names[i])) strdName = "";
                 string newText = Regex.Replace(ct.names[i], "([a-z])([A-Z])", "$1 $2");
@@ -268,10 +292,9 @@ namespace EC3CarbonCalculator.UI
         }
 
         /// <summary>
-        /// Repopulates the search result panel with EPD search results from
-        /// the EC3 API. This method should never be called from inside the
-        /// SearchForm class but instead in whichever class is performing the
-        /// searching...
+        /// Repopulates the search result panel with EPD search results from the EC3 API. 
+        /// This method should never be called from inside the SearchForm class but 
+        /// instead in whichever class is performing the searching...
         /// </summary>
         /// <param name="epds"></param>
         /// <param name="avgEPD"></param>
@@ -289,6 +312,7 @@ namespace EC3CarbonCalculator.UI
             epdLayout.Add(Spacer(Colors.WhiteSmoke));
 
             // NOTE: right now only 20 EPDs are displayed per search
+            // Consider implementing with more EPDs displayed...
             foreach(EPD epd in epds.Take(20))
             {
                 epdLayout.Add(EPDPanel(epd));
@@ -300,10 +324,9 @@ namespace EC3CarbonCalculator.UI
         }
 
         /// <summary>
-        /// Used to display an error message to the user in the search result
-        /// panel
+        /// Used to display a text message to the user in the search result panel
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="msg"> Text message to display on the search result panel. </param>
         public void RepopulateResultMessage(string msg)
         {
             DynamicLayout msgLayout = new DynamicLayout
@@ -321,9 +344,15 @@ namespace EC3CarbonCalculator.UI
             msgLayout.Add(msgLabel);
             msgLayout.Add(null);
 
+            // Reassigning panel content updates the current content, but simply changing
+            // the dynamic layout does not.
             this.resPanel.Content = msgLayout;
         }
 
+        /// <summary>
+        /// Creates a panel to display EPD information.
+        /// </summary>
+        /// <param name="epd"> EPD to display </param>
         private Panel EPDPanel(EPD epd)
         {
             Panel bkg = new Panel { Width = resPanel.Width - 40};
@@ -347,15 +376,18 @@ namespace EC3CarbonCalculator.UI
                 TextColor = Colors.DarkSlateGray
             };
 
-            Label manName = new Label { Text = epd.manufacturer };
             Button browserView = new Button { Text = "View in Browser" };
             Button assignButton = new Button { Text = "Assign to Object" };
 
+            // Makes a system call to open the EPD's page on EC3 in the default browser
+            // window. This is nice because it does not interfere with Rhino and also
+            // opens a tab on an existing window if there is one already.
             browserView.Click += (s, e) =>
             {
                 System.Diagnostics.Process.Start("https://buildingtransparency.org/ec3/epds/" + epd.id);
             };
 
+            // The assign button is pressed. Non-UI events are not delt with in this class.
             assignButton.Click += (s, e) =>
             {
                 AssignEvent?.Invoke(this, new AssignEventArgs(epd));
@@ -377,9 +409,12 @@ namespace EC3CarbonCalculator.UI
             infoLayout.EndBeginHorizontal();
             infoLayout.Add(manufacturer);
             infoLayout.EndBeginHorizontal();
+            // These spacer lines are to make sure that the EPD name does not extend off
+            // the screen... These are the times when I hate frontend.
             infoLayout.Add(null);
             infoLayout.Add(new Panel());
 
+            // Maybe this layout should be put in a separate method to encapsulate it?
             DynamicLayout buttonLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
@@ -402,6 +437,11 @@ namespace EC3CarbonCalculator.UI
             return bkg;
         }
 
+        /// <summary>
+        /// A spacer with a line in the middle
+        /// </summary>
+        /// <param name="bkgColor"> Color of the line </param>
+        /// <returns>A spacer</returns>
         private DynamicLayout Spacer(Color bkgColor)
         {
             DynamicLayout spacer = new DynamicLayout();
@@ -464,6 +504,11 @@ namespace EC3CarbonCalculator.UI
             return layout;
         }
 
+        /// <summary>
+        /// Custom EventArgs class to pass the EPD for which "Assign to Object" was
+        /// pressed to the class that's actually implementing the assigning (which would
+        /// be SearchEPD)
+        /// </summary>
         internal class AssignEventArgs: EventArgs
         {
             public EPD Epd { get; set; }
