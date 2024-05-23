@@ -11,6 +11,13 @@ using Rhino.Input;
 namespace EC3CarbonCalculator
 {
     // WARNING: something will likely go wrong with this code when used on blocks
+    /// <summary>
+    /// A child of the SimpleSelector class, customized for selecting geometry for
+    /// assigning EPD information to from the EC3 database. The customization is mostly
+    /// just telling the user about dimensions and how that will affect calculation
+    /// method... These specific customizations might become unnecessary once we use a
+    /// more robust system for getting material quantity.
+    /// </summary>
     internal class EC3Selector : SimpleSelector
     {
         int dimension = 3;

@@ -15,8 +15,14 @@ using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
+    /// <summary>
+    /// This is the core Rhino command used to search EPDs and assign them to Rhino
+    /// objects. It creates a search window and listens to events from the search window
+    /// to perform requests through the EC3 API and to assign EPDs to objects.
+    /// </summary>
     public class SearchEPD : Rhino.Commands.Command
     {
+        // ETO form that hosts the search window
         private SearchForm form { get; set; }
 
         public SearchEPD()
@@ -24,7 +30,6 @@ namespace EC3CarbonCalculator
             Instance = this;
         }
 
-        ///<summary>The only instance of the MyCommand command.</summary>
         public static SearchEPD Instance { get; private set; }
         public override string EnglishName => "SearchEPD";
 
@@ -32,7 +37,6 @@ namespace EC3CarbonCalculator
         {
             EC3MaterialFilter mf = new EC3MaterialFilter();
             
-
             if (form == null)
             {
                 form = new SearchForm(mf) { Owner = RhinoEtoApp.MainWindow };
@@ -42,6 +46,7 @@ namespace EC3CarbonCalculator
 
             List<EPD> epds = new List<EPD>();
             EPD avgEPD;
+            // Event listener: a search event is called
             form.SearchEvent += (s, e) =>
             {
                 mf = form.GetMaterialFilter();
@@ -66,6 +71,7 @@ namespace EC3CarbonCalculator
                 Application.Instance.Invoke(() => form.RepopulateSearchResult(epds, avgEPD));
             };
 
+            // Event listener: an assign event is called
             form.AssignEvent += (s, e) =>
             {
                 form.WindowState = WindowState.Minimized;
@@ -82,6 +88,13 @@ namespace EC3CarbonCalculator
             form = null;
         }
 
+        /// <summary>
+        /// Sends API request to EC3 and retreives the resultant EPDs and the average EPD.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="mf"></param>
+        /// <param name="avgEPD"></param>
+        /// <returns></returns>
         private List<EPD> RequestEC3 (RhinoDoc doc, EC3MaterialFilter mf, out EPD avgEPD)
         {
             // this portion that calculates the unit system should be migrated to assigning
@@ -122,13 +135,17 @@ namespace EC3CarbonCalculator
             return epds;
         }
 
+        /// <summary>
+        /// Parses the Newtonsoft JArray returned from the EC3 API call and parses a list
+        /// of EPDs based on that JArray.
+        /// </summary>
         public static List<EPD> ParseEPDs(JArray jsonArray, bool discardInvalid, EC3MaterialFilter mf = null)
         {
             List<EPD> epds = new List<EPD>();
             foreach (JObject jobj in jsonArray)
             {
                 EPD epd = new EPD(jobj, mf);
-                if (epd.valid) {  epds.Add(epd); }
+                if (discardInvalid) { if (epd.valid) { epds.Add(epd); } }
             }
             return epds;
         }

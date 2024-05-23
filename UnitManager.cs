@@ -11,8 +11,22 @@ using UnitsNet;
 
 namespace EC3CarbonCalculator
 {
+    /// <summary>
+    /// Helper class containing static methods used to parse and retreive units. Depends
+    /// on the UnitsNet library to operate.
+    /// </summary>
     internal class UnitManager
     {
+        /// <summary>
+        /// Parses a string representing a value and a unit separated by a space into
+        /// a double representing the value and a string representing the unit. This 
+        /// method is to be used specifically to format units that will be readable by
+        /// UnitsNet, so do not hisitate to add any weird formatting requirements that
+        /// are needed by UnitsNet.
+        /// </summary>
+        /// <param name="attrStr"> String containing value and unit to parse </param>
+        /// <param name="unit"> Output parsed unit string formatted for UnitsNet </param>
+        /// <returns> Double representing the value from the input attrStr </returns>
         public static double ParseDoubleWithUnit(string attrStr, out string unit)
         {
             double flt;
@@ -30,6 +44,7 @@ namespace EC3CarbonCalculator
             }
             catch (FormatException)
             {
+                // Fail: the first value after splitting is not a number
                 unit = null;
                 return 0;
             }
@@ -46,18 +61,30 @@ namespace EC3CarbonCalculator
             return flt;
         }
 
+        /// <summary>
+        /// Override for the previous method, input is an attribute of a JsonObeject
+        /// </summary>
         public static double ParseDoubleWithUnit (JObject mat, string attribute, out string unit)
         {
             string attrStr = mat[attribute]?.ToString();
             return ParseDoubleWithUnit(attrStr, out unit);
         }
 
+        /// <summary>
+        /// Override of the ParseDoubleWithUnit method, when the output unit string does
+        /// not matter.
+        /// </summary>
         public static double ParseDoubleWithUnit(JObject mat, string attribute)
         {
             string unit;
             return ParseDoubleWithUnit(mat, attribute, out unit);
         }
 
+        /// <summary>
+        /// Method used to parse density units. This is very specific to buggs 
+        /// </summary>
+        /// <param name="densityUnit"></param>
+        /// <returns></returns>
         public static string ParseDensityUnit(string densityUnit)
         {
             string newDensityUnit = densityUnit;
@@ -69,6 +96,14 @@ namespace EC3CarbonCalculator
             return newDensityUnit;
         }
 
+        /// <summary>
+        /// Method that parses a UnitsNet IQuantity from a string. This method also
+        /// includes formatting that is specific to UnitsNet.
+        /// </summary>
+        /// <param name="attrstr"> Input string to parse. </param>
+        /// <param name="valid"> Whether the quantity was successfully parsed (is this 
+        /// necessary if we're already returning null on unsuccessful parsing?)</param>
+        /// <returns> Parsed IQuantity </returns>
         public static IQuantity ParseQuantity (string attrstr, out bool valid)
         {
             double unitMultiplier = ParseDoubleWithUnit(attrstr, out string unit);
@@ -86,6 +121,8 @@ namespace EC3CarbonCalculator
                 return unitMaterial;
             }
 
+            // weird formatting requirements and conditions to make parsing more likely to
+            // be successful.
             if (unit == "t" || unit == "ton")
             {
                 unit = "t";
@@ -120,14 +157,18 @@ namespace EC3CarbonCalculator
                     unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
                 } catch (Exception)
                 {
+                    // Could not be parsed, return null
                     valid = false;
                     return null;
-                }
-                
+                }  
             }
             return unitMaterial;
         }
 
+        /// <summary>
+        /// Method to parse an attribute of a JObject. Overrides ParseQuantity (also uses
+        /// the original ParseQuantity)
+        /// </summary>
         public static IQuantity ParseQuantity(JObject mat, string attribute, out bool valid)
         {
             string attrStr = mat[attribute]?.ToString();
@@ -142,9 +183,18 @@ namespace EC3CarbonCalculator
             return ParseQuantity(attrStr, out valid);
         }
 
+        /// <summary>
+        /// Retreive an IQuantity equal to 1 unit of the document unit for the input
+        /// RhinoDoc of the input dimension.
+        /// </summary>
+        /// <param name="doc"> RhinoDoc from which to get the unit needed </param>
+        /// <param name="dimension"> An integer from 1 to 3 indicating the dimension of
+        /// the unit to retreive </param>
+        /// <returns> IQuantity equal to 1 unit of the document unit for the input
+        /// RhinoDoc of the input dimension </returns>
         public static IQuantity GetSystemUnit(RhinoDoc doc, int dimension)
         {
-            IQuantity unit = null;
+            IQuantity unit;
             
             string unitSystem = doc.GetUnitSystemName(true, false, true, true);
 
@@ -168,10 +218,15 @@ namespace EC3CarbonCalculator
             return unit;
         }
 
+        /// <summary>
+        /// Returns a string with the unit of that the RhinoDoc is in along with dimensions
+        /// formatted in superscript. For printing or UI use.
+        /// </summary>
         public static string GetSystemUnitStr(RhinoDoc doc, int dimension) 
         {
             string unit = doc.GetUnitSystemName(true, false, true, true);
 
+            // Gets unigode for superscripted 2 and 3
             switch (dimension)
             {
                 case 2:

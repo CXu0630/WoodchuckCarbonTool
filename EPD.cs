@@ -10,6 +10,11 @@ using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
+    /// <summary>
+    /// Container for GWP data and corresponding metadata. This class is currently built
+    /// to accomodate EPDs from EC3, but should be expanded to be usable for different
+    /// databases.
+    /// </summary>
     public class EPD
     {
         JObject JObj;

@@ -44,6 +44,7 @@ namespace EC3CarbonCalculator
             double totalGWP = 0;
             int dimension = -1;
 
+            // Access the epd stored in the UserData of each selected object
             foreach (Rhino.DocObjects.ObjRef objRef in objRefs)
             {
                 EPD epd = null;

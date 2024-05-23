@@ -10,6 +10,10 @@ using Rhino.UI;
 
 namespace EC3CarbonCalculator.UI
 {
+    /// <summary>
+    /// ETO form to display EPD calculation results in. For now, it's just a very simple
+    /// window to display one line of text.
+    /// </summary>
     internal class ResultForm : Form
     {
         public ResultForm(string rsltStr)

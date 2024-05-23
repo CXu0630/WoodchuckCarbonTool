@@ -14,6 +14,10 @@ using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
+    /// <summary>
+    /// Rhino command used for testing. Change the build action to C# if using, and 
+    /// remember to change if back before building a release.
+    /// </summary>
     public class Tester : Command
     {
         private SearchForm form {  get; set; }

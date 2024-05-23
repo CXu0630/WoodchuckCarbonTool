@@ -361,7 +361,7 @@ namespace EC3CarbonCalculator.UI
             Label gwp = new Label
             {
                 Text = epd.GetGwpConverted(this.displayUnit).ToString()
-                + "/" + this.displayUnitStr,
+                + "CO2e/" + this.displayUnitStr,
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
             Label epdName = new Label 

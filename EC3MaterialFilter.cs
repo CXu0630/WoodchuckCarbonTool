@@ -10,10 +10,21 @@ using System.Threading.Tasks;
 
 namespace EC3CarbonCalculator
 {
+    /// <summary>
+    /// This class is used to store search criterea for materials in EC3. EC3 uses a 
+    /// custom format for search criterea called MaterialFilter. This class also formats
+    /// input criterea into MaterialFilter format which can be understood by EC3. 
+    /// 
+    /// The hope is that in future, this can be further expanded to include properties
+    /// specific to different categories.
+    /// </summary>
     public class EC3MaterialFilter
     {
+        // CategoryTree and GeographyCodes classes used to ensure validity of input params
         EC3CategoryTree categoryTree = EC3CategoryTree.Instance;
         GeographyCodes geoCodes = GeographyCodes.Instance;
+
+        // Stored search criterea
         public string categoryName { get; private set; }
         public string countryCode { get; private set; }
         public string stateCode { get; private set; }
@@ -70,6 +81,12 @@ namespace EC3CarbonCalculator
                 date.Day.ToString();
         }
 
+        /// <summary>
+        /// Formats information in this class into MaterialFilter fomat readable by EC3's
+        /// servers.
+        /// </summary>
+        /// <returns> A string containing the search criterea information stored in this
+        /// object in MaterialFilter format </returns>
         public string GetMaterialFilter()
         {
             string pragma = "!pragma eMF(\"2.0/1\"), lcia(\"TRACI 2.1\")";
@@ -94,6 +111,12 @@ namespace EC3CarbonCalculator
             return mf;
         }
 
+        /// <summary>
+        /// Primarily used for debugging. Retreives the infromation stored in this class
+        /// as strings to be printed or otherwise displayed.
+        /// </summary>
+        /// <returns> An array of strings containing search parameters stored in this 
+        /// object. </returns>
         public string[] GetPrintableData()
         {
             string category = $"category: {this.categoryName}";

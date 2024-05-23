@@ -11,8 +11,15 @@ using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
+    /// <summary>
+    /// This class is used to assign EPDs to Rhino objects and retreive those EPDs for
+    /// calculations
+    /// </summary>
     internal class EPDManager
     {
+        /// <summary>
+        /// Assigns an EPD to an array of Object References
+        /// </summary>
         public static Result Assign(ObjRef[] objRefs, EPD epd)
         {
             foreach (ObjRef objRef in objRefs)
@@ -28,6 +35,10 @@ namespace EC3CarbonCalculator
             return Result.Success;
         }
         
+        /// <summary>
+        /// Requests the user select Rhino geometry and assigns an EPD to each of these 
+        /// objects.
+        /// </summary>
         public static Result SelectAssign(EPD epd)
         {
             EC3Selector geoSelector = new EC3Selector(epd.dimension);
@@ -36,6 +47,9 @@ namespace EC3CarbonCalculator
             return Assign(objRefs, epd);
         }
 
+        /// <summary>
+        /// Retreives the EPD assigned to a Rhino object.
+        /// </summary>
         public static EPD Get(ObjRef objRef)
         {
             if (objRef == null) return null;
