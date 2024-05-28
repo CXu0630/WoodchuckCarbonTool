@@ -29,11 +29,10 @@ namespace EC3CarbonCalculator.UI
         // All search prameters are stored in the mf instead of individually
         EC3MaterialFilter mf;
         Button search = new Button { Text = "Search" };
+        RhinoDoc doc;
 
         // This is public as it needs to be edditable by multiple methods.
         Scrollable resPanel;
-        IQuantity displayUnit;
-        string displayUnitStr;
 
         // This event is used to signal when the search button has been pressed:
         // search parameters are locked in and an EPD search is performed.
@@ -64,6 +63,8 @@ namespace EC3CarbonCalculator.UI
 
             // Twwo basic layouts: one for search parameters, one for search results
             DynamicLayout mfLayout = this.MaterialFilterLayout();
+
+            this.doc = RhinoDoc.ActiveDoc;
 
             // Results exist in a panel to be updated with new content each search
             resPanel = new Scrollable
@@ -306,8 +307,6 @@ namespace EC3CarbonCalculator.UI
                 Padding = new Padding(10)
             };
 
-            this.displayUnit = UnitManager.GetSystemUnit(RhinoDoc.ActiveDoc, avgEPD.dimension);
-            this.displayUnitStr = UnitManager.GetSystemUnitStr(RhinoDoc.ActiveDoc, avgEPD.dimension);
             epdLayout.Add(EPDPanel(avgEPD));
             epdLayout.Add(Spacer(Colors.WhiteSmoke));
 
@@ -360,8 +359,8 @@ namespace EC3CarbonCalculator.UI
 
             Label gwp = new Label
             {
-                Text = epd.GetGwpConverted(this.displayUnit).ToString()
-                + "CO2e/" + this.displayUnitStr,
+                Text = epd.GetGwpConverted(UnitManager.GetSystemUnit(doc, epd.dimension))
+                + "CO2e/" + UnitManager.GetSystemUnitStr(doc, epd.dimension),
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
             Label epdName = new Label 

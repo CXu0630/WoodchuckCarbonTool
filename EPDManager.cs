@@ -17,34 +17,41 @@ namespace EC3CarbonCalculator
     /// </summary>
     internal class EPDManager
     {
+        public static Result Assign(ObjRef objRef, EPD epd)
+        {
+            if (objRef == null) { return Result.Failure; }
+            RhinoObject obj = objRef.Object();
+            if (epd == null) { return Result.Failure; }
+
+            bool reassign = false;
+            EPDData epdData = obj.Geometry.UserData.Find(typeof(EPDData)) as EPDData;
+            if (epdData == null){ epdData = new EPDData(epd); reassign = true; }
+            else { epdData.epd = epd; }
+
+            if (reassign) obj.Geometry.UserData.Add(epdData);
+
+            obj.CommitChanges();
+
+            return Result.Success;
+        }
+
         /// <summary>
         /// Assigns an EPD to an array of Object References
         /// </summary>
         public static Result Assign(ObjRef[] objRefs, EPD epd)
         {
+            Result finalRslt = Result.Success;
+
+
             foreach (ObjRef objRef in objRefs)
             {
                 if(objRef == null) continue;
 
-                RhinoObject obj = objRef.Object();
-                EPDData epdData = new EPDData();
-                epdData.epd = epd;
-                obj.UserData.Add(epdData);
+                Result rslt = Assign(objRef, epd);
+                if (rslt != Result.Success) finalRslt = rslt;
             }
 
-            return Result.Success;
-        }
-        
-        /// <summary>
-        /// Requests the user select Rhino geometry and assigns an EPD to each of these 
-        /// objects.
-        /// </summary>
-        public static Result SelectAssign(EPD epd)
-        {
-            EC3Selector geoSelector = new EC3Selector(epd.dimension);
-            ObjRef[] objRefs = geoSelector.GetSelection();
-
-            return Assign(objRefs, epd);
+            return finalRslt;
         }
 
         /// <summary>
@@ -55,11 +62,13 @@ namespace EC3CarbonCalculator
             if (objRef == null) return null;
 
             RhinoObject obj = objRef.Object();
-            EPDData data = obj.UserData.Find(typeof(EPDData)) as EPDData;
 
-            if (data != null) { return data.epd; }
+            EPDData epdData = obj.Geometry.UserData.Find(typeof(EPDData)) as EPDData;
+            if (epdData == null) return null;
 
-            return null;
+            EPD epd = epdData.epd;
+            
+            return epd;
         }
     }
 }

@@ -75,6 +75,16 @@ namespace EC3CarbonCalculator
             return true;
         }
 
+        /// <summary>
+        /// Method used only to recreate Material Filters. Do not use other than for
+        /// serialization.
+        /// </summary>
+        public bool SetFormattedExporationDate(string date)
+        {
+            this.expirationDate = date;
+            return true;
+        }
+
         private static string CompileDate(DateTime date)
         {
             return date.Year.ToString() + "-" + date.Month.ToString() + "-" + 

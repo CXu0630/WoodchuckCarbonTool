@@ -25,7 +25,6 @@ namespace EC3CarbonCalculator
         public Density density;
 
         public string id { get; }
-        public string uuid { get; }
         public string category { get; }
         public string manufacturer { get; }
         public int dimension {  get; }
@@ -53,10 +52,8 @@ namespace EC3CarbonCalculator
             // basic stuff
             this.name = obj["name"]?.ToString();
             this.id = obj["id"]?.ToString();
-            this.uuid = obj["open_xpd_uuid"]?.ToString();
             this.category = mf.categoryName?.ToString();
             this.manufacturer = obj["manufacturer"]["name"]?.ToString();
-            this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
 
             // parse GWP
             double gwpVal = UnitManager.ParseDoubleWithUnit(obj, "gwp", out string gwpUnit);
@@ -81,6 +78,8 @@ namespace EC3CarbonCalculator
             {
                 this.MassToVolume();
             }
+
+            if (this.valid) { this.dimension = UnitManager.GetUnitDimension(this.unitMaterial); }
         }
 
         /// <summary>
@@ -96,13 +95,15 @@ namespace EC3CarbonCalculator
         /// <param name="category"></param>
         /// <param name="searchPar"></param>
         public EPD(string name, double gwp, string unit, double density, string densityUnit, 
-            string category, EC3MaterialFilter searchPar = null, string manufacturer = null)
+            string category, int dimension, EC3MaterialFilter searchPar, 
+            string manufacturer, string id = null)
         {
             this.name = name;
             this.category = category;
             this.mf = searchPar;
             this.manufacturer = manufacturer;
-            this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
+            this.dimension = dimension;
+            this.id = id;
 
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg"); 
 
@@ -127,13 +128,12 @@ namespace EC3CarbonCalculator
         }
 
         public EPD(string name, Mass gwp, IQuantity unitMat, Density density, 
-            string category, EC3MaterialFilter searchPar = null, string manufacturer = null)
+            string category, EC3MaterialFilter searchPar, string manufacturer)
         {
             this.name = name;
             this.category = category;
             this.mf = searchPar;
             this.manufacturer = manufacturer;
-            this.dimension = EC3CategoryTree.Instance.GetCategoryDimension(this.category);
 
             this.gwp = gwp;
             this.unitMaterial = unitMat;
@@ -143,6 +143,8 @@ namespace EC3CarbonCalculator
             {
                 this.MassToVolume();
             }
+
+            if (this.valid) { this.dimension = UnitManager.GetUnitDimension(this.unitMaterial); }
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using Rhino;
 using Rhino.Geometry;
 using UnitsNet;
+using UnitsNet.Units;
 
 namespace EC3CarbonCalculator
 {
@@ -50,11 +51,11 @@ namespace EC3CarbonCalculator
             }
 
             unit = string.Join("", splitAttr, 1, splitAttr.Length - 1);
-            if (unit[unit.Length - 1] == '3')
+            if (unit[unit.Length - 1] == '3' && unit[unit.Length - 2] != '^')
             {
                 unit = unit.Remove(unit.Length - 1) + "^3";
             }
-            if (unit[unit.Length - 1] == '2')
+            if (unit[unit.Length - 1] == '2' && unit[unit.Length - 2] != '^')
             {
                 unit = unit.Remove(unit.Length - 1) + "^2";
             }
@@ -239,5 +240,16 @@ namespace EC3CarbonCalculator
 
             return unit;
         }
+
+        public static int GetUnitDimension(IQuantity unit)
+        {
+            int dim = 0;
+            
+            dim = unit.Dimensions.Length;
+            if (dim == 0 && unit.Dimensions.Mass != 0) { dim = 3; }
+
+            return dim;
+        }
+
     }
 }

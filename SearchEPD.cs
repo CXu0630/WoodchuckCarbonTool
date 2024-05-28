@@ -75,7 +75,10 @@ namespace EC3CarbonCalculator
             form.AssignEvent += (s, e) =>
             {
                 form.WindowState = WindowState.Minimized;
-                EPDManager.SelectAssign(e.Epd);
+                EC3Selector geoSelector = new EC3Selector(e.Epd.dimension);
+                ObjRef[] objRefs = geoSelector.GetSelection();
+
+                EPDManager.Assign(objRefs, e.Epd);
                 form.WindowState = WindowState.Normal;
             };
 
@@ -97,9 +100,7 @@ namespace EC3CarbonCalculator
         /// <returns></returns>
         private List<EPD> RequestEC3 (RhinoDoc doc, EC3MaterialFilter mf, out EPD avgEPD)
         {
-            // this portion that calculates the unit system should be migrated to assigning
-            // epds...
-
+            // the dimension used to calculate the average, defaults to category dimension
             int dimension = EC3CategoryTree.Instance.GetCategoryDimension(mf.categoryName);
             IQuantity unit = UnitManager.GetSystemUnit(doc, dimension);
 
