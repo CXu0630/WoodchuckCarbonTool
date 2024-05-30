@@ -18,60 +18,81 @@ namespace EC3CarbonCalculator
     /// The hope is that in future, this can be further expanded to include properties
     /// specific to different categories.
     /// </summary>
-    public class EC3MaterialFilter
+    public class MaterialFilter
     {
         // CategoryTree and GeographyCodes classes used to ensure validity of input params
-        EC3CategoryTree categoryTree = EC3CategoryTree.Instance;
+        EC3CategoryTree ec3CategoryTree = EC3CategoryTree.Instance;
         GeographyCodes geoCodes = GeographyCodes.Instance;
 
         // Stored search criterea
+        public string dataBase { get; set; }
         public string categoryName { get; private set; }
-        public string countryCode { get; private set; }
-        public string stateCode { get; private set; }
+        public string country { get; private set; }
+        public string state { get; private set; }
         public string expirationDate { get; private set; }
 
-        public EC3MaterialFilter() { }
+        public MaterialFilter() { }
 
-        public bool SetCategory(string category)
+        public bool SetCLFCategory(string category)
         {
-            int idx = categoryTree.GetCategoryIdx(category);
+            if (CLFCategoryTree.categoryNames.Contains(category))
+            {
+                this.categoryName = category;
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetCLFRegion(string region)
+        {
+            if (GeographyCodes.Instance.USRegions.Contains(region))
+            {
+                this.state = region;
+                return true;
+            }
+            return false;
+        }
+
+        public bool SetEC3Category(string category)
+        {
+            int idx = ec3CategoryTree.GetCategoryIdx(category);
             if (idx == -1) { return false; }
 
-            this.categoryName = categoryTree.names[idx];
+            this.categoryName = ec3CategoryTree.names[idx];
             return true;
         }
 
-        public bool SetCountry(string countryCode)
+        public bool SetEC3Country(string countryCode)
         {
             if(geoCodes.CountryCodes.Contains(countryCode))
             {
-                this.countryCode = countryCode;
+                this.country = countryCode;
                 return true;
             } 
             else
             {
-                this.countryCode = null;
+                this.country = null;
             }
             return false;
         }
 
-        public bool SetState(string stateCode)
+        public bool SetEC3State(string stateCode)
         {
             if (geoCodes.StateCodes.Contains(stateCode))
             {
-                this.stateCode = stateCode;
+                this.state = stateCode;
                 return true;
             }
             else
             {
-                this.stateCode = null;
+                this.state = null;
             }
             return false;
         }
 
-        public bool SetExpirationDate(DateTime date)
+        public bool SetEC3ExpirationDate(DateTime date)
         {
-            this.expirationDate = CompileDate(date);
+            this.expirationDate = CompileEC3Date(date);
             return true;
         }
 
@@ -79,13 +100,13 @@ namespace EC3CarbonCalculator
         /// Method used only to recreate Material Filters. Do not use other than for
         /// serialization.
         /// </summary>
-        public bool SetFormattedExporationDate(string date)
+        public bool SetEC3FormattedExporationDate(string date)
         {
             this.expirationDate = date;
             return true;
         }
 
-        private static string CompileDate(DateTime date)
+        private static string CompileEC3Date(DateTime date)
         {
             return date.Year.ToString() + "-" + date.Month.ToString() + "-" + 
                 date.Day.ToString();
@@ -97,18 +118,18 @@ namespace EC3CarbonCalculator
         /// </summary>
         /// <returns> A string containing the search criterea information stored in this
         /// object in MaterialFilter format </returns>
-        public string GetMaterialFilter()
+        public string GetEC3MaterialFilter()
         {
             string pragma = "!pragma eMF(\"2.0/1\"), lcia(\"TRACI 2.1\")";
             string category = $"category:\"{this.categoryName}\"";
             string date = $"epd__date_validity_ends:>\"{this.expirationDate}\"";
             string jurisdiction = null;
-            if (this.countryCode != null)
+            if (this.country != null)
             {
-                string jurisdictionCode = this.countryCode;
-                if (this.stateCode != null && this.countryCode == "US")
+                string jurisdictionCode = this.country;
+                if (this.state != null && this.country == "US")
                 {
-                    jurisdictionCode += $"-{this.stateCode}";
+                    jurisdictionCode += $"-{this.state}";
                 }
                 jurisdiction = $"jurisdiction:IN(\"{jurisdictionCode}\")";
             }
@@ -132,12 +153,12 @@ namespace EC3CarbonCalculator
             string category = $"category: {this.categoryName}";
             string date = $"epd validity ends after: {this.expirationDate}";
             string jurisdiction = null;
-            if (this.countryCode != null)
+            if (this.country != null)
             {
-                string jurisdictionCode = this.countryCode;
-                if (this.stateCode != null && this.countryCode == "US")
+                string jurisdictionCode = this.country;
+                if (this.state != null && this.country == "US")
                 {
-                    jurisdictionCode += $"-{this.stateCode}";
+                    jurisdictionCode += $"-{this.state}";
                 }
                 jurisdiction = $"produced in: {jurisdictionCode}";
             }

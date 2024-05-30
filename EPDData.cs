@@ -27,8 +27,8 @@ namespace EC3CarbonCalculator
             if (epd.mf != null)
             {
                 dict.Set("MF Category", epd.mf.categoryName);
-                dict.Set("MF Country", epd.mf.countryCode);
-                dict.Set("MF State", epd.mf.stateCode);
+                dict.Set("MF Country", epd.mf.country);
+                dict.Set("MF State", epd.mf.state);
                 dict.Set("MF Date", epd.mf.expirationDate);
             } else
             {
@@ -62,17 +62,17 @@ namespace EC3CarbonCalculator
             Rhino.Collections.ArchivableDictionary dict = archive.ReadDictionary();
             if (dict != null)
             {
-                EC3MaterialFilter mf = new EC3MaterialFilter();
+                MaterialFilter mf = new MaterialFilter();
 
                 // I hate this too :(
                 if (dict.ContainsKey("MF Category"))
-                    mf.SetCategory(dict["MF Category"] as string);
+                    mf.SetEC3Category(dict["MF Category"] as string);
                 if (dict.ContainsKey("MF Country"))
-                    mf.SetCountry(dict["MF Country"] as string);
+                    mf.SetEC3Country(dict["MF Country"] as string);
                 if (dict.ContainsKey("MF State"))
-                    mf.SetState(dict["MF State"] as string);
+                    mf.SetEC3State(dict["MF State"] as string);
                 if (dict.ContainsKey("MF Date"))
-                    mf.SetFormattedExporationDate(dict["MF Date"] as string);
+                    mf.SetEC3FormattedExporationDate(dict["MF Date"] as string);
 
                 string name = null;
                 string category = null;

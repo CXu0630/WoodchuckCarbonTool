@@ -51,6 +51,7 @@ namespace EC3CarbonCalculator
             }
 
             unit = string.Join("", splitAttr, 1, splitAttr.Length - 1);
+            if (unit.Length < 2) { return flt; }
             if (unit[unit.Length - 1] == '3' && unit[unit.Length - 2] != '^')
             {
                 unit = unit.Remove(unit.Length - 1) + "^3";

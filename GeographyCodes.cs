@@ -1,4 +1,4 @@
-﻿using Rhino.Input.Custom;
+using Rhino.Input.Custom;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +16,10 @@ namespace EC3CarbonCalculator
 
         public List<string> StateCodes;
         public List<string> StateNames;
+
+        public List<string> USRegions = new List<string> { "Pacific Southwest", 
+            "Pacific Northwest", "Rocky Mountains", "South Central", "North Central", 
+            "Southeastern", "Great Lakes", "Eastern", "National" };
 
         private static readonly Lazy<GeographyCodes> _geoCodeInstance =
             new Lazy<GeographyCodes>(() => new GeographyCodes());

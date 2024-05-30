@@ -35,7 +35,7 @@ namespace EC3CarbonCalculator
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            EC3MaterialFilter mf = new EC3MaterialFilter();
+            MaterialFilter mf = new MaterialFilter();
             
             if (form == null)
             {
@@ -45,12 +45,21 @@ namespace EC3CarbonCalculator
             }
 
             List<EPD> epds = new List<EPD>();
-            EPD avgEPD;
+            EPD avgEPD = null;
             // Event listener: a search event is called
             form.SearchEvent += (s, e) =>
             {
                 mf = form.GetMaterialFilter();
-                epds = RequestEC3(doc, mf, out avgEPD);
+
+                switch (mf.dataBase)
+                {
+                    case "EC3":
+                        epds = RequestEC3(doc, mf, out avgEPD);
+                        break;
+                    case "CLF":
+                        epds = CLFSearch.Instance.Search(mf);
+                        break;
+                }
                 // ERROR: the server did not return anything, most likely than not an
                 // authentication error.
                 if (epds == null)
@@ -98,7 +107,7 @@ namespace EC3CarbonCalculator
         /// <param name="mf"></param>
         /// <param name="avgEPD"></param>
         /// <returns></returns>
-        private List<EPD> RequestEC3 (RhinoDoc doc, EC3MaterialFilter mf, out EPD avgEPD)
+        private List<EPD> RequestEC3 (RhinoDoc doc, MaterialFilter mf, out EPD avgEPD)
         {
             // the dimension used to calculate the average, defaults to category dimension
             int dimension = EC3CategoryTree.Instance.GetCategoryDimension(mf.categoryName);
@@ -111,7 +120,7 @@ namespace EC3CarbonCalculator
                 RhinoApp.WriteLine(str);
             }
 
-            string matData = EC3Request.GetMaterialData(mf.GetMaterialFilter());
+            string matData = EC3Request.GetMaterialData(mf.GetEC3MaterialFilter());
             // this mostly happens when there is an authentication error. Error is
             // handled by the "main method" of the command
             if(matData  == null)
@@ -127,8 +136,8 @@ namespace EC3CarbonCalculator
             // get averages for EPDs
             Density avgDensity = EPD.AverageDensity(epds);
             Mass avgGwp = EPD.AverageGwp(epds, unit);
-            string jurisdiction = mf.countryCode;
-            if (mf.stateCode != null) { jurisdiction += ("-" + mf.stateCode); }
+            string jurisdiction = mf.country;
+            if (mf.state != null) { jurisdiction += ("-" + mf.state); }
             avgEPD = new EPD(
                 $"Average of Search Result",
                 avgGwp, unit, avgDensity, mf.categoryName, mf, "None");
@@ -140,7 +149,7 @@ namespace EC3CarbonCalculator
         /// Parses the Newtonsoft JArray returned from the EC3 API call and parses a list
         /// of EPDs based on that JArray.
         /// </summary>
-        public static List<EPD> ParseEPDs(JArray jsonArray, bool discardInvalid, EC3MaterialFilter mf = null)
+        public static List<EPD> ParseEPDs(JArray jsonArray, bool discardInvalid, MaterialFilter mf = null)
         {
             List<EPD> epds = new List<EPD>();
             foreach (JObject jobj in jsonArray)

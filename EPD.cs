@@ -28,6 +28,8 @@ namespace EC3CarbonCalculator
         public string category { get; }
         public string manufacturer { get; }
         public int dimension {  get; }
+
+        public string description = null;
         
 
         // a material is invalid if it is defined by gwp per unit mass and does not have
@@ -35,7 +37,7 @@ namespace EC3CarbonCalculator
         // data like gwp or declaired unit.
         public bool valid = true;
 
-        public EC3MaterialFilter mf { get; }
+        public MaterialFilter mf { get; }
 
         /// <summary>
         /// Constructor used to create an EPD from a JObject retreived from the EC3
@@ -44,7 +46,7 @@ namespace EC3CarbonCalculator
         /// <param name="obj"> A JObject retreived from the EC3 database. </param>
         /// <param name="searchPar"> Search parameters in the form of an EC3MaterialFilter
         /// object used to replicate the search that retreived the JObject.</param>
-        public EPD(JObject obj, EC3MaterialFilter searchPar = null)
+        public EPD(JObject obj, MaterialFilter searchPar = null)
         {
             this.JObj = obj;
             this.mf = searchPar;
@@ -95,7 +97,7 @@ namespace EC3CarbonCalculator
         /// <param name="category"></param>
         /// <param name="searchPar"></param>
         public EPD(string name, double gwp, string unit, double density, string densityUnit, 
-            string category, int dimension, EC3MaterialFilter searchPar, 
+            string category, int dimension, MaterialFilter searchPar, 
             string manufacturer, string id = null)
         {
             this.name = name;
@@ -105,16 +107,16 @@ namespace EC3CarbonCalculator
             this.dimension = dimension;
             this.id = id;
 
-            this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg"); 
+            this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg");
 
-            if(unit == "t") { this.unitMaterial = Quantity.Parse(typeof(Mass), "1 " + unit); }
-            else { this.unitMaterial = Quantity.FromUnitAbbreviation(1, unit); }
+            this.unitMaterial = UnitManager.ParseQuantity("1 " + unit, out bool valid);
 
             if (density != 0 &&  densityUnit != null) 
             {
                 densityUnit = density.ToString() + " " + densityUnit;
                 densityUnit = UnitManager.ParseDensityUnit(densityUnit);
-                this.density = (Density)Quantity.Parse(typeof(Density), densityUnit);
+                IQuantity roh = UnitManager.ParseQuantity(densityUnit, out bool validDensity);
+                if (validDensity) { this.density = (Density)roh; }
             } 
             else if (densityUnit == null && unitMaterial.GetType() == typeof(Mass))
             {
@@ -128,7 +130,7 @@ namespace EC3CarbonCalculator
         }
 
         public EPD(string name, Mass gwp, IQuantity unitMat, Density density, 
-            string category, EC3MaterialFilter searchPar, string manufacturer)
+            string category, MaterialFilter searchPar, string manufacturer)
         {
             this.name = name;
             this.category = category;

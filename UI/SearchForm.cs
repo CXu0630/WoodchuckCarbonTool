@@ -26,13 +26,15 @@ namespace EC3CarbonCalculator.UI
     /// </summary>
      internal class SearchForm : Form
     {
+        CLFUiElements clfUi;
         // All search prameters are stored in the mf instead of individually
-        EC3MaterialFilter mf;
+        MaterialFilter mf;
         Button search = new Button { Text = "Search" };
         RhinoDoc doc;
 
         // This is public as it needs to be edditable by multiple methods.
         Scrollable resPanel;
+        Panel searchPanel;
 
         // This event is used to signal when the search button has been pressed:
         // search parameters are locked in and an EPD search is performed.
@@ -49,8 +51,9 @@ namespace EC3CarbonCalculator.UI
         /// </summary>
         /// <param name="mf"> Material Filter object in which search criteria for EPDs 
         /// will be stored. </param>
-        public SearchForm(EC3MaterialFilter mf)
+        public SearchForm(MaterialFilter mf)
         {
+            this.clfUi = new CLFUiElements();
             this.mf = mf;
             WindowStyle = WindowStyle.Default;
             Maximizable = true;
@@ -61,9 +64,6 @@ namespace EC3CarbonCalculator.UI
             Title = "EC3 Material GWP Search";
             MinimumSize = new Size(900, 500);
 
-            // Twwo basic layouts: one for search parameters, one for search results
-            DynamicLayout mfLayout = this.MaterialFilterLayout();
-
             this.doc = RhinoDoc.ActiveDoc;
 
             // Results exist in a panel to be updated with new content each search
@@ -72,6 +72,10 @@ namespace EC3CarbonCalculator.UI
                 ExpandContentWidth = true
             };
             resPanel.BackgroundColor = Colors.LightGrey;
+
+            searchPanel = new Panel();
+            // Two basic layouts: one for search parameters, one for search results
+            DynamicLayout searchLayout = this.SearchLayout();
 
             // Sends an event signal to listeners in other classes when a search is 
             // performed.
@@ -90,7 +94,7 @@ namespace EC3CarbonCalculator.UI
             // The contents of the panel is divided in two, with search parameters and 
             // criteria on the left, and search results on the right.
             layout.BeginHorizontal();
-            layout.Add(mfLayout); 
+            layout.Add(searchLayout); 
             layout.Add(resPanel);
             layout.EndHorizontal();
 
@@ -101,180 +105,97 @@ namespace EC3CarbonCalculator.UI
         /// This method creates a dynamic layout for selecting a category, inputting 
         /// material search parameters and a search confirm button.
         /// </summary>
-        private DynamicLayout MaterialFilterLayout()
+        private DynamicLayout SearchLayout()
         {
-            DynamicLayout mfLayout = new DynamicLayout
+            DynamicLayout searchLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
                 Padding = new Padding(10),
                 Size = new Size(380, 500)
             };
 
-            mfLayout.Add(this.CategoryLayout());
-            mfLayout.Add(this.Spacer(Colors.DarkGray));
-            mfLayout.Add(this.GeneralSearchLayout());
+            searchLayout.Add(this.DatabaseLayout());
+            searchLayout.Add(Spacer(Colors.DarkGray));
 
-            mfLayout.Add(null);
-            mfLayout.Add(this.ConfirmLayout());
+            searchLayout.Add(this.searchPanel);
+            this.RepopulateSearchPanel();
 
-            return mfLayout;
+            searchLayout.Add(null);
+            searchLayout.Add(this.ConfirmLayout());
+
+            return searchLayout;
         }
 
-        /// <summary>
-        /// This method creates a dynamic layout for material search parameters.
-        /// </summary>
-        private DynamicLayout CategoryLayout()
+        private void RepopulateSearchPanel()
         {
-            // Use category names retreived from EC3 by the Category Tree as dropdown
-            // option names.
-            EC3CategoryTree ct = EC3CategoryTree.Instance;
-
-            List<ListItem> catOptions = new List<ListItem>();
-            for (int i = 0; i < ct.names.Count; i++)
+            DynamicLayout searchLayout = new DynamicLayout
             {
-                // TODO: Add Masterformat code to the display names and sort in order of
-                // masterformat?
-                string strdName;
-                if (string.IsNullOrWhiteSpace(ct.names[i])) strdName = "";
-                string newText = Regex.Replace(ct.names[i], "([a-z])([A-Z])", "$1 $2");
-                newText = Regex.Replace(newText, "([A-Z]+)([A-Z][a-z])", "$1 $2");
-                strdName = newText;
-
-                catOptions.Add(new ListItem
-                {
-                    Text = strdName,
-                    Key = ct.names[i]
-                });
-            }
-            DropDown catDD = new DropDown();
-            catDD.DataStore = catOptions;
-            // set default values
-            catDD.SelectedIndex = 47;
-            mf.SetCategory(catDD.SelectedKey);
-            // set listener
-            catDD.SelectedValueChanged += (sender, e) =>
-            {
-                mf.SetCategory(catDD.SelectedKey);
+                DefaultSpacing = new Size(5, 5)
             };
 
-            Label catLabel = new Label { Text = "Category" };
+            switch (this.mf.dataBase)
+            {
+                case "EC3":
+                    searchLayout.Add(EC3UiElements.EC3CategoryLayout(mf));
+                    searchLayout.Add(Spacer(Colors.DarkGray));
+                    searchLayout.Add(EC3UiElements.EC3GeneralSearchLayout(mf));
+                    break;
+                case "CLF":
+                    searchLayout.Add(clfUi.CLFCategoryLayout(mf));
+                    searchLayout.Add(clfUi.clfPanel);
+                    break;
+            }
 
-            DynamicLayout catLayout = new DynamicLayout
+            this.searchPanel.Content = searchLayout;
+        }
+
+        private DynamicLayout DatabaseLayout()
+        {
+            List<ListItem> dbOptions = new List<ListItem>
+            {
+                new ListItem
+                {
+                    Text = "EC3 Carbon Database",
+                    Key = "EC3"
+                },
+                new ListItem
+                {
+                    Text = "CLF Material Baselines",
+                    Key = "CLF"
+                }
+            };
+            /*DBOPTIONS.ADD(NEW LISTITEM
+            {
+                TEXT = "KALEIDOSCOPE",
+                KEY = "KALEIDOSCOPE"
+            });*/
+
+            DropDown dbDD = new DropDown();
+            dbDD.DataStore = dbOptions;
+            // set default values
+            dbDD.SelectedIndex = 0;
+            this.mf.dataBase = dbDD.SelectedKey;
+            dbDD.SelectedValueChanged += (sender, e) =>
+            {
+                this.mf = new MaterialFilter();
+                this.mf.dataBase = dbDD.SelectedKey;
+                this.RepopulateSearchPanel();
+            };
+
+            Label dbLabel = new Label { Text = "Database" };
+
+            DynamicLayout dbLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
             };
 
-            catLayout.BeginHorizontal();
-            catLayout.Add(catLabel);
-            catLayout.Add(null);
-            catLayout.Add(catDD);
-            catLayout.EndHorizontal();
+            dbLayout.BeginHorizontal();
+            dbLayout.Add(dbLabel);
+            dbLayout.Add(null);
+            dbLayout.Add(dbDD);
+            dbLayout.EndHorizontal();
 
-            return catLayout;
-        }
-
-        /// <summary>
-        /// Material search parameters that are used accross all searches
-        /// Preliminary search parameter layout used in our prototype.
-        /// </summary>
-        /// <returns> dynamic layout of search fields </returns>
-        private DynamicLayout GeneralSearchLayout()
-        {
-            GeographyCodes gc = GeographyCodes.Instance;
-            
-            // country options dropdown
-            List<ListItem> countryOptions = new List<ListItem>();
-            // blank option for default
-            countryOptions.Add(new ListItem { Key = null, Text = "Global" });
-            for (int i = 0; i < gc.CountryCodes.Count; i++)
-            {
-                countryOptions.Add(new ListItem 
-                { 
-                    Text = gc.CountryNames[i], 
-                    Key = gc.CountryCodes[i]
-                });
-            }
-            DropDown countryDD = new DropDown();
-            countryDD.DataStore = countryOptions;
-            // set default value
-            countryDD.SelectedKey = "US";
-            mf.SetCountry(countryDD.SelectedKey);
-            // set listener
-            countryDD.SelectedKeyChanged += (s, e) =>
-            {
-                mf.SetCountry(countryDD.SelectedKey);
-            };
-            Label countryLabel = new Label { Text = "Country" };
-
-            // state options dropdown
-            List<ListItem> stateOptions = new List<ListItem>();
-            // blank option for default
-            stateOptions.Add(new ListItem { Key = null, Text = "None" });
-            for (int i = 0; i < gc.StateCodes.Count; i++)
-            {
-                stateOptions.Add(new ListItem
-                {
-                    Text = gc.StateNames[i],
-                    Key = gc.StateCodes[i]
-                });
-            }
-            DropDown stateDD = new DropDown();
-            stateDD.DataStore = stateOptions;
-            // set default value
-            stateDD.SelectedKey = "NY";
-            mf.SetState(stateDD.SelectedKey);
-            // set listener
-            stateDD.SelectedKeyChanged += (s, e) =>
-            {
-                mf.SetState(stateDD.SelectedKey);
-            };
-            Label stateLabel = new Label { Text = "State" };
-
-            // set listener to disable state selection when not in states
-            countryDD.SelectedValueChanged += (s, e) =>
-            {
-                if (countryDD.SelectedKey == "US") stateDD.Enabled = true;
-                else {stateDD.Enabled = false; stateDD.SelectedValue = null; }
-            };
-
-            DateTimePicker datePicker = new DateTimePicker
-            {
-                Value = DateTime.Now,
-                Mode = DateTimePickerMode.Date
-            };
-            mf.SetExpirationDate((DateTime)datePicker.Value);
-            datePicker.ValueChanged += (s, e) =>
-            {
-                mf.SetExpirationDate((DateTime)datePicker.Value);
-            };
-            Label dateLabel = new Label { Text = "Valid Before" };
-
-            // add options to layout
-            DynamicLayout genLayout = new DynamicLayout 
-            { 
-                DefaultSpacing = new Size(5, 5)
-            };
-
-            genLayout.BeginHorizontal();
-            genLayout.Add(countryLabel);
-            genLayout.Add(null);
-            genLayout.Add(countryDD);
-            genLayout.EndHorizontal();
-
-            genLayout.BeginHorizontal();
-            genLayout.Add(stateLabel);
-            genLayout.Add(null);
-            genLayout.Add(stateDD);
-            genLayout.EndHorizontal();
-
-            genLayout.BeginHorizontal();
-            genLayout.Add(dateLabel);
-            genLayout.Add(null);
-            genLayout.Add(datePicker);
-            genLayout.EndHorizontal();
-            genLayout.Add(null);
-
-            return genLayout;
+            return dbLayout;
         }
 
         /// <summary>
@@ -299,7 +220,7 @@ namespace EC3CarbonCalculator.UI
         /// </summary>
         /// <param name="epds"></param>
         /// <param name="avgEPD"></param>
-        public void RepopulateSearchResult(List<EPD> epds, EPD avgEPD)
+        public void RepopulateSearchResult(List<EPD> epds, EPD avgEPD = null)
         {
             DynamicLayout epdLayout = new DynamicLayout
             {
@@ -307,8 +228,11 @@ namespace EC3CarbonCalculator.UI
                 Padding = new Padding(10)
             };
 
-            epdLayout.Add(EPDPanel(avgEPD));
-            epdLayout.Add(Spacer(Colors.WhiteSmoke));
+            if (avgEPD != null)
+            {
+                epdLayout.Add(EPDPanel(avgEPD));
+                epdLayout.Add(Spacer(Colors.WhiteSmoke));
+            }
 
             // NOTE: right now only 20 EPDs are displayed per search
             // Consider implementing with more EPDs displayed...
@@ -374,6 +298,11 @@ namespace EC3CarbonCalculator.UI
                 Font = new Font(SystemFonts.Default().FamilyName, 10),
                 TextColor = Colors.DarkSlateGray
             };
+
+            if (epd.description != null)
+            {
+                epdName.ToolTip = epd.description;
+            }
 
             Button browserView = new Button { Text = "View in Browser" };
             Button assignButton = new Button { Text = "Assign to Object" };
@@ -441,7 +370,7 @@ namespace EC3CarbonCalculator.UI
         /// </summary>
         /// <param name="bkgColor"> Color of the line </param>
         /// <returns>A spacer</returns>
-        private DynamicLayout Spacer(Color bkgColor)
+        public static DynamicLayout Spacer(Color bkgColor)
         {
             DynamicLayout spacer = new DynamicLayout();
 
@@ -472,7 +401,7 @@ namespace EC3CarbonCalculator.UI
             base.OnClosing(e);
         }
 
-        public EC3MaterialFilter GetMaterialFilter()
+        public MaterialFilter GetMaterialFilter()
         {
             return this.mf;
         }
