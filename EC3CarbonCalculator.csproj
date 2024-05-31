@@ -40,9 +40,4 @@
     <None Remove="EmbeddedResources\2023_04_CLF_USAReadyMixedConcreteRegional.csv" />
   </ItemGroup>
   
-  <ItemGroup>
-    <Folder Include="src\EC3\" />
-    <Folder Include="src\CLF\" />
-  </ItemGroup>
-  
 </Project>

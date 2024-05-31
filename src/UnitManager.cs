@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Rhino;
-using Rhino.Geometry;
+using System;
 using UnitsNet;
-using UnitsNet.Units;
 
 namespace EC3CarbonCalculator.src
 {

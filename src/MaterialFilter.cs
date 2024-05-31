@@ -1,12 +1,6 @@
-using Eto.Forms;
 using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using EC3CarbonCalculator.src.EC3;
 
 namespace EC3CarbonCalculator.src
 {

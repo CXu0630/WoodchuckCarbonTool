@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rhino.Input.Custom;
-using Rhino.Commands;
+﻿using Rhino.Commands;
 using Rhino.Input;
-using Rhino;
 
 namespace EC3CarbonCalculator
 {

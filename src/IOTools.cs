@@ -1,15 +1,10 @@
+using CsvHelper;
+using CsvHelper.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using CsvHelper.Configuration;
-using CsvHelper;
-using Newtonsoft.Json.Linq;
 
 namespace EC3CarbonCalculator.src
 {

@@ -1,10 +1,8 @@
-using System;
-using System.Runtime.Remoting;
 using EC3CarbonCalculator.src.UI;
 using Rhino;
 using Rhino.Commands;
-using Rhino.DocObjects;
 using Rhino.UI;
+using System;
 using UnitsNet;
 
 namespace EC3CarbonCalculator.src

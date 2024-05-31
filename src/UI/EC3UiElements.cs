@@ -1,12 +1,9 @@
-using Eto.Forms;
+using EC3CarbonCalculator.src.EC3;
 using Eto.Drawing;
+using Eto.Forms;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using EC3CarbonCalculator.src;
 
 namespace EC3CarbonCalculator.src.UI
 {

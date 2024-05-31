@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using Rhino.UI;
+using System;
+using System.ComponentModel;
 
 namespace EC3CarbonCalculator.src.UI
 {

@@ -1,14 +1,7 @@
-using Rhino.Input.Custom;
-using Rhino.DocObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rhino;
-using Rhino.Input;
+using Rhino.DocObjects;
 
-namespace EC3CarbonCalculator.src
+namespace EC3CarbonCalculator.src.EC3
 {
     // WARNING: something will likely go wrong with this code when used on blocks
     /// <summary>

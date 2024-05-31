@@ -1,5 +1,3 @@
-using Rhino;
-using Rhino.DocObjects;
 using Rhino.DocObjects.Custom;
 using Rhino.FileIO;
 using System;

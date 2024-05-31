@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using EC3CarbonCalculator.src.EC3;
 using EC3CarbonCalculator.src.UI;
 using Eto.Forms;
 using Newtonsoft.Json.Linq;
 using Rhino;
 using Rhino.Commands;
 using Rhino.DocObjects;
-using Rhino.DocObjects.Custom;
 using Rhino.UI;
+using System;
+using System.Collections.Generic;
 using UnitsNet;
-using UnitsNet.Units;
 
 namespace EC3CarbonCalculator.src
 {
@@ -43,6 +40,9 @@ namespace EC3CarbonCalculator.src
                 form.Closed += OnFormClosed;
                 form.Show();
             }
+
+            form.BringToFront();
+            form.PopulateStartupMessage();
 
             List<EPD> epds = new List<EPD>();
             EPD avgEPD = null;

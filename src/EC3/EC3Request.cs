@@ -1,15 +1,9 @@
 using Rhino;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
-namespace EC3CarbonCalculator.src
+namespace EC3CarbonCalculator.src.EC3
 {
     internal class EC3Request
     {

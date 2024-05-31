@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json.Linq;
-using Rhino;
 using Rhino.Commands;
 using Rhino.DocObjects;
-using Rhino.DocObjects.Custom;
-using UnitsNet;
-using UnitsNet.Units;
 
 namespace EC3CarbonCalculator.src
 {

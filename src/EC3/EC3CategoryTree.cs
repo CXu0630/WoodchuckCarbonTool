@@ -1,15 +1,11 @@
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using Newtonsoft.Json.Linq;
-using Rhino.Input;
-using System.Reflection;
+using System.Linq;
 using UnitsNet;
 
-namespace EC3CarbonCalculator.src
+namespace EC3CarbonCalculator.src.EC3
 {
     /// <summary>
     /// A singleton class that contains EC3 category information. It stores the category
