@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     internal class GeographyCodes
     {
@@ -17,8 +17,8 @@ namespace EC3CarbonCalculator
         public List<string> StateCodes;
         public List<string> StateNames;
 
-        public List<string> USRegions = new List<string> { "Pacific Southwest", 
-            "Pacific Northwest", "Rocky Mountains", "South Central", "North Central", 
+        public List<string> USRegions = new List<string> { "Pacific Southwest",
+            "Pacific Northwest", "Rocky Mountains", "South Central", "North Central",
             "Southeastern", "Great Lakes", "Eastern", "National" };
 
         private static readonly Lazy<GeographyCodes> _geoCodeInstance =
@@ -28,8 +28,8 @@ namespace EC3CarbonCalculator
 
         public GeographyCodes()
         {
-            this.PopulateAreaCodeLists("ISOCountryCodes", out CountryNames, out CountryCodes);
-            this.PopulateAreaCodeLists("USStateCodes", out StateNames, out StateCodes);
+            PopulateAreaCodeLists("ISOCountryCodes", out CountryNames, out CountryCodes);
+            PopulateAreaCodeLists("USStateCodes", out StateNames, out StateCodes);
         }
 
         private void PopulateAreaCodeLists(string csvName, out List<string> names, out List<string> codes)
@@ -65,27 +65,27 @@ namespace EC3CarbonCalculator
             codes = areaCodes;
         }
 
-        public string GetCountryName (string code)
+        public string GetCountryName(string code)
         {
-            int idx = this.CountryCodes.FindIndex(s => s.Equals(code));
+            int idx = CountryCodes.FindIndex(s => s.Equals(code));
             return CountryNames[idx];
         }
 
         public string GetCountryCode(string name)
         {
-            int idx = this.CountryNames.FindIndex(s => s.Equals(name));
+            int idx = CountryNames.FindIndex(s => s.Equals(name));
             return CountryCodes[idx];
         }
 
         public string GetStateName(string code)
         {
-            int idx = this.StateCodes.FindIndex(s => s.Equals(code));
+            int idx = StateCodes.FindIndex(s => s.Equals(code));
             return StateNames[idx];
         }
 
         public string GetStateCode(string name)
         {
-            int idx = this.StateNames.FindIndex(s => s.Equals(name));
+            int idx = StateNames.FindIndex(s => s.Equals(name));
             return StateCodes[idx];
         }
     }

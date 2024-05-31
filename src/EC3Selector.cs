@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Rhino;
 using Rhino.Input;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     // WARNING: something will likely go wrong with this code when used on blocks
     /// <summary>
@@ -22,8 +22,8 @@ namespace EC3CarbonCalculator
     {
         int dimension = 3;
 
-        public EC3Selector(int dimension) 
-        { 
+        public EC3Selector(int dimension)
+        {
             this.dimension = dimension;
         }
 
@@ -31,7 +31,7 @@ namespace EC3CarbonCalculator
         {
             string prompt = "";
 
-            switch (this.dimension)
+            switch (dimension)
             {
                 case 3:
                     prompt = "Your selected category reportes GWP per volume. Select " +
@@ -53,7 +53,7 @@ namespace EC3CarbonCalculator
                     prompt = "Your selected category reports GWP per length. Select curves" +
                         "to calculate for. If surfaces or solids are selected, the total" +
                         "length of their edges will be used.";
-                    getObject.GeometryFilter = 
+                    getObject.GeometryFilter =
                         ObjectType.Curve |
                         ObjectType.Surface |
                         ObjectType.Brep |

@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     /// <summary>
     /// Counterpart of EC3Request
     /// </summary>
     internal sealed class CLFSearch
     {
+        // Singleton class so that the CSVs only have to be read once. There isn't that 
+        // much information so not with the IO overhead.
         private static readonly Lazy<CLFSearch> _clfSearch =
             new Lazy<CLFSearch>(() => new CLFSearch());
 
@@ -25,16 +27,16 @@ namespace EC3CarbonCalculator
             readyMixes = IOTools.ReadCSVFromEmbedded("2023_04_CLF_USAReadyMixedConcreteRegional");
         }
 
-        public List<EPD> Search (MaterialFilter mf)
+        public List<EPD> Search(MaterialFilter mf)
         {
-            if (mf.categoryName == "US Regional Ready-Mix Concrete") return this.SearchReadyMix(mf);
-            return this.SearchGeneralMaterial(mf);
+            if (mf.categoryName == "US Regional Ready-Mix Concrete") return SearchReadyMix(mf);
+            return SearchGeneralMaterial(mf);
         }
 
-        public List<EPD> SearchGeneralMaterial (MaterialFilter mf)
+        public List<EPD> SearchGeneralMaterial(MaterialFilter mf)
         {
             List<EPD> epds = new List<EPD>();
-            foreach(List<string> material in generalMaterials)
+            foreach (List<string> material in generalMaterials)
             {
                 if (material[0] != mf.categoryName) continue;
                 double qUnit = UnitManager.ParseDoubleWithUnit(material[4], out string unit);
@@ -48,10 +50,14 @@ namespace EC3CarbonCalculator
                     density, material[10], mf.categoryName,
                     int.Parse(material[8]), mf, null);
                     epds.Add(epd);
+
+                    epd.description = material[2];
+                    epd.tooltip = material[7];
                 }
-                catch (Exception e) 
-                { 
-                    continue; 
+                catch (Exception e)
+                {
+                    Console.Write(e.ToString());
+                    continue;
                 }
             }
             return epds;

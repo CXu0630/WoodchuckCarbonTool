@@ -8,7 +8,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using Rhino.UI;
 
-namespace EC3CarbonCalculator.UI
+namespace EC3CarbonCalculator.src.UI
 {
     /// <summary>
     /// ETO form to display EPD calculation results in. For now, it's just a very simple
@@ -21,7 +21,7 @@ namespace EC3CarbonCalculator.UI
             WindowStyle = WindowStyle.Default;
             Maximizable = false;
             Minimizable = false;
-            Padding = new Eto.Drawing.Padding(5);
+            Padding = new Padding(5);
             Resizable = false;
             ShowInTaskbar = true;
             Title = "GWP Result";

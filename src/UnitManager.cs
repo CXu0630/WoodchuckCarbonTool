@@ -10,7 +10,7 @@ using Rhino.Geometry;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     /// <summary>
     /// Helper class containing static methods used to parse and retreive units. Depends
@@ -66,7 +66,7 @@ namespace EC3CarbonCalculator
         /// <summary>
         /// Override for the previous method, input is an attribute of a JsonObeject
         /// </summary>
-        public static double ParseDoubleWithUnit (JObject mat, string attribute, out string unit)
+        public static double ParseDoubleWithUnit(JObject mat, string attribute, out string unit)
         {
             string attrStr = mat[attribute]?.ToString();
             return ParseDoubleWithUnit(attrStr, out unit);
@@ -106,7 +106,7 @@ namespace EC3CarbonCalculator
         /// <param name="valid"> Whether the quantity was successfully parsed (is this 
         /// necessary if we're already returning null on unsuccessful parsing?)</param>
         /// <returns> Parsed IQuantity </returns>
-        public static IQuantity ParseQuantity (string attrstr, out bool valid)
+        public static IQuantity ParseQuantity(string attrstr, out bool valid)
         {
             double unitMultiplier = ParseDoubleWithUnit(attrstr, out string unit);
             IQuantity unitMaterial = null;
@@ -157,12 +157,13 @@ namespace EC3CarbonCalculator
                 try
                 {
                     unitMaterial = Quantity.FromUnitAbbreviation(unitMultiplier, unit);
-                } catch (Exception)
+                }
+                catch (Exception)
                 {
                     // Could not be parsed, return null
                     valid = false;
                     return null;
-                }  
+                }
             }
             return unitMaterial;
         }
@@ -181,7 +182,7 @@ namespace EC3CarbonCalculator
                 if (qty != null && unit != null) { attrStr = qty + " " + unit; }
             }
             catch (Exception) { }
-            
+
             return ParseQuantity(attrStr, out valid);
         }
 
@@ -197,7 +198,7 @@ namespace EC3CarbonCalculator
         public static IQuantity GetSystemUnit(RhinoDoc doc, int dimension)
         {
             IQuantity unit;
-            
+
             string unitSystem = doc.GetUnitSystemName(true, false, true, true);
 
             Length lengthUnit = (Length)Quantity.Parse(typeof(Length), "1 " + unitSystem);
@@ -224,7 +225,7 @@ namespace EC3CarbonCalculator
         /// Returns a string with the unit of that the RhinoDoc is in along with dimensions
         /// formatted in superscript. For printing or UI use.
         /// </summary>
-        public static string GetSystemUnitStr(RhinoDoc doc, int dimension) 
+        public static string GetSystemUnitStr(RhinoDoc doc, int dimension)
         {
             string unit = doc.GetUnitSystemName(true, false, true, true);
 
@@ -245,7 +246,7 @@ namespace EC3CarbonCalculator
         public static int GetUnitDimension(IQuantity unit)
         {
             int dim = 0;
-            
+
             dim = unit.Dimensions.Length;
             if (dim == 0 && unit.Dimensions.Mass != 0) { dim = 3; }
 

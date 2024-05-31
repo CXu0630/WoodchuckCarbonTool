@@ -1,13 +1,13 @@
 using System;
 using System.Runtime.Remoting;
-using EC3CarbonCalculator.UI;
+using EC3CarbonCalculator.src.UI;
 using Rhino;
 using Rhino.Commands;
 using Rhino.DocObjects;
 using Rhino.UI;
 using UnitsNet;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     /// <summary>
     /// Rhino command that retreives the GWP of a selection of objects. For now, this

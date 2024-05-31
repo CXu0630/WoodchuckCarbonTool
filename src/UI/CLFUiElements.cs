@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EC3CarbonCalculator.src;
 
-namespace EC3CarbonCalculator.UI
+namespace EC3CarbonCalculator.src.UI
 {
     internal class CLFUiElements
     {
@@ -51,15 +52,15 @@ namespace EC3CarbonCalculator.UI
             catDD.SelectedValueChanged += (sender, e) =>
             {
                 mf.SetCLFCategory(catDD.SelectedKey);
-                if (catDD.SelectedIndex != 0) 
-                { 
+                if (catDD.SelectedIndex != 0)
+                {
                     mf.SetCLFRegion(null);
                 }
-                this.RepopulateCLFPanel(mf);
+                RepopulateCLFPanel(mf);
             };
 
             Label catLabel = new Label { Text = "Category" };
-            
+
             DynamicLayout catLayout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
@@ -70,14 +71,14 @@ namespace EC3CarbonCalculator.UI
             catLayout.Add(null);
             catLayout.Add(catDD);
             catLayout.EndHorizontal();
-            
+
             return catLayout;
         }
 
-        public DynamicLayout USRegionLayout (MaterialFilter mf)
+        public DynamicLayout USRegionLayout(MaterialFilter mf)
         {
             DynamicLayout dl = new DynamicLayout();
-            
+
             List<ListItem> regionOptions = new List<ListItem>();
             for (int i = 0; i < GeographyCodes.Instance.USRegions.Count(); i++)
             {

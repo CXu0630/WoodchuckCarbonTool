@@ -5,7 +5,7 @@ using Rhino.FileIO;
 using System;
 using System.Runtime.InteropServices;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     [Serializable]
     [Guid("847b706e-f578-47eb-a8f0-b440584e5e2d")]
@@ -17,7 +17,7 @@ namespace EC3CarbonCalculator
 
         public EPDData(EPD epd) { this.epd = epd; }
 
-        protected override bool Write(Rhino.FileIO.BinaryArchiveWriter archive)
+        protected override bool Write(BinaryArchiveWriter archive)
         {
             if (epd == null) return false;
 
@@ -30,7 +30,8 @@ namespace EC3CarbonCalculator
                 dict.Set("MF Country", epd.mf.country);
                 dict.Set("MF State", epd.mf.state);
                 dict.Set("MF Date", epd.mf.expirationDate);
-            } else
+            }
+            else
             {
                 dict.Set("MF Category", (string)null);
                 dict.Set("MF Country", (string)null);
@@ -56,7 +57,7 @@ namespace EC3CarbonCalculator
             return true; // Return true to indicate successful write
         }
 
-        protected override bool Read(Rhino.FileIO.BinaryArchiveReader archive)
+        protected override bool Read(BinaryArchiveReader archive)
         {
             // Attempt to read the dictionary from the archive
             Rhino.Collections.ArchivableDictionary dict = archive.ReadDictionary();
@@ -103,7 +104,7 @@ namespace EC3CarbonCalculator
                 if (dict.ContainsKey("EPD Id"))
                     id = dict["EPD Id"] as string;
 
-                this.epd = new EPD(name, gwp, unit, densityVal, densityUnit, category,
+                epd = new EPD(name, gwp, unit, densityVal, densityUnit, category,
                     dimension, mf, manufacturer, id);
 
                 return true; // Successfully read all data

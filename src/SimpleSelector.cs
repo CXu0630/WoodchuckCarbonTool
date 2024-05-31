@@ -23,7 +23,7 @@ using Rhino.DocObjects;
 using Rhino.Input;
 using Rhino.Input.Custom;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     public class SimpleSelector
     {
@@ -61,7 +61,7 @@ namespace EC3CarbonCalculator
                 // Case: No geometry is selected.
                 else if (res != GetResult.Object)
                 {
-                    this.Deselect();
+                    Deselect();
                     doc.Views.Redraw();
                     RhinoApp.WriteLine("No valid geometry was selected.");
                     return Result.Cancel;
@@ -82,7 +82,7 @@ namespace EC3CarbonCalculator
 
             selection = getObject.Objects();
 
-            this.Deselect();
+            Deselect();
             doc.Views.Redraw();
 
             return Result.Success;
@@ -149,17 +149,17 @@ namespace EC3CarbonCalculator
         /// <param name="prompt"></param>
         public void SetPrompt(string prompt)
         {
-            this.promptMessage = prompt;
+            promptMessage = prompt;
         }
 
         /// <summary>
         /// Run selector code and obtain results.
         /// </summary>
         /// <returns> an array of ObjRefs containing selection results. </returns>
-        public Rhino.DocObjects.ObjRef[] GetSelection()
+        public ObjRef[] GetSelection()
         {
-            this.RunCommand(RhinoDoc.ActiveDoc, RunMode.Interactive);
-            return this.selection;
+            RunCommand(RhinoDoc.ActiveDoc, RunMode.Interactive);
+            return selection;
         }
     }
 }

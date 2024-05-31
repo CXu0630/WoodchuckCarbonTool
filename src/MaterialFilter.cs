@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     /// <summary>
     /// This class is used to store search criterea for materials in EC3. EC3 uses a 
@@ -37,7 +37,7 @@ namespace EC3CarbonCalculator
         {
             if (CLFCategoryTree.categoryNames.Contains(category))
             {
-                this.categoryName = category;
+                categoryName = category;
                 return true;
             }
             return false;
@@ -47,7 +47,7 @@ namespace EC3CarbonCalculator
         {
             if (GeographyCodes.Instance.USRegions.Contains(region))
             {
-                this.state = region;
+                state = region;
                 return true;
             }
             return false;
@@ -58,20 +58,20 @@ namespace EC3CarbonCalculator
             int idx = ec3CategoryTree.GetCategoryIdx(category);
             if (idx == -1) { return false; }
 
-            this.categoryName = ec3CategoryTree.names[idx];
+            categoryName = ec3CategoryTree.names[idx];
             return true;
         }
 
         public bool SetEC3Country(string countryCode)
         {
-            if(geoCodes.CountryCodes.Contains(countryCode))
+            if (geoCodes.CountryCodes.Contains(countryCode))
             {
-                this.country = countryCode;
+                country = countryCode;
                 return true;
-            } 
+            }
             else
             {
-                this.country = null;
+                country = null;
             }
             return false;
         }
@@ -80,19 +80,19 @@ namespace EC3CarbonCalculator
         {
             if (geoCodes.StateCodes.Contains(stateCode))
             {
-                this.state = stateCode;
+                state = stateCode;
                 return true;
             }
             else
             {
-                this.state = null;
+                state = null;
             }
             return false;
         }
 
         public bool SetEC3ExpirationDate(DateTime date)
         {
-            this.expirationDate = CompileEC3Date(date);
+            expirationDate = CompileEC3Date(date);
             return true;
         }
 
@@ -102,13 +102,13 @@ namespace EC3CarbonCalculator
         /// </summary>
         public bool SetEC3FormattedExporationDate(string date)
         {
-            this.expirationDate = date;
+            expirationDate = date;
             return true;
         }
 
         private static string CompileEC3Date(DateTime date)
         {
-            return date.Year.ToString() + "-" + date.Month.ToString() + "-" + 
+            return date.Year.ToString() + "-" + date.Month.ToString() + "-" +
                 date.Day.ToString();
         }
 
@@ -121,15 +121,15 @@ namespace EC3CarbonCalculator
         public string GetEC3MaterialFilter()
         {
             string pragma = "!pragma eMF(\"2.0/1\"), lcia(\"TRACI 2.1\")";
-            string category = $"category:\"{this.categoryName}\"";
-            string date = $"epd__date_validity_ends:>\"{this.expirationDate}\"";
+            string category = $"category:\"{categoryName}\"";
+            string date = $"epd__date_validity_ends:>\"{expirationDate}\"";
             string jurisdiction = null;
-            if (this.country != null)
+            if (country != null)
             {
-                string jurisdictionCode = this.country;
-                if (this.state != null && this.country == "US")
+                string jurisdictionCode = country;
+                if (state != null && country == "US")
                 {
-                    jurisdictionCode += $"-{this.state}";
+                    jurisdictionCode += $"-{state}";
                 }
                 jurisdiction = $"jurisdiction:IN(\"{jurisdictionCode}\")";
             }
@@ -150,19 +150,19 @@ namespace EC3CarbonCalculator
         /// object. </returns>
         public string[] GetPrintableData()
         {
-            string category = $"category: {this.categoryName}";
-            string date = $"epd validity ends after: {this.expirationDate}";
+            string category = $"category: {categoryName}";
+            string date = $"epd validity ends after: {expirationDate}";
             string jurisdiction = null;
-            if (this.country != null)
+            if (country != null)
             {
-                string jurisdictionCode = this.country;
-                if (this.state != null && this.country == "US")
+                string jurisdictionCode = country;
+                if (state != null && country == "US")
                 {
-                    jurisdictionCode += $"-{this.state}";
+                    jurisdictionCode += $"-{state}";
                 }
                 jurisdiction = $"produced in: {jurisdictionCode}";
             }
-            string[] mfArray = new string[] {category, date, jurisdiction };
+            string[] mfArray = new string[] { category, date, jurisdiction };
             return mfArray;
         }
     }

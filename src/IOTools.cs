@@ -11,7 +11,7 @@ using CsvHelper.Configuration;
 using CsvHelper;
 using Newtonsoft.Json.Linq;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     /// <summary>
     /// This is supposed to be a helper class with static methods to aid file IO. Not sure

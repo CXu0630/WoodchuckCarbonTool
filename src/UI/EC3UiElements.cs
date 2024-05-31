@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EC3CarbonCalculator.src;
 
-namespace EC3CarbonCalculator.UI
+namespace EC3CarbonCalculator.src.UI
 {
     internal class EC3UiElements
     {

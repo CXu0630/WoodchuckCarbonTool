@@ -14,13 +14,14 @@
 
   <ItemGroup>
     <Compile Remove="Archive\AssignEPD.cs" />
+    <Compile Remove="src\Tester.cs" />
     <Compile Remove="Tester.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Archive\AssignEPD.cs" />
     <None Include="C:\Users\chloe.xu\source\repos\EC3CarbonCalculator\.editorconfig" />
-    <None Include="Tester.cs" />
+    <None Include="src\Tester.cs" />
   </ItemGroup>
   
   <ItemGroup>
@@ -37,6 +38,11 @@
   <ItemGroup>
     <None Remove="EmbeddedResources\2023_04_CLF_CLFMaterialBaselines.csv" />
     <None Remove="EmbeddedResources\2023_04_CLF_USAReadyMixedConcreteRegional.csv" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="src\EC3\" />
+    <Folder Include="src\CLF\" />
   </ItemGroup>
   
 </Project>

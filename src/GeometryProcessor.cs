@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     internal class GeometryProcessor
     {
@@ -40,7 +40,7 @@ namespace EC3CarbonCalculator
             Brep brep = obj.Brep();
             if (brep != null) { return brep.GetArea(); }
             BrepFace face = obj.Face();
-            if (face != null) 
+            if (face != null)
             {
                 double h; double w;
                 face.GetSurfaceSize(out h, out w);
@@ -63,7 +63,7 @@ namespace EC3CarbonCalculator
             {
                 double len = 0;
                 Curve[] edges = brep.DuplicateEdgeCurves();
-                foreach(Curve brepEdge in edges)
+                foreach (Curve brepEdge in edges)
                 {
                     len += brepEdge.GetLength();
                 }

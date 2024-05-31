@@ -9,7 +9,7 @@ using Rhino.DocObjects.Custom;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     /// <summary>
     /// This class is used to assign EPDs to Rhino objects and retreive those EPDs for
@@ -25,7 +25,7 @@ namespace EC3CarbonCalculator
 
             bool reassign = false;
             EPDData epdData = obj.Geometry.UserData.Find(typeof(EPDData)) as EPDData;
-            if (epdData == null){ epdData = new EPDData(epd); reassign = true; }
+            if (epdData == null) { epdData = new EPDData(epd); reassign = true; }
             else { epdData.epd = epd; }
 
             if (reassign) obj.Geometry.UserData.Add(epdData);
@@ -45,7 +45,7 @@ namespace EC3CarbonCalculator
 
             foreach (ObjRef objRef in objRefs)
             {
-                if(objRef == null) continue;
+                if (objRef == null) continue;
 
                 Result rslt = Assign(objRef, epd);
                 if (rslt != Result.Success) finalRslt = rslt;
@@ -67,7 +67,7 @@ namespace EC3CarbonCalculator
             if (epdData == null) return null;
 
             EPD epd = epdData.epd;
-            
+
             return epd;
         }
     }

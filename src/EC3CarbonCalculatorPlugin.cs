@@ -1,7 +1,7 @@
-﻿using Rhino;
+using Rhino;
 using System;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     ///<summary>
     /// <para>Every RhinoCommon .rhp assembly must have one and only one PlugIn-derived

@@ -15,8 +15,9 @@ using System.Runtime.Remoting.Channels;
 using Rhino;
 using static System.Net.Mime.MediaTypeNames;
 using UnitsNet;
+using EC3CarbonCalculator.src;
 
-namespace EC3CarbonCalculator.UI
+namespace EC3CarbonCalculator.src.UI
 {
     /// <summary>
     /// This class defines an ETO form used to search the EC3 database for EPDs and
@@ -24,7 +25,7 @@ namespace EC3CarbonCalculator.UI
     /// defines the UI aspect of the search. Calculations and assignment are handled by
     /// SearchEPD.
     /// </summary>
-     internal class SearchForm : Form
+    internal class SearchForm : Form
     {
         CLFUiElements clfUi;
         // All search prameters are stored in the mf instead of individually
@@ -53,18 +54,18 @@ namespace EC3CarbonCalculator.UI
         /// will be stored. </param>
         public SearchForm(MaterialFilter mf)
         {
-            this.clfUi = new CLFUiElements();
+            clfUi = new CLFUiElements();
             this.mf = mf;
             WindowStyle = WindowStyle.Default;
             Maximizable = true;
             Minimizable = true;
-            Padding = new Eto.Drawing.Padding(5);
+            Padding = new Padding(5);
             Resizable = true;
             ShowInTaskbar = true;
             Title = "EC3 Material GWP Search";
             MinimumSize = new Size(900, 500);
 
-            this.doc = RhinoDoc.ActiveDoc;
+            doc = RhinoDoc.ActiveDoc;
 
             // Results exist in a panel to be updated with new content each search
             resPanel = new Scrollable
@@ -75,7 +76,7 @@ namespace EC3CarbonCalculator.UI
 
             searchPanel = new Panel();
             // Two basic layouts: one for search parameters, one for search results
-            DynamicLayout searchLayout = this.SearchLayout();
+            DynamicLayout searchLayout = SearchLayout();
 
             // Sends an event signal to listeners in other classes when a search is 
             // performed.
@@ -94,7 +95,7 @@ namespace EC3CarbonCalculator.UI
             // The contents of the panel is divided in two, with search parameters and 
             // criteria on the left, and search results on the right.
             layout.BeginHorizontal();
-            layout.Add(searchLayout); 
+            layout.Add(searchLayout);
             layout.Add(resPanel);
             layout.EndHorizontal();
 
@@ -114,14 +115,14 @@ namespace EC3CarbonCalculator.UI
                 Size = new Size(380, 500)
             };
 
-            searchLayout.Add(this.DatabaseLayout());
+            searchLayout.Add(DatabaseLayout());
             searchLayout.Add(Spacer(Colors.DarkGray));
 
-            searchLayout.Add(this.searchPanel);
-            this.RepopulateSearchPanel();
+            searchLayout.Add(searchPanel);
+            RepopulateSearchPanel();
 
             searchLayout.Add(null);
-            searchLayout.Add(this.ConfirmLayout());
+            searchLayout.Add(ConfirmLayout());
 
             return searchLayout;
         }
@@ -133,7 +134,7 @@ namespace EC3CarbonCalculator.UI
                 DefaultSpacing = new Size(5, 5)
             };
 
-            switch (this.mf.dataBase)
+            switch (mf.dataBase)
             {
                 case "EC3":
                     searchLayout.Add(EC3UiElements.EC3CategoryLayout(mf));
@@ -146,7 +147,7 @@ namespace EC3CarbonCalculator.UI
                     break;
             }
 
-            this.searchPanel.Content = searchLayout;
+            searchPanel.Content = searchLayout;
         }
 
         private DynamicLayout DatabaseLayout()
@@ -174,12 +175,12 @@ namespace EC3CarbonCalculator.UI
             dbDD.DataStore = dbOptions;
             // set default values
             dbDD.SelectedIndex = 0;
-            this.mf.dataBase = dbDD.SelectedKey;
+            mf.dataBase = dbDD.SelectedKey;
             dbDD.SelectedValueChanged += (sender, e) =>
             {
-                this.mf = new MaterialFilter();
-                this.mf.dataBase = dbDD.SelectedKey;
-                this.RepopulateSearchPanel();
+                mf = new MaterialFilter();
+                mf.dataBase = dbDD.SelectedKey;
+                RepopulateSearchPanel();
             };
 
             Label dbLabel = new Label { Text = "Database" };
@@ -236,14 +237,14 @@ namespace EC3CarbonCalculator.UI
 
             // NOTE: right now only 20 EPDs are displayed per search
             // Consider implementing with more EPDs displayed...
-            foreach(EPD epd in epds.Take(20))
+            foreach (EPD epd in epds.Take(20))
             {
                 epdLayout.Add(EPDPanel(epd));
             }
 
             epdLayout.Add(null);
 
-            this.resPanel.Content = epdLayout;
+            resPanel.Content = epdLayout;
         }
 
         /// <summary>
@@ -257,8 +258,8 @@ namespace EC3CarbonCalculator.UI
                 DefaultSpacing = new Size(5, 5),
                 Padding = new Padding(10)
             };
-            Label msgLabel = new Label 
-            { 
+            Label msgLabel = new Label
+            {
                 Text = msg,
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
@@ -269,7 +270,7 @@ namespace EC3CarbonCalculator.UI
 
             // Reassigning panel content updates the current content, but simply changing
             // the dynamic layout does not.
-            this.resPanel.Content = msgLayout;
+            resPanel.Content = msgLayout;
         }
 
         /// <summary>
@@ -278,7 +279,7 @@ namespace EC3CarbonCalculator.UI
         /// <param name="epd"> EPD to display </param>
         private Panel EPDPanel(EPD epd)
         {
-            Panel bkg = new Panel { Width = resPanel.Width - 40};
+            Panel bkg = new Panel { Width = resPanel.Width - 40 };
             bkg.BackgroundColor = Colors.WhiteSmoke;
 
             Label gwp = new Label
@@ -287,22 +288,27 @@ namespace EC3CarbonCalculator.UI
                 + "CO2e/" + UnitManager.GetSystemUnitStr(doc, epd.dimension),
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
-            Label epdName = new Label 
-            { 
-                Text = epd.name, 
+            Label epdName = new Label
+            {
+                Text = epd.name,
                 Font = new Font(SystemFonts.Default().FamilyName, 12)
             };
+            if (epd.tooltip != null && epd.tooltip != "")
+            {
+                epdName.ToolTip = epd.tooltip;
+            }
             Label manufacturer = new Label
             {
                 Text = "Manufacturer: " + epd.manufacturer,
                 Font = new Font(SystemFonts.Default().FamilyName, 10),
                 TextColor = Colors.DarkSlateGray
             };
-
-            if (epd.description != null)
+            Label description = new Label
             {
-                epdName.ToolTip = epd.description;
-            }
+                Text = epd.description,
+                Font = new Font(SystemFonts.Default().FamilyName, 8),
+                TextColor = Colors.DarkSlateGray
+            };
 
             Button browserView = new Button { Text = "View in Browser" };
             Button assignButton = new Button { Text = "Assign to Object" };
@@ -335,7 +341,11 @@ namespace EC3CarbonCalculator.UI
             infoLayout.Add(epdName);
             infoLayout.Add(gwp);
             infoLayout.EndBeginHorizontal();
-            infoLayout.Add(manufacturer);
+            if (epd.manufacturer != null && epd.manufacturer != "")
+                infoLayout.Add(manufacturer);
+            infoLayout.EndBeginHorizontal();
+            if (epd.description != null && epd.description != "")
+                infoLayout.Add(description);
             infoLayout.EndBeginHorizontal();
             // These spacer lines are to make sure that the EPD name does not extend off
             // the screen... These are the times when I hate frontend.
@@ -350,7 +360,7 @@ namespace EC3CarbonCalculator.UI
             };
             buttonLayout.BeginHorizontal();
             buttonLayout.Add(null);
-            if(epd.id != null)
+            if (epd.id != null)
             {
                 buttonLayout.Add(browserView);
             }
@@ -403,7 +413,7 @@ namespace EC3CarbonCalculator.UI
 
         public MaterialFilter GetMaterialFilter()
         {
-            return this.mf;
+            return mf;
         }
 
         // unused for now...
@@ -437,7 +447,7 @@ namespace EC3CarbonCalculator.UI
         /// pressed to the class that's actually implementing the assigning (which would
         /// be SearchEPD)
         /// </summary>
-        internal class AssignEventArgs: EventArgs
+        internal class AssignEventArgs : EventArgs
         {
             public EPD Epd { get; set; }
             public AssignEventArgs(EPD epd)

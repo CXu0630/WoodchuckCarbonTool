@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 
-namespace EC3CarbonCalculator
+namespace EC3CarbonCalculator.src
 {
     internal class EC3Request
     {
@@ -27,7 +27,7 @@ namespace EC3CarbonCalculator
         /// <summary>
         /// Sends a request for category data to EC3 for one category.
         /// </summary>
-        public static string GetCategoryData (string category)
+        public static string GetCategoryData(string category)
         {
             var url = "https://buildingtransparency.org/api/categories/" + category;
             return SendGetRequest(url);
@@ -37,7 +37,7 @@ namespace EC3CarbonCalculator
         /// Sends a request for a material search based on a MaterialFilter formatted by 
         /// the EC3MaterialFilter class.
         /// </summary>
-        public static string GetMaterialData (string mf)
+        public static string GetMaterialData(string mf)
         {
             var baseUrl = "https://buildingtransparency.org/api/materials";
             var query = "?mf=" + mf;
@@ -52,7 +52,7 @@ namespace EC3CarbonCalculator
         public static string GetCategoryTree()
         {
             var url = "https://buildingtransparency.org/api/categories/root";
-            return  SendGetRequest(url);
+            return SendGetRequest(url);
         }
 
         /// <summary>
