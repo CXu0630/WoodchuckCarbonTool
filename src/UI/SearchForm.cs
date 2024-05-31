@@ -490,6 +490,34 @@ namespace EC3CarbonCalculator.src.UI
                 "GWP of a material.",
                 Width = this.resPanel.Width - 40
             };
+            Label ec3Title = new Label
+            {
+                Text = "What is Embodied Carbon in Construction Calculator (EC3)?",
+                Font = new Font(SystemFonts.Default().FamilyName, 12),
+                Width = this.resPanel.Width - 40
+            };
+            Label ec3Label = new Label
+            {
+                Text = "The EC3 tool is a database that allows benchmarking, " +
+                "assessments, and reductions in embodied carbon. It has a robust " +
+                "database of digital, third-party verified EPDs. This plugin uses EC3's " +
+                "database to access real-time EPDs.",
+                Width = this.resPanel.Width - 40
+            };
+            Label clfTitle = new Label
+            {
+                Text = "What is Carbon Leadership Forum (CLF)?",
+                Font = new Font(SystemFonts.Default().FamilyName, 12),
+                Width = this.resPanel.Width - 40
+            };
+            Label clfLabel = new Label
+            {
+                Text = "The Carbon Leadership Forum is an independend nonprofit organization " +
+                "with the goal of reducing embodied carbon in buildings and infrastructure. " +
+                "The CLF provides various research initiatives and reports pertaining to " +
+                "embodied carbon. This tool uses the CLF's Material Baseline Report from 2023.",
+                Width = this.resPanel.Width - 40
+            };
 
             dl.Add(whatTitle);
             dl.Add(whatLabel);
@@ -505,6 +533,12 @@ namespace EC3CarbonCalculator.src.UI
             dl.Add(Spacer(Colors.WhiteSmoke));
             dl.Add(epdTitle);
             dl.Add(epdLabel);
+            dl.Add(Spacer(Colors.WhiteSmoke));
+            dl.Add(ec3Title);
+            dl.Add(ec3Label);
+            dl.Add(Spacer(Colors.WhiteSmoke));
+            dl.Add(clfTitle);
+            dl.Add(clfLabel);
             dl.Add(null);
 
             this.resPanel.Content = dl;
