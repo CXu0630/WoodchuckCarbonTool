@@ -11,8 +11,7 @@ Use the SearchEPD command to search the carbon databases for materials that fit 
 ### What does it do?
 - __Database connection__
   - makes various carbon databases available from Rhino (all the current tools in the carbon => Rhino / Grasshopper category are either no longer maintained or not yet well developed)
-  - EC3 (real-time-ish data from manufacturers), CLF Materials Baseline (compiled industry
-    - wide material data), Kaleidoscope (compiled industry-wide assembly data)
+  - EC3 (real-time-ish data from manufacturers), CLF Materials Baseline (compiled industry wide material data), Kaleidoscope (compiled industry-wide assembly data)
 - __Geometric calculator__
   - extracts material quantities from Rhino geometry and quickly calculates carbon
 - __Carbon education (?) tool__
