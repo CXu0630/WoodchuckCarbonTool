@@ -1,7 +1,7 @@
 using Rhino;
 using Rhino.DocObjects;
 
-namespace EC3CarbonCalculator.src.EC3
+namespace WoodchuckCarbonTool.src.EC3
 {
     // WARNING: something will likely go wrong with this code when used on blocks
     /// <summary>

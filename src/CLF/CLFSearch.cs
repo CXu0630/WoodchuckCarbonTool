@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// Counterpart of EC3Request

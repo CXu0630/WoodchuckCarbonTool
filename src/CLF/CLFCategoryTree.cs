@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     internal class CLFCategoryTree
     {

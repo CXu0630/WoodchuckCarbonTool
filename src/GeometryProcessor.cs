@@ -1,7 +1,7 @@
 ﻿using Rhino.DocObjects;
 using Rhino.Geometry;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     internal class GeometryProcessor
     {

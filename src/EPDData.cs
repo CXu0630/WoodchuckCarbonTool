@@ -3,7 +3,7 @@ using Rhino.FileIO;
 using System;
 using System.Runtime.InteropServices;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     [Serializable]
     [Guid("847b706e-f578-47eb-a8f0-b440584e5e2d")]

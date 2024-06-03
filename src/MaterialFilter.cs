@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using EC3CarbonCalculator.src.EC3;
+using WoodchuckCarbonTool.src.EC3;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// This class is used to store search criterea for materials in EC3. EC3 uses a 

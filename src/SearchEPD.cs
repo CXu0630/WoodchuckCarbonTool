@@ -1,5 +1,5 @@
-using EC3CarbonCalculator.src.EC3;
-using EC3CarbonCalculator.src.UI;
+using WoodchuckCarbonTool.src.EC3;
+using WoodchuckCarbonTool.src.UI;
 using Eto.Forms;
 using Newtonsoft.Json.Linq;
 using Rhino;
@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using UnitsNet;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// This is the core Rhino command used to search EPDs and assign them to Rhino

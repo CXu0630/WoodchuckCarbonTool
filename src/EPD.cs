@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnitsNet;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// Container for GWP data and corresponding metadata. This class is currently built

@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// This is supposed to be a helper class with static methods to aid file IO. Not sure
@@ -30,7 +30,7 @@ namespace EC3CarbonCalculator.src
             var assembly = Assembly.GetExecutingAssembly();
 
             // Create a list to hold each line's list of items
-            var resourceName = "EC3CarbonCalculator.EmbeddedResources." + filename + ".csv";
+            var resourceName = "WoodchuckCarbonTool.EmbeddedResources." + filename + ".csv";
 
 
             var csvData = ReadCsvFromEmbeddedResource(resourceName);

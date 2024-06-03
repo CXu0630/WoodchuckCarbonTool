@@ -1,11 +1,11 @@
-using EC3CarbonCalculator.src.UI;
+using WoodchuckCarbonTool.src.UI;
 using Rhino;
 using Rhino.Commands;
 using Rhino.UI;
 using System;
 using UnitsNet;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// Rhino command that retreives the GWP of a selection of objects. For now, this

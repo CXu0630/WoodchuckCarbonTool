@@ -1,4 +1,4 @@
-namespace EC3CarbonCalculator.src.EC3
+namespace WoodchuckCarbonTool.src
 {
     ///<summary>
     /// <para>Every RhinoCommon .rhp assembly must have one and only one PlugIn-derived
@@ -8,15 +8,15 @@ namespace EC3CarbonCalculator.src.EC3
     /// attributes in AssemblyInfo.cs (you might need to click "Project" ->
     /// "Show All Files" to see it in the "Solution Explorer" window).</para>
     ///</summary>
-    public class EC3CarbonCalculatorPlugin : Rhino.PlugIns.PlugIn
+    public class WoodchuckCarbonToolPlugin : Rhino.PlugIns.PlugIn
     {
-        public EC3CarbonCalculatorPlugin()
+        public WoodchuckCarbonToolPlugin()
         {
             Instance = this;
         }
 
-        ///<summary>Gets the only instance of the EC3CarbonCalculatorPlugin plug-in.</summary>
-        public static EC3CarbonCalculatorPlugin Instance { get; private set; }
+        ///<summary>Gets the only instance of the WoodchuckCarbonToolPlugin plug-in.</summary>
+        public static WoodchuckCarbonToolPlugin Instance { get; private set; }
 
         // You can override methods here to change the plug-in behavior on
         // loading and shut down, add options pages to the Rhino _Option command

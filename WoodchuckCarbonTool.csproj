@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <Version>1.0</Version>
-    <Title>EC3CarbonCalculator</Title>
-    <Description>Description of EC3CarbonCalculator</Description>
+    <Title>WoodchuckCarbonTool</Title>
+    <Description>Description of WoodchuckCarbonTool</Description>
     <TargetExt>.rhp</TargetExt>
   </PropertyGroup>
 
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <None Include="Archive\AssignEPD.cs" />
-    <None Include="C:\Users\chloe.xu\source\repos\EC3CarbonCalculator\.editorconfig" />
+    <None Include="C:\Users\chloe.xu\source\repos\WoodchuckCarbonTool\.editorconfig" />
     <None Include="src\Tester.cs" />
   </ItemGroup>
   
@@ -32,7 +32,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\chloe.xu\source\repos\EC3CarbonCalculator\.editorconfig" />
+    <EditorConfigFiles Remove="C:\Users\chloe.xu\source\repos\WoodchuckCarbonTool\.editorconfig" />
   </ItemGroup>
   
   <ItemGroup>

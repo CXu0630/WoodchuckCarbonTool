@@ -3,7 +3,7 @@ using Rhino;
 using System;
 using UnitsNet;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// Helper class containing static methods used to parse and retreive units. Depends

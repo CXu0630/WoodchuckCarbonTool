@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     internal class GeographyCodes
     {
@@ -31,7 +31,7 @@ namespace EC3CarbonCalculator.src
         private void PopulateAreaCodeLists(string csvName, out List<string> names, out List<string> codes)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "EC3CarbonCalculator.EmbeddedResources." + csvName + ".csv";
+            var resourceName = "WoodchuckCarbonTool.EmbeddedResources." + csvName + ".csv";
 
             List<string> areaNames = new List<string>();
             List<string> areaCodes = new List<string>();

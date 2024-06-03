@@ -3,7 +3,7 @@ using Eto.Forms;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EC3CarbonCalculator.src.UI
+namespace WoodchuckCarbonTool.src.UI
 {
     internal class CLFUiElements
     {

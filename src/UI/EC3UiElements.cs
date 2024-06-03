@@ -1,11 +1,11 @@
-using EC3CarbonCalculator.src.EC3;
+using WoodchuckCarbonTool.src.EC3;
 using Eto.Drawing;
 using Eto.Forms;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace EC3CarbonCalculator.src.UI
+namespace WoodchuckCarbonTool.src.UI
 {
     internal class EC3UiElements
     {

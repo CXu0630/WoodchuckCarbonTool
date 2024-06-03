@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using UnitsNet;
 
-namespace EC3CarbonCalculator.src.EC3
+namespace WoodchuckCarbonTool.src.EC3
 {
     /// <summary>
     /// A singleton class that contains EC3 category information. It stores the category

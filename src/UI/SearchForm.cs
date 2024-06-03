@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EC3CarbonCalculator.src.UI
+namespace WoodchuckCarbonTool.src.UI
 {
     /// <summary>
     /// This class defines an ETO form used to search the EC3 database for EPDs and

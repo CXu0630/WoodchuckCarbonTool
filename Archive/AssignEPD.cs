@@ -9,7 +9,7 @@ using Rhino.DocObjects.Custom;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace EC3CarbonCalculator
+namespace WoodchuckCarbonTool
 {
     public class AssignEPD : Command
     {

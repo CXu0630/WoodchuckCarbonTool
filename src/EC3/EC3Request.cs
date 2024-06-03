@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace EC3CarbonCalculator.src.EC3
+namespace WoodchuckCarbonTool.src.EC3
 {
     internal class EC3Request
     {

@@ -1,7 +1,7 @@
 using Rhino.Commands;
 using Rhino.DocObjects;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// This class is used to assign EPDs to Rhino objects and retreive those EPDs for

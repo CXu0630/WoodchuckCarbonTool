@@ -4,7 +4,7 @@ using Rhino.UI;
 using System;
 using System.ComponentModel;
 
-namespace EC3CarbonCalculator.src.UI
+namespace WoodchuckCarbonTool.src.UI
 {
     /// <summary>
     /// ETO form to display EPD calculation results in. For now, it's just a very simple

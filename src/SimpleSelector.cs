@@ -23,7 +23,7 @@ using Rhino.DocObjects;
 using Rhino.Input;
 using Rhino.Input.Custom;
 
-namespace EC3CarbonCalculator.src
+namespace WoodchuckCarbonTool.src
 {
     public class SimpleSelector
     {

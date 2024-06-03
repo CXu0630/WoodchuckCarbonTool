@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Policy;
-using EC3CarbonCalculator.src;
-using EC3CarbonCalculator.src.UI;
+using WoodchuckCarbonTool.src;
+using WoodchuckCarbonTool.src.UI;
 using Newtonsoft.Json.Linq;
 using Rhino;
 using Rhino.Commands;
@@ -13,7 +13,7 @@ using Rhino.UI;
 using UnitsNet;
 using UnitsNet.Units;
 
-namespace EC3CarbonCalculator
+namespace WoodchuckCarbonTool
 {
     /// <summary>
     /// Rhino command used for testing. Change the build action to C# if using, and 

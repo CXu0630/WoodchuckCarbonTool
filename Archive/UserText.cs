@@ -1,7 +1,7 @@
 ﻿using Rhino.Commands;
 using Rhino.Input;
 
-namespace EC3CarbonCalculator
+namespace WoodchuckCarbonTool
 {
     internal class UserText
     {
