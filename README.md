@@ -1,6 +1,6 @@
-## What is this tool?
+## What is Woodchuck?
 
-This plugin is used to provide easy access to the EC3 carbon database (and hopefully other carbon databases in near future) from within Rhino. It includes calculator functionality that can be used to quickly calculate embodied carbon of modeled geometry.
+Woodchuck is used to provide easy access to various embodied carbon databases from within Rhino. It includes calculator functionality that can be used to quickly calculate embodied carbon of modeled geometry.
 
 ## How to use this tool?
 
