@@ -4,15 +4,21 @@ using Eto.Forms;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace WoodchuckCarbonTool.src.UI
 {
     internal class EC3UiElements
     {
+        public delegate void CategoryChangeHandler(object sender, CategoryChangeEventArgs e);
+        public event CategoryChangeHandler CategoryChangeEvent;
+
+        public EC3UiElements() { }
+
         /// <summary>
         /// This method creates a dynamic layout for material search parameters.
         /// </summary>
-        public static DynamicLayout EC3CategoryLayout(MaterialFilter mf)
+        public DynamicLayout EC3CategoryLayout(MaterialFilter mf)
         {
             // Use category names retreived from EC3 by the Category Tree as dropdown
             // option names.
@@ -38,12 +44,15 @@ namespace WoodchuckCarbonTool.src.UI
             DropDown catDD = new DropDown();
             catDD.DataStore = catOptions;
             // set default values
-            catDD.SelectedIndex = 47;
+            int defaultIdx = 2;
+            catDD.SelectedIndex = defaultIdx;
             mf.SetEC3Category(catDD.SelectedKey);
+            CategoryChangeEvent.Invoke(catDD, new CategoryChangeEventArgs(ct.names[defaultIdx]));
             // set listener
             catDD.SelectedValueChanged += (sender, e) =>
             {
                 mf.SetEC3Category(catDD.SelectedKey);
+                CategoryChangeEvent.Invoke(sender, new CategoryChangeEventArgs(catDD.SelectedKey));
             };
 
             Label catLabel = new Label { Text = "Category" };
@@ -67,7 +76,7 @@ namespace WoodchuckCarbonTool.src.UI
         /// Preliminary search parameter layout used in our prototype.
         /// </summary>
         /// <returns> dynamic layout of search fields </returns>
-        public static DynamicLayout EC3GeneralSearchLayout(MaterialFilter mf)
+        public DynamicLayout EC3GeneralSearchLayout(MaterialFilter mf)
         {
             GeographyCodes gc = GeographyCodes.Instance;
 
@@ -164,6 +173,15 @@ namespace WoodchuckCarbonTool.src.UI
             genLayout.Add(null);
 
             return genLayout;
+        }
+    }
+
+    internal class CategoryChangeEventArgs : EventArgs
+    {
+        public string category;
+        public CategoryChangeEventArgs(string cat)
+        {
+            category = cat;
         }
     }
 }

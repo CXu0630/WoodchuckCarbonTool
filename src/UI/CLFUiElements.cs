@@ -1,5 +1,6 @@
 using Eto.Drawing;
 using Eto.Forms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,9 @@ namespace WoodchuckCarbonTool.src.UI
     internal class CLFUiElements
     {
         public Panel clfPanel;
+
+        public delegate void CategoryChangeHandler(object sender, CategoryChangeEventArgs e);
+        public event CategoryChangeHandler CategoryChangeEvent;
 
         public CLFUiElements()
         {
@@ -41,8 +45,10 @@ namespace WoodchuckCarbonTool.src.UI
             DropDown catDD = new DropDown();
             catDD.DataStore = catOptions;
             // set default values
-            catDD.SelectedIndex = 1;
+            int defaultIdx = 1;
+            catDD.SelectedIndex = defaultIdx;
             mf.SetCLFCategory(catDD.SelectedKey);
+            CategoryChangeEvent.Invoke(catDD, new CategoryChangeEventArgs(CLFCategoryTree.categoryNames[defaultIdx]));
             // set listener
             catDD.SelectedValueChanged += (sender, e) =>
             {
@@ -52,6 +58,7 @@ namespace WoodchuckCarbonTool.src.UI
                     mf.SetCLFRegion(null);
                 }
                 RepopulateCLFPanel(mf);
+                CategoryChangeEvent.Invoke(this, new CategoryChangeEventArgs(catDD.SelectedKey));
             };
 
             Label catLabel = new Label { Text = "Category" };
@@ -103,6 +110,15 @@ namespace WoodchuckCarbonTool.src.UI
             dl.EndHorizontal();
 
             return dl;
+        }
+
+        internal class CategoryChangeEventArgs : EventArgs
+        {
+            public string category;
+            public CategoryChangeEventArgs(string cat)
+            {
+                category = cat;
+            }
         }
     }
 }

@@ -20,7 +20,8 @@ namespace WoodchuckCarbonTool.src
     public class SearchEPD : Rhino.Commands.Command
     {
         // ETO form that hosts the search window
-        private SearchForm form { get; set; }
+        private SearchForm searchForm { get; set; }
+        private MaterialQuantityOptionsForm qForm { get; set; }
 
         public SearchEPD()
         {
@@ -34,22 +35,22 @@ namespace WoodchuckCarbonTool.src
         {
             MaterialFilter mf = new MaterialFilter();
 
-            if (form == null)
+            if (searchForm == null)
             {
-                form = new SearchForm(mf) { Owner = RhinoEtoApp.MainWindow };
-                form.Closed += OnFormClosed;
-                form.Show();
+                searchForm = new SearchForm(mf) { Owner = RhinoEtoApp.MainWindow };
+                searchForm.Closed += OnFormClosed;
+                searchForm.Show();
             }
 
-            form.BringToFront();
-            form.PopulateStartupMessage();
+            searchForm.BringToFront();
+            searchForm.PopulateStartupMessage();
 
             List<EPD> epds = new List<EPD>();
             EPD avgEPD = null;
             // Event listener: a search event is called
-            form.SearchEvent += (s, e) =>
+            searchForm.SearchEvent += (s, e) =>
             {
-                mf = form.GetMaterialFilter();
+                mf = searchForm.GetMaterialFilter();
 
                 switch (mf.dataBase)
                 {
@@ -66,7 +67,7 @@ namespace WoodchuckCarbonTool.src
                 if (epds == null)
                 {
                     Application.Instance.Invoke(() =>
-                    form.RepopulateResultMessage("There was an error accessing the EC3 server."));
+                    searchForm.RepopulateResultMessage("There was an error accessing the EC3 server."));
                     return;
                 }
                 // NO RES: there weren't any EPDs found with these particular 
@@ -74,22 +75,28 @@ namespace WoodchuckCarbonTool.src
                 if (epds.Count == 0)
                 {
                     Application.Instance.Invoke(() =>
-                    form.RepopulateResultMessage("No valid results were found for your " +
+                    searchForm.RepopulateResultMessage("No valid results were found for your " +
                         "input parameters.\nTry broadening your search."));
                     return;
                 }
-                Application.Instance.Invoke(() => form.RepopulateSearchResult(epds, avgEPD));
+                Application.Instance.Invoke(() => searchForm.RepopulateSearchResult(epds, avgEPD));
             };
 
             // Event listener: an assign event is called
-            form.AssignEvent += (s, e) =>
+            searchForm.AssignEvent += (s, e) =>
             {
-                form.WindowState = WindowState.Minimized;
+                searchForm.WindowState = WindowState.Minimized;
                 EC3Selector geoSelector = new EC3Selector(e.Epd.dimension);
                 ObjRef[] objRefs = geoSelector.GetSelection();
 
                 EPDManager.Assign(objRefs, e.Epd);
-                form.WindowState = WindowState.Normal;
+                searchForm.WindowState = WindowState.Normal;
+            };
+
+            qForm.PercentageEvent += (s, e) =>
+            {
+                qForm.Close();
+
             };
 
             return Result.Success;
@@ -97,8 +104,8 @@ namespace WoodchuckCarbonTool.src
 
         private void OnFormClosed(object sender, EventArgs e)
         {
-            form.Dispose();
-            form = null;
+            searchForm.Dispose();
+            searchForm = null;
         }
 
         /// <summary>

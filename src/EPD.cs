@@ -23,6 +23,7 @@ namespace WoodchuckCarbonTool.src
         public string category { get; }
         public string manufacturer { get; }
         public int dimension { get; }
+        public int percentageSolid { get; set; }
 
         public string description = null;
         public string tooltip = null;

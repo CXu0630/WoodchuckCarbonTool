@@ -19,6 +19,7 @@ namespace WoodchuckCarbonTool.src.UI
     internal class SearchForm : Form
     {
         CLFUiElements clfUi;
+        EC3UiElements ec3Ui;
         // All search prameters are stored in the mf instead of individually
         MaterialFilter mf;
         Button search = new Button { Text = "Search" };
@@ -27,6 +28,7 @@ namespace WoodchuckCarbonTool.src.UI
         // This is public as it needs to be edditable by multiple methods.
         Scrollable resPanel;
         Panel searchPanel;
+        Panel descriptionPanel;
 
         // This event is used to signal when the search button has been pressed:
         // search parameters are locked in and an EPD search is performed.
@@ -45,6 +47,7 @@ namespace WoodchuckCarbonTool.src.UI
         /// will be stored. </param>
         public SearchForm(MaterialFilter mf)
         {
+            ec3Ui = new EC3UiElements();
             clfUi = new CLFUiElements();
             this.mf = mf;
             WindowStyle = WindowStyle.Default;
@@ -65,6 +68,17 @@ namespace WoodchuckCarbonTool.src.UI
             };
             resPanel.BackgroundColor = Colors.LightGrey;
             //
+
+            descriptionPanel = new Panel();
+
+            ec3Ui.CategoryChangeEvent += (s, e) =>
+            {
+                RepopulateDescriptionPanel(e.category);
+            };
+            clfUi.CategoryChangeEvent += (s, e) =>
+            {
+                RepopulateDescriptionPanel(e.category);
+            };
 
             searchPanel = new Panel();
             // Two basic layouts: one for search parameters, one for search results
@@ -112,8 +126,12 @@ namespace WoodchuckCarbonTool.src.UI
 
             searchLayout.Add(searchPanel);
             RepopulateSearchPanel();
+            searchLayout.Add(Spacer(Colors.DarkGray));
 
             searchLayout.Add(null);
+
+            searchLayout.Add(descriptionPanel);
+
             searchLayout.Add(ConfirmLayout());
 
             return searchLayout;
@@ -129,9 +147,9 @@ namespace WoodchuckCarbonTool.src.UI
             switch (mf.dataBase)
             {
                 case "EC3":
-                    searchLayout.Add(EC3UiElements.EC3CategoryLayout(mf));
+                    searchLayout.Add(ec3Ui.EC3CategoryLayout(mf));
                     searchLayout.Add(Spacer(Colors.DarkGray));
-                    searchLayout.Add(EC3UiElements.EC3GeneralSearchLayout(mf));
+                    searchLayout.Add(ec3Ui.EC3GeneralSearchLayout(mf));
                     break;
                 case "CLF":
                     searchLayout.Add(clfUi.CLFCategoryLayout(mf));
@@ -189,6 +207,40 @@ namespace WoodchuckCarbonTool.src.UI
             dbLayout.EndHorizontal();
 
             return dbLayout;
+        }
+
+        public void RepopulateDescriptionPanel(string category)
+        {
+            string description = CategoryDescriptions.Instance.GetCategoryDescription(category);
+            if (description == null) { descriptionPanel.Content = null; return; }
+
+            Label titleLbl = new Label
+            {
+                Text = "Tips on " + category,
+                Width = 380 - 20,
+                TextColor = Colors.Gray,
+            };
+
+            Label descriptionLbl = new Label
+            {
+                Text = CategoryDescriptions.Instance.GetCategoryDescription(category),
+                Font = new Font(SystemFonts.Default().FamilyName, 8),
+                TextColor = Colors.Gray,
+                Width = 380 - 20
+            };
+
+            DynamicLayout lyt = new DynamicLayout
+            {
+                DefaultSpacing = new Size(5, 5),
+                Size = new Size(380-20, 200)
+            };
+
+            lyt.Add(titleLbl);
+            lyt.Add(descriptionLbl);
+            lyt.Add(null);
+
+            descriptionPanel.Content = lyt;
+            return;
         }
 
         /// <summary>
@@ -557,5 +609,6 @@ namespace WoodchuckCarbonTool.src.UI
                 Epd = epd;
             }
         }
+
     }
 }
