@@ -14,7 +14,9 @@ namespace WoodchuckCarbonTool.src.UI
         public delegate void PercentageEventHandler(object sender, PercentageEventArgs e);
         public event PercentageEventHandler PercentageEvent;
 
-        public MaterialQuantityOptionsForm() 
+        public Panel errorPanel;
+
+        public MaterialQuantityOptionsForm(EPD epd) 
         {
             WindowStyle = WindowStyle.Default;
             Maximizable = false;
@@ -25,6 +27,8 @@ namespace WoodchuckCarbonTool.src.UI
             Title = "Material Quantity Options";
             MinimumSize = new Size(300, 200);
 
+            errorPanel = new Panel();
+
             DynamicLayout layout = new DynamicLayout
             {
                 DefaultSpacing = new Size(5, 5),
@@ -33,42 +37,87 @@ namespace WoodchuckCarbonTool.src.UI
 
             Label lbl = new Label
             {
-                Text = "Percentage of solid material\n" +
-                "in modeled object: "
+                Text = "Percentage of solid material in modeled object: ",
+                Width = 100
             };
 
-            Slider sldr = new Slider
+            TextBox textBox = new TextBox
             {
-                MinValue = 0,
-                MaxValue = 100,
-                Orientation = Orientation.Horizontal,
-                Value = 100,
-                Width = lbl.Width
+                PlaceholderText = "100",
+                Width = 60
             };
 
             Button confirm = new Button
             {
-                Text = "Confirm"
+                Text = "Confirm",
+                Width = 60
             };
             confirm.Click += (sender, e) =>
             {
-                PercentageEvent.Invoke(confirm, new PercentageEventArgs(sldr.Value));
+                int percentage = CheckPercentage(textBox.Text);
+
+                if (percentage != -1)
+                {
+                    epd.percentageSolid = percentage;
+                    PercentageEvent.Invoke(confirm, new PercentageEventArgs(epd));
+                }
             };
 
-            layout.Add(new Panel());
+            layout.Add(null);
+            layout.BeginHorizontal();
             layout.Add(lbl);
-            layout.Add(sldr);
+            layout.Add(textBox);
+            layout.EndBeginHorizontal();
+            layout.Add(null);
+            layout.Add(new Panel());
+            layout.EndHorizontal();
+            layout.Add(null);
+            layout.BeginHorizontal();
+            layout.Add(errorPanel);
             layout.Add(confirm);
+            layout.EndHorizontal();
 
             this.Content = layout;
         }
 
+        private int CheckPercentage(string text)
+        {
+            if ( text == "" )
+            {
+                return 100;
+            }
+            if (int.TryParse(text, out var percentage))
+            {
+                if (percentage > 0 && percentage <= 100) return percentage;
+                RepopulateErrorPanel("Please enter a number between 1 to 100.");
+                return -1;
+            }
+            RepopulateErrorPanel("Please enter a number.");
+            return -1;
+        }
+
+        private void RepopulateErrorPanel (string errormsg)
+        {
+            DynamicLayout lyt = new DynamicLayout();
+
+            Label error = new Label
+            {
+                Text = errormsg,
+                TextColor = Colors.Red,
+                Width = 90
+            };
+
+            lyt.Add(error);
+
+            this.errorPanel.Content = lyt;
+        }
+
         internal class PercentageEventArgs : EventArgs
         {
-            public double percentage;
-            public PercentageEventArgs(double percentage)
+            public EPD epd;
+            public PercentageEventArgs(EPD epd)
             {
-                this.percentage = percentage;
+                this.epd = epd;
             }
         }
     }

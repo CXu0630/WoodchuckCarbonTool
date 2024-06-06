@@ -54,7 +54,7 @@ namespace WoodchuckCarbonTool.src
                 double unitGWP = epd.GetGwpConverted(unit).Value;
                 if (dimension == -1) dimension = epd.dimension;
 
-                totalGWP += quantity * unitGWP;
+                totalGWP += quantity * unitGWP * epd.percentageSolid / 100;
             }
 
             string rsltStr = "Total GWP of Selected Objects: \n" + totalGWP.ToString("F3") +

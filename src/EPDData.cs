@@ -49,6 +49,7 @@ namespace WoodchuckCarbonTool.src
             dict.Set("EPD Density Val", epd.density.Value);
             dict.Set("EPD Density Unit", densityUnit);
             dict.Set("EPD Id", epd.id);
+            dict.Set("EPD Percentage Solid", epd.percentageSolid);
 
             // Write the dictionary to the archive
             archive.WriteDictionary(dict);
@@ -82,6 +83,7 @@ namespace WoodchuckCarbonTool.src
                 double densityVal = 0;
                 string densityUnit = null;
                 string id = null;
+                int percentageSolid = 100;
 
                 if (dict.ContainsKey("EPD Name"))
                     name = dict["EPD Name"] as string;
@@ -101,9 +103,12 @@ namespace WoodchuckCarbonTool.src
                     densityUnit = dict["EPD Density Unit"] as string;
                 if (dict.ContainsKey("EPD Id"))
                     id = dict["EPD Id"] as string;
+                if (dict.ContainsKey("EPD Percentage Solid"))
+                    percentageSolid = (int)dict["EPD Percentage Solid"];
 
                 epd = new EPD(name, gwp, unit, densityVal, densityUnit, category,
                     dimension, mf, manufacturer, id);
+                epd.percentageSolid = percentageSolid;
 
                 return true; // Successfully read all data
             }

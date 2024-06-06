@@ -192,7 +192,7 @@ namespace WoodchuckCarbonTool.src
         {
             IQuantity unit;
 
-            string unitSystem = doc.GetUnitSystemName(true, false, true, true);
+            string unitSystem = RhinoDoc.ActiveDoc.GetUnitSystemName(true, false, true, true);
 
             Length lengthUnit = (Length)Quantity.Parse(typeof(Length), "1 " + unitSystem);
             Area areaUnit = lengthUnit * lengthUnit;

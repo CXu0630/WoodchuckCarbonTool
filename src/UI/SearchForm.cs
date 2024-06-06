@@ -56,7 +56,7 @@ namespace WoodchuckCarbonTool.src.UI
             Padding = new Padding(5);
             Resizable = true;
             ShowInTaskbar = true;
-            Title = "EC3 Material GWP Search";
+            Title = "Woodchuck Material Search";
             MinimumSize = new Size(900, 500);
 
             doc = RhinoDoc.ActiveDoc;
@@ -603,10 +603,10 @@ namespace WoodchuckCarbonTool.src.UI
         /// </summary>
         internal class AssignEventArgs : EventArgs
         {
-            public EPD Epd { get; set; }
+            public EPD epd { get; set; }
             public AssignEventArgs(EPD epd)
             {
-                Epd = epd;
+                this.epd = epd;
             }
         }
 

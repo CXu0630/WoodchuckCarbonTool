@@ -86,18 +86,29 @@ namespace WoodchuckCarbonTool.src
             searchForm.AssignEvent += (s, e) =>
             {
                 searchForm.WindowState = WindowState.Minimized;
-                EC3Selector geoSelector = new EC3Selector(e.Epd.dimension);
-                ObjRef[] objRefs = geoSelector.GetSelection();
+                if (qForm == null)
+                {
+                    qForm = new MaterialQuantityOptionsForm(e.epd) { Owner = RhinoEtoApp.MainWindow };
+                    qForm.Closed += OnQFormClosed;
+                    qForm.Show();
+                }
 
-                EPDManager.Assign(objRefs, e.Epd);
-                searchForm.WindowState = WindowState.Normal;
+                qForm.PercentageEvent += (s2, e2) =>
+                {
+                    qForm.Close();
+                    EC3Selector geoSelector = new EC3Selector(e2.epd.dimension);
+                    ObjRef[] objRefs = geoSelector.GetSelection();
+
+                    Result rslt = EPDManager.Assign(objRefs, e2.epd);
+                    if (rslt != Result.Success)
+                    {
+                        RhinoApp.WriteLine("Assignment canceled, No objects selected");
+                    }
+                    searchForm.WindowState = WindowState.Normal;
+                };
             };
 
-            qForm.PercentageEvent += (s, e) =>
-            {
-                qForm.Close();
-
-            };
+            
 
             return Result.Success;
         }
@@ -106,6 +117,12 @@ namespace WoodchuckCarbonTool.src
         {
             searchForm.Dispose();
             searchForm = null;
+        }
+
+        private void OnQFormClosed(object sender, EventArgs e)
+        {
+            qForm.Dispose();
+            qForm = null;
         }
 
         /// <summary>
