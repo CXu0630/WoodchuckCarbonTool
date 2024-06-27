@@ -1,7 +1,7 @@
 using Rhino;
 using Rhino.DocObjects;
 
-namespace WoodchuckCarbonTool.src.EC3
+namespace WoodchuckCarbonTool.src
 {
     // WARNING: something will likely go wrong with this code when used on blocks
     /// <summary>
@@ -11,11 +11,11 @@ namespace WoodchuckCarbonTool.src.EC3
     /// method... These specific customizations might become unnecessary once we use a
     /// more robust system for getting material quantity.
     /// </summary>
-    internal class EC3Selector : SimpleSelector
+    internal class WCKSelector : SimpleSelector
     {
         int dimension = 3;
 
-        public EC3Selector(int dimension)
+        public WCKSelector(int dimension)
         {
             this.dimension = dimension;
         }

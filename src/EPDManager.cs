@@ -5,7 +5,8 @@ namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// This class is used to assign EPDs to Rhino objects and retreive those EPDs for
-    /// calculations
+    /// calculations. It makes use of EPDData as the wrapper class for EPD objects
+    /// so that EPDs can be read and written with the Rhino file.
     /// </summary>
     internal class EPDManager
     {

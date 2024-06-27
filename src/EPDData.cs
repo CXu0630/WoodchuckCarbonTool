@@ -7,6 +7,10 @@ namespace WoodchuckCarbonTool.src
 {
     [Serializable]
     [Guid("847b706e-f578-47eb-a8f0-b440584e5e2d")]
+
+    /// This class is specific to implementing EPD IO in Rhino. On file save, the data
+    /// from the EPD is serialized and stored, and on file load, is is read and
+    /// reconstructed into an EPD object.
     public class EPDData : UserData
     {
         public EPD epd { get; set; }

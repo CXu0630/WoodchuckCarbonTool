@@ -281,7 +281,7 @@ namespace WoodchuckCarbonTool.src.UI
 
             // NOTE: right now only 20 EPDs are displayed per search
             // Consider implementing with more EPDs displayed...
-            foreach (EPD epd in epds.Take(20))
+            foreach (EPD epd in epds.Take(30))
             {
                 epdLayout.Add(EPDPanel(epd));
             }

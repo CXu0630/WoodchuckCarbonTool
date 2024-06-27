@@ -96,7 +96,7 @@ namespace WoodchuckCarbonTool.src
                 qForm.PercentageEvent += (s2, e2) =>
                 {
                     qForm.Close();
-                    EC3Selector geoSelector = new EC3Selector(e2.epd.dimension);
+                    WCKSelector geoSelector = new WCKSelector(e2.epd.dimension);
                     ObjRef[] objRefs = geoSelector.GetSelection();
 
                     Result rslt = EPDManager.Assign(objRefs, e2.epd);
