@@ -10,7 +10,6 @@ namespace WoodchuckCarbonTool.src.Kaleidoscope
     {
         public static string[] categoryNames = new string[] {"Wall", "Ceiling", 
             "Flooring", "Partitions", "Envelopes"};
-        public static int[] dimensions = new int[] { 3, 3, 3, 3, 3, 3, 2, 2, 3, 2 };
 
         public static int GetDimension(string categoryName)
         {

@@ -9,6 +9,7 @@ using Rhino.UI;
 using System;
 using System.Collections.Generic;
 using UnitsNet;
+using WoodchuckCarbonTool.src.Kaleidoscope;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -59,6 +60,10 @@ namespace WoodchuckCarbonTool.src
                         break;
                     case "CLF":
                         epds = CLFSearch.Instance.Search(mf);
+                        avgEPD = null;
+                        break;
+                    case "Kaleidoscope":
+                        epds = KaleidoscopeSearch.Instance.Search(mf);
                         avgEPD = null;
                         break;
                 }

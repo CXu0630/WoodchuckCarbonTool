@@ -20,6 +20,7 @@ namespace WoodchuckCarbonTool.src.UI
     {
         CLFUiElements clfUi;
         EC3UiElements ec3Ui;
+        KaleidoscopeUiElements ksUi;
         // All search prameters are stored in the mf instead of individually
         MaterialFilter mf;
         Button search = new Button { Text = "Search" };
@@ -49,6 +50,8 @@ namespace WoodchuckCarbonTool.src.UI
         {
             ec3Ui = new EC3UiElements();
             clfUi = new CLFUiElements();
+            ksUi = new KaleidoscopeUiElements();
+
             this.mf = mf;
             WindowStyle = WindowStyle.Default;
             Maximizable = true;
@@ -76,6 +79,10 @@ namespace WoodchuckCarbonTool.src.UI
                 RepopulateDescriptionPanel(e.category);
             };
             clfUi.CategoryChangeEvent += (s, e) =>
+            {
+                RepopulateDescriptionPanel(e.category);
+            };
+            ksUi.CategoryChangeEvent += (s, e) =>
             {
                 RepopulateDescriptionPanel(e.category);
             };
@@ -155,6 +162,11 @@ namespace WoodchuckCarbonTool.src.UI
                     searchLayout.Add(clfUi.CLFCategoryLayout(mf));
                     searchLayout.Add(clfUi.clfPanel);
                     break;
+                case "Kaleidoscope":
+                    searchLayout.Add(ksUi.KaleidoscopeLayout(mf));
+                    searchLayout.Add(Spacer(Colors.DarkGray));
+                    searchLayout.Add(ksUi.scopeLayout(mf));
+                    break;
             }
 
             searchPanel.Content = searchLayout;
@@ -173,6 +185,11 @@ namespace WoodchuckCarbonTool.src.UI
                 {
                     Text = "CLF Material Baselines",
                     Key = "CLF"
+                },
+                new ListItem
+                {
+                    Text = "Kaleidoscope Assembly Database",
+                    Key = "Kaleidoscope"
                 }
             };
             /*DBOPTIONS.ADD(NEW LISTITEM
