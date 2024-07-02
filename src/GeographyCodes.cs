@@ -22,7 +22,7 @@ namespace WoodchuckCarbonTool.src
 
         public static GeographyCodes Instance => _geoCodeInstance.Value;
 
-        public GeographyCodes()
+        private GeographyCodes()
         {
             PopulateAreaCodeLists("ISOCountryCodes", out CountryNames, out CountryCodes);
             PopulateAreaCodeLists("USStateCodes", out StateNames, out StateCodes);
@@ -64,25 +64,53 @@ namespace WoodchuckCarbonTool.src
         public string GetCountryName(string code)
         {
             int idx = CountryCodes.FindIndex(s => s.Equals(code));
-            return CountryNames[idx];
+            if (idx != -1)
+            {
+                return CountryNames[idx];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public string GetCountryCode(string name)
         {
             int idx = CountryNames.FindIndex(s => s.Equals(name));
-            return CountryCodes[idx];
+            if (idx != -1)
+            {
+                return CountryCodes[idx];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public string GetStateName(string code)
         {
             int idx = StateCodes.FindIndex(s => s.Equals(code));
-            return StateNames[idx];
+            if (idx != -1)
+            {
+                return StateNames[idx];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public string GetStateCode(string name)
         {
             int idx = StateNames.FindIndex(s => s.Equals(name));
-            return StateCodes[idx];
+            if (idx != -1)
+            {
+                return StateCodes[idx];
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
