@@ -18,18 +18,18 @@ namespace WoodchuckCarbonTool.src
     /// objects. It creates a search window and listens to events from the search window
     /// to perform requests through the EC3 API and to assign EPDs to objects.
     /// </summary>
-    public class SearchEPD : Rhino.Commands.Command
+    public class SearchEPDCommand : Rhino.Commands.Command
     {
         // ETO form that hosts the search window
         private SearchForm searchForm { get; set; }
         private MaterialQuantityOptionsForm qForm { get; set; }
 
-        public SearchEPD()
+        public SearchEPDCommand()
         {
             Instance = this;
         }
 
-        public static SearchEPD Instance { get; private set; }
+        public static SearchEPDCommand Instance { get; private set; }
         public override string EnglishName => "SearchEPD";
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)

@@ -13,17 +13,17 @@ namespace WoodchuckCarbonTool.src
     /// it can build data plots for selected geometry and create a custom display of the
     /// model based on GWP data.
     /// </summary>
-    public class GetGWP : Command
+    public class GetGWPCommand : Command
     {
         private ResultForm form { get; set; }
 
-        public GetGWP()
+        public GetGWPCommand()
         {
             Instance = this;
         }
 
         ///<summary>The only instance of the MyCommand command.</summary>
-        public static GetGWP Instance { get; private set; }
+        public static GetGWPCommand Instance { get; private set; }
 
         public override string EnglishName => "GetGWP";
 
@@ -39,23 +39,7 @@ namespace WoodchuckCarbonTool.src
             getSelector.SetPrompt("Select geometry to calculate GWP for");
             Rhino.DocObjects.ObjRef[] objRefs = getSelector.GetSelection();
 
-            double totalGWP = 0;
-            int dimension = -1;
-
-            // Access the epd stored in the UserData of each selected object
-            foreach (Rhino.DocObjects.ObjRef objRef in objRefs)
-            {
-                EPD epd = null;
-                if (objRef != null) { epd = EPDManager.Get(objRef); }
-                if (epd == null) { continue; }
-
-                IQuantity unit = UnitManager.GetSystemUnit(doc, epd.dimension);
-                double quantity = GeometryProcessor.GetDimensionalInfo(objRef, epd.dimension);
-                double unitGWP = epd.GetGwpConverted(unit).Value;
-                if (dimension == -1) dimension = epd.dimension;
-
-                totalGWP += quantity * unitGWP * epd.percentageSolid / 100;
-            }
+            double totalGWP = GWPCalculator.GetTotalGwp(doc, objRefs);
 
             string rsltStr = "Total GWP of Selected Objects: \n" + totalGWP.ToString("F3") +
                 "kgCO2e";

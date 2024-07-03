@@ -232,5 +232,23 @@ namespace WoodchuckCarbonTool.src
             if (count == 0) { return sumDensity; }
             return sumDensity / count;
         }
+
+        public bool Equals (EPD epd)
+        {
+            if (epd == null) { return false; }
+
+            if (
+                epd.name == name &&
+                epd.category == category && 
+                epd.dimension == dimension &&
+                epd.GetGwpPerUnit(unitMaterial.Unit) == this.GetGwpPerUnit(unitMaterial.Unit) &&
+                epd.manufacturer == manufacturer
+                )
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
