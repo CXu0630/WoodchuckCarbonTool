@@ -1,3 +1,6 @@
+using Rhino.PlugIns;
+using Rhino.UI;
+
 namespace WoodchuckCarbonTool.src
 {
     ///<summary>
@@ -21,5 +24,16 @@ namespace WoodchuckCarbonTool.src
         // You can override methods here to change the plug-in behavior on
         // loading and shut down, add options pages to the Rhino _Option command
         // and maintain plug-in wide options in a document.
+
+        protected override void ObjectPropertiesPages(ObjectPropertiesPageCollection collection)
+        {
+            var sample_page = new SampleCsEtoPropertiesPage();
+            collection.Add(sample_page);
+        }
+
+        protected override LoadReturnCode OnLoad(ref string errorMessage)
+        {
+            return base.OnLoad(ref errorMessage);
+        }
     }
 }
