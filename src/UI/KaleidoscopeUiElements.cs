@@ -30,9 +30,9 @@ namespace WoodchuckCarbonTool.src.UI
             DropDown catDD = new DropDown();
             catDD.DataStore = catOptions;
             // set default values
-            int defaultIdx = 1;
+            int defaultIdx = 0;
             catDD.SelectedIndex = defaultIdx;
-            mf.SetCLFCategory(catDD.SelectedKey);
+            mf.SetKaleidoscopeCategory(catDD.SelectedKey);
             CategoryChangeEvent.Invoke(catDD, new CategoryChangeEventArgs(KaleidoscopeCategoryTree.categoryNames[defaultIdx]));
             // set listener
             catDD.SelectedValueChanged += (sender, e) =>
