@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Eto.Forms;
 using Eto.Drawing;
 using System.Runtime.CompilerServices;
+using Rhino.Geometry;
 
 namespace WoodchuckCarbonTool.src.UI
 {
@@ -17,49 +18,129 @@ namespace WoodchuckCarbonTool.src.UI
         }
 
         public void PopulateControl (int numAssignedObjs, double totalGwp, 
-            string database, EPD uniqueEpd, int percentageSolid)
+            string database, EPD uniqueEpd, int percentageSolid, EPD epds)
         {
-            DynamicLayout propertiesDl = new DynamicLayout
-            {
-                Padding = new Padding(10),
-                DefaultSpacing = new Size(3, 2)
+            Control propertiesTxt = new Label 
+            { 
+                Text = "Carbon Properties", 
+                Font = new Font(SystemFonts.Default().FamilyName, 10)
             };
 
-            int keyWidth = 50;
+            Control numAssignedTxt = new Label { Text = "Selected Objects with EPDs" };
+            Control numAssignedRsp = new Label { Text = numAssignedObjs.ToString() };
 
-            Panel numAssignedTxt = CreateCell(new Label { Text = "Objects with EPDs" }, Colors.White);
-            Panel numAssignedRsp = CreateCell(new Label { Text = numAssignedObjs.ToString() }, Colors.White);
+            Control totalGwpTxt = new Label { Text = "Total GWP" };
+            Control totalGwpRsp = new Label { Text = totalGwp.ToString() };
 
-            Panel totalGwpTxt = CreateCell(new Label { Text = "Total GWP" }, Colors.White);
-            Panel totalGwpRsp = CreateCell(new Label { Text = totalGwp.ToString() }, Colors.White);
+            Control databaseTxt = new Label { Text = "Source Database" };
+            Control databaseRsp = new Label { Text = database };
 
-            Panel databaseTxt = CreateCell(new Label { Text = "Source Database" }, Colors.White);
-            Panel databaseRsp = CreateCell(new Label { Text = database }, Colors.White);
+            Control[] texts = new Control[] {numAssignedTxt, totalGwpTxt, databaseTxt};
+            Control[] rsps = new Control[] {numAssignedRsp, totalGwpRsp, databaseRsp};
 
-            propertiesDl.AddRow(new Control[] { numAssignedTxt, numAssignedRsp });
-            propertiesDl.AddRow(new Control[] { totalGwpTxt, totalGwpRsp });
-            propertiesDl.AddRow(new Control[] { databaseTxt, databaseRsp });
+            DynamicLayout propertiesDl = TwoColumnLeftSpacedTable(texts, rsps);
 
-            DynamicLayout mainDl = new DynamicLayout();
+            DynamicLayout mainDl = new DynamicLayout
+            {
+                Spacing = new Size(3, 4)
+            };
 
+            mainDl.Add(propertiesTxt);
+            mainDl.Add(SeparationLine(Colors.Gray));
             mainDl.Add(propertiesDl);
             mainDl.Add(null);
 
             this.Content = mainDl;
         }
 
-        private Panel CreateCell(Control control, Color clr, int width = -1)
+        private DynamicLayout TwoColumnLeftSpacedTable(Control[] ctrls1, Control[] ctrls2)
         {
-            var panel = new Panel
-            {
-                Padding = new Padding(4),
-                Content = control,
-                BackgroundColor = clr, 
+            DynamicLayout twoColumnTable = TwoColumnTable(ctrls1, ctrls2);
+            Panel leftSpacer = new Panel { Width = 15 };
+            DynamicLayout leftSpacedTable = new DynamicLayout();
+
+            leftSpacedTable.AddRow(new Control[] {leftSpacer, twoColumnTable});
+
+            return leftSpacedTable;
+        }
+
+        private DynamicLayout TwoColumnTable(Control[] ctrls1, Control[] ctrls2)
+        {
+            DynamicLayout dl = new DynamicLayout 
+            { 
+                Spacing = new Size (3, 4) 
             };
 
-            if (width > 0) { panel.Width = width; }
+            if (ctrls1.Length != ctrls2.Length) { return null; }
 
+            for (int i = 0; i < ctrls1.Length; i++)
+            {
+                DynamicLayout subDl = TwoColumnRow(ctrls1[i], ctrls2[i]);
+                dl.Add(subDl);
+                if (i < ctrls1.Length - 1)
+                {
+                    dl.Add(SeparationLine(Colors.Gray));
+                }
+            }
+
+            return dl;
+        }
+
+        private DynamicLayout TwoColumnRow(Control ctrl1, Control ctrl2)
+        {
+            DynamicLayout dl = new DynamicLayout { DefaultSpacing = new Size(10, 2) };
+            dl.AddRow(new Control[] { FixedWidthCell(ctrl1), FixedWidthCell(ctrl2) });
+
+            return dl;
+        }
+
+        private Control SeparationLine(Color clr)
+        {
+            var drawable = new Drawable
+            {
+                Height = 1,
+                BackgroundColor = Colors.Transparent
+            };
+
+            drawable.Paint += (sender, e) =>
+            {
+                var g = e.Graphics;
+                var rect = new Rectangle(drawable.Size);
+                var semiTransparentColor = new Color(clr, 0.8f); // Semi-transparent color
+                g.FillRectangle(semiTransparentColor, rect);
+                //g.DrawRectangle(Colors.Gray, rect); // Draw the border
+            };
+
+            return drawable;
+        }
+
+        private Control FixedWidthCell(Control control)
+        {
+            if (control == null) { return null; }
+            Panel panel = new Panel { Width = (this.Width - 20)/2 };
+            panel.Content = control;
             return panel;
+        }
+
+        private Control TransparentCell(Control control, Color clr, int width = -1)
+        {
+            var drawable = new Drawable
+            {
+                Padding = new Padding(3),
+                BackgroundColor = Colors.Transparent
+            };
+
+            drawable.Paint += (sender, e) =>
+            {
+                var g = e.Graphics;
+                var rect = new Rectangle(drawable.Size);
+                var semiTransparentColor = new Color(clr, 0.2f); // Semi-transparent color
+                g.FillRectangle(semiTransparentColor, rect);
+                //g.DrawRectangle(Colors.Gray, rect); // Draw the border
+            };
+
+            drawable.Content = control;
+            return drawable;
         }
     }
 }

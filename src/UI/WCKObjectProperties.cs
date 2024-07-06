@@ -27,9 +27,17 @@ namespace WoodchuckCarbonTool.src.UI
         {
             EPD uniqueEpd = null;
             bool hasUniqueEpd = true;
+
+            string uniqueSource = null;
+            bool hasUniqueSource = true;
+
+            int uniquePercentSolid = -1;
+            bool hasUniquePercentSolid = true;
+
             int numAssignedObjs = 0;
 
             List<ObjRef> objRefs = new List<ObjRef>();
+            List<EPD> epds = new List<EPD>();
 
             foreach (RhinoObject obj in e.Objects)
             {
@@ -38,15 +46,27 @@ namespace WoodchuckCarbonTool.src.UI
                 EPD epd = null;
                 epd = EPDManager.Get(new ObjRef(obj));
                 if (epd == null) { continue; }
+                epds.Add(epd);
 
                 numAssignedObjs++;
+
+                if (uniqueSource == null) { uniqueSource = epd.mf.dataBase; }
+                else if (!epd.mf.dataBase.Equals(uniqueSource)) { hasUniqueSource = false; continue; }
+
                 if (uniqueEpd == null) { uniqueEpd = epd; }
-                else if (!epd.Equals(uniqueEpd)) { hasUniqueEpd = false; break; }
+                else if (!epd.Equals(uniqueEpd)) { hasUniqueEpd = false; }
+
+                if (uniquePercentSolid == -1) { uniquePercentSolid = epd.percentageSolid; }
+                else if (!(epd.percentageSolid == uniquePercentSolid)) { hasUniquePercentSolid = false; }
             }
+
+            if (!hasUniqueEpd) { uniqueEpd = null; }
+            if (!hasUniqueSource) { uniqueSource = null; }
+            if (!hasUniquePercentSolid) { uniquePercentSolid = -1; }
 
             double totalGwp = GWPCalculator.GetTotalGwp(e.Document, objRefs.ToArray());
 
-            control.PopulateControl(numAssignedObjs, totalGwp, "EC3", uniqueEpd, 25);
+            control.PopulateControl(numAssignedObjs, totalGwp, uniqueSource, uniqueEpd, uniquePercentSolid, epds);
         }
     }
 }
