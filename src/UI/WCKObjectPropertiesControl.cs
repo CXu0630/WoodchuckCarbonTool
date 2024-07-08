@@ -18,7 +18,7 @@ namespace WoodchuckCarbonTool.src.UI
         }
 
         public void PopulateControl (int numAssignedObjs, double totalGwp, 
-            string database, EPD uniqueEpd, int percentageSolid, EPD epds)
+            string database, EPD uniqueEpd, int percentageSolid, List<EPD> epds)
         {
             Control propertiesTxt = new Label 
             { 

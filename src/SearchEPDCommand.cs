@@ -38,7 +38,7 @@ namespace WoodchuckCarbonTool.src
 
             if (searchForm == null)
             {
-                searchForm = new SearchForm(mf) { Owner = RhinoEtoApp.MainWindow };
+                searchForm = new SearchForm(doc, mf) { Owner = RhinoEtoApp.MainWindow };
                 searchForm.Closed += OnFormClosed;
                 searchForm.Show();
             }
@@ -88,7 +88,7 @@ namespace WoodchuckCarbonTool.src
             };
 
             // Event listener: an assign event is called
-            searchForm.AssignEvent += (s, e) =>
+            /*searchForm.AssignEvent += (s, e) =>
             {
                 searchForm.WindowState = WindowState.Minimized;
                 if (qForm == null)
@@ -111,7 +111,7 @@ namespace WoodchuckCarbonTool.src
                     }
                     searchForm.WindowState = WindowState.Normal;
                 };
-            };
+            };*/
 
             
 

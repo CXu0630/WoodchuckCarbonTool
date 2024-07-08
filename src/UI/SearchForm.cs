@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 
 namespace WoodchuckCarbonTool.src.UI
@@ -36,17 +37,12 @@ namespace WoodchuckCarbonTool.src.UI
         public delegate void SearchEventHandler(object sender, EventArgs e);
         public event SearchEventHandler SearchEvent;
 
-        // This event is used to signal when the assign button has been pressed, actions
-        // relating to this event are delt with by the SearchEPD class
-        public delegate void AssignEventHandler(object sender, AssignEventArgs e);
-        public event AssignEventHandler AssignEvent;
-
         /// <summary>
         /// Constructs an instance of SearchForm. 
         /// </summary>
         /// <param name="mf"> Material Filter object in which search criteria for EPDs 
         /// will be stored. </param>
-        public SearchForm(MaterialFilter mf)
+        public SearchForm(RhinoDoc doc, MaterialFilter mf)
         {
             ec3Ui = new EC3UiElements();
             clfUi = new CLFUiElements();
@@ -62,7 +58,7 @@ namespace WoodchuckCarbonTool.src.UI
             Title = "Woodchuck Material Search";
             MinimumSize = new Size(900, 500);
 
-            doc = RhinoDoc.ActiveDoc;
+            this.doc = doc;
 
             // Results exist in a panel to be updated with new content each search
             resPanel = new Scrollable
@@ -292,7 +288,8 @@ namespace WoodchuckCarbonTool.src.UI
 
             if (avgEPD != null)
             {
-                epdLayout.Add(EPDPanel(avgEPD));
+                EPDPanel avgPanel = new UI.EPDPanel(this.doc, avgEPD, this.resPanel.Width - 40, this);
+                epdLayout.Add(avgPanel);
                 epdLayout.Add(Spacer(Colors.WhiteSmoke));
             }
 
@@ -300,7 +297,9 @@ namespace WoodchuckCarbonTool.src.UI
             // Consider implementing with more EPDs displayed...
             foreach (EPD epd in epds.Take(30))
             {
-                epdLayout.Add(EPDPanel(epd));
+                if (epd == null) { continue; }
+                EPDPanel epdPanel = new UI.EPDPanel(this.doc, epd, this.resPanel.Width - 40, this);
+                epdLayout.Add(epdPanel);
             }
 
             epdLayout.Add(null);
@@ -332,108 +331,6 @@ namespace WoodchuckCarbonTool.src.UI
             // Reassigning panel content updates the current content, but simply changing
             // the dynamic layout does not.
             resPanel.Content = msgLayout;
-        }
-
-        /// <summary>
-        /// Creates a panel to display EPD information.
-        /// </summary>
-        /// <param name="epd"> EPD to display </param>
-        private Panel EPDPanel(EPD epd)
-        {
-            Panel bkg = new Panel { Width = resPanel.Width - 40 };
-            bkg.BackgroundColor = Colors.WhiteSmoke;
-
-            Label gwp = new Label
-            {
-                Text = epd.GetGwpConverted(UnitManager.GetSystemUnit(doc, epd.dimension))
-                + "CO2e/" + UnitManager.GetSystemUnitStr(doc, epd.dimension),
-                Font = new Font(SystemFonts.Default().FamilyName, 12)
-            };
-            Label epdName = new Label
-            {
-                Text = epd.name,
-                Font = new Font(SystemFonts.Default().FamilyName, 12)
-            };
-            if (epd.tooltip != null && epd.tooltip != "")
-            {
-                epdName.ToolTip = epd.tooltip;
-            }
-            Label manufacturer = new Label
-            {
-                Text = "Manufacturer: " + epd.manufacturer,
-                Font = new Font(SystemFonts.Default().FamilyName, 10),
-                TextColor = Colors.DarkSlateGray
-            };
-            Label description = new Label
-            {
-                Text = epd.description,
-                Font = new Font(SystemFonts.Default().FamilyName, 8),
-                TextColor = Colors.DarkSlateGray
-            };
-
-            Button browserView = new Button { Text = "View in Browser" };
-            Button assignButton = new Button { Text = "Assign to Object" };
-
-            // Makes a system call to open the EPD's page on EC3 in the default browser
-            // window. This is nice because it does not interfere with Rhino and also
-            // opens a tab on an existing window if there is one already.
-            browserView.Click += (s, e) =>
-            {
-                System.Diagnostics.Process.Start("https://buildingtransparency.org/ec3/epds/" + epd.id);
-            };
-
-            // The assign button is pressed. Non-UI events are not delt with in this class.
-            assignButton.Click += (s, e) =>
-            {
-                AssignEvent?.Invoke(this, new AssignEventArgs(epd));
-            };
-
-            // General container
-            DynamicLayout epdLayout = new DynamicLayout();
-
-            // Container for display information
-            DynamicLayout infoLayout = new DynamicLayout
-            {
-                DefaultSpacing = new Size(5, 5),
-                Padding = new Padding(10),
-                Size = new Size(-1, -1)
-            };
-            infoLayout.BeginHorizontal();
-            infoLayout.Add(epdName);
-            infoLayout.Add(gwp);
-            infoLayout.EndBeginHorizontal();
-            if (epd.manufacturer != null && epd.manufacturer != "")
-                infoLayout.Add(manufacturer);
-            infoLayout.EndBeginHorizontal();
-            if (epd.description != null && epd.description != "")
-                infoLayout.Add(description);
-            infoLayout.EndBeginHorizontal();
-            // These spacer lines are to make sure that the EPD name does not extend off
-            // the screen... These are the times when I hate frontend.
-            infoLayout.Add(null);
-            infoLayout.Add(new Panel());
-
-            // Maybe this layout should be put in a separate method to encapsulate it?
-            DynamicLayout buttonLayout = new DynamicLayout
-            {
-                DefaultSpacing = new Size(5, 5),
-                Padding = new Padding(10)
-            };
-            buttonLayout.BeginHorizontal();
-            buttonLayout.Add(null);
-            if (epd.id != null)
-            {
-                buttonLayout.Add(browserView);
-            }
-            buttonLayout.Add(assignButton);
-
-            epdLayout.Add(infoLayout);
-            epdLayout.Add(null);
-            epdLayout.Add(buttonLayout);
-
-            bkg.Content = epdLayout;
-
-            return bkg;
         }
 
         /// <summary>
@@ -611,20 +508,6 @@ namespace WoodchuckCarbonTool.src.UI
             dl.Add(null);
 
             this.resPanel.Content = dl;
-        }
-
-        /// <summary>
-        /// Custom EventArgs class to pass the EPD for which "Assign to Object" was
-        /// pressed to the class that's actually implementing the assigning (which would
-        /// be SearchEPD)
-        /// </summary>
-        internal class AssignEventArgs : EventArgs
-        {
-            public EPD epd { get; set; }
-            public AssignEventArgs(EPD epd)
-            {
-                this.epd = epd;
-            }
         }
 
     }

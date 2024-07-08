@@ -35,6 +35,7 @@ namespace WoodchuckCarbonTool.src
         {
             Result finalRslt = Result.Success;
 
+            if (objRefs == null) { return Result.Cancel; }
             if (objRefs.Length == 0) { return Result.Cancel; }
 
             foreach (ObjRef objRef in objRefs)
