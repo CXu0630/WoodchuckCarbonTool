@@ -7,24 +7,24 @@ using Eto.Forms;
 using Eto.Drawing;
 using System.Runtime.CompilerServices;
 using Rhino.Geometry;
+using Rhino.DocObjects;
+using Rhino;
+using System.Runtime.Remoting.Channels;
 
 namespace WoodchuckCarbonTool.src.UI
 {
     internal class WCKObjectPropertiesControl : Panel
     {
-        public WCKObjectPropertiesControl()
+        public void PopulateControl(RhinoDoc doc, int numAssignedObjs, double totalGwp,
+            string database, EPD uniqueEpd, int percentageSolid, ObjRef[] selectedObjs)
         {
-            
-        }
-
-        public void PopulateControl (int numAssignedObjs, double totalGwp, 
-            string database, EPD uniqueEpd, int percentageSolid, List<EPD> epds)
-        {
-            Control propertiesTxt = new Label 
-            { 
-                Text = "Carbon Properties", 
-                Font = new Font(SystemFonts.Default().FamilyName, 10)
+            RhinoStyleTable propertiesTable = new RhinoStyleTable
+            {
+                Spacing = new Size(10, 4),
+                Width = this.Width
             };
+
+            propertiesTable.AddTitle("Carbon Properties");
 
             Control numAssignedTxt = new Label { Text = "Selected Objects with EPDs" };
             Control numAssignedRsp = new Label { Text = numAssignedObjs.ToString() };
@@ -32,115 +32,48 @@ namespace WoodchuckCarbonTool.src.UI
             Control totalGwpTxt = new Label { Text = "Total GWP" };
             Control totalGwpRsp = new Label { Text = totalGwp.ToString() };
 
+            if (numAssignedObjs == 0) { database = "None"; }
+
             Control databaseTxt = new Label { Text = "Source Database" };
             Control databaseRsp = new Label { Text = database };
 
-            Control[] texts = new Control[] {numAssignedTxt, totalGwpTxt, databaseTxt};
-            Control[] rsps = new Control[] {numAssignedRsp, totalGwpRsp, databaseRsp};
+            Control[] texts = new Control[] { numAssignedTxt, totalGwpTxt, databaseTxt };
+            Control[] rsps = new Control[] { numAssignedRsp, totalGwpRsp, databaseRsp };
 
-            DynamicLayout propertiesDl = TwoColumnLeftSpacedTable(texts, rsps);
+            Control[][] controlColumns = new Control[][] { texts, rsps };
 
-            DynamicLayout mainDl = new DynamicLayout
+            propertiesTable.AddSubtable(controlColumns);
+
+            propertiesTable.AddTitle("Assigned EPD");
+
+            if (numAssignedObjs == 0)
             {
-                Spacing = new Size(3, 4)
-            };
-
-            mainDl.Add(propertiesTxt);
-            mainDl.Add(SeparationLine(Colors.Gray));
-            mainDl.Add(propertiesDl);
-            mainDl.Add(null);
-
-            this.Content = mainDl;
-        }
-
-        private DynamicLayout TwoColumnLeftSpacedTable(Control[] ctrls1, Control[] ctrls2)
-        {
-            DynamicLayout twoColumnTable = TwoColumnTable(ctrls1, ctrls2);
-            Panel leftSpacer = new Panel { Width = 15 };
-            DynamicLayout leftSpacedTable = new DynamicLayout();
-
-            leftSpacedTable.AddRow(new Control[] {leftSpacer, twoColumnTable});
-
-            return leftSpacedTable;
-        }
-
-        private DynamicLayout TwoColumnTable(Control[] ctrls1, Control[] ctrls2)
-        {
-            DynamicLayout dl = new DynamicLayout 
-            { 
-                Spacing = new Size (3, 4) 
-            };
-
-            if (ctrls1.Length != ctrls2.Length) { return null; }
-
-            for (int i = 0; i < ctrls1.Length; i++)
-            {
-                DynamicLayout subDl = TwoColumnRow(ctrls1[i], ctrls2[i]);
-                dl.Add(subDl);
-                if (i < ctrls1.Length - 1)
+                Label noEpdLabel = new Label { Text = "No EPDs assigned." };
+                Button searchEpdButton = new Button { Text = "Search EPDs" };
+                searchEpdButton.Click += (sender, e) =>
                 {
-                    dl.Add(SeparationLine(Colors.Gray));
-                }
+                    SearchEPDCommand.Instance.SearchEPD(doc);
+                };
+
+                propertiesTable.AddSubtable(new Control[][] { new Control[] { noEpdLabel }, new Control[] { searchEpdButton } });
+            }
+            else
+            {
+                EPDPanel uniqueEpdPanel = new EPDPanel(doc, uniqueEpd, this.Width - 20);
+                propertiesTable.AddSubtable(new Control[][] { new Control[] { uniqueEpdPanel } });
             }
 
-            return dl;
+            propertiesTable.AddTitle("Material Quantity");
+
+            Label percentageSolidLabel = new Label { Text = "Percentage of solid material" };
+            TextBox percentageSolidTextBox = new TextBox { };
+            if (percentageSolid > 0) percentageSolidTextBox.Text = percentageSolid.ToString();
+            else percentageSolidTextBox.Text = "100";
+
+            propertiesTable.Add(null);
+
+            this.Content = propertiesTable;
         }
 
-        private DynamicLayout TwoColumnRow(Control ctrl1, Control ctrl2)
-        {
-            DynamicLayout dl = new DynamicLayout { DefaultSpacing = new Size(10, 2) };
-            dl.AddRow(new Control[] { FixedWidthCell(ctrl1), FixedWidthCell(ctrl2) });
-
-            return dl;
-        }
-
-        private Control SeparationLine(Color clr)
-        {
-            var drawable = new Drawable
-            {
-                Height = 1,
-                BackgroundColor = Colors.Transparent
-            };
-
-            drawable.Paint += (sender, e) =>
-            {
-                var g = e.Graphics;
-                var rect = new Rectangle(drawable.Size);
-                var semiTransparentColor = new Color(clr, 0.8f); // Semi-transparent color
-                g.FillRectangle(semiTransparentColor, rect);
-                //g.DrawRectangle(Colors.Gray, rect); // Draw the border
-            };
-
-            return drawable;
-        }
-
-        private Control FixedWidthCell(Control control)
-        {
-            if (control == null) { return null; }
-            Panel panel = new Panel { Width = (this.Width - 20)/2 };
-            panel.Content = control;
-            return panel;
-        }
-
-        private Control TransparentCell(Control control, Color clr, int width = -1)
-        {
-            var drawable = new Drawable
-            {
-                Padding = new Padding(3),
-                BackgroundColor = Colors.Transparent
-            };
-
-            drawable.Paint += (sender, e) =>
-            {
-                var g = e.Graphics;
-                var rect = new Rectangle(drawable.Size);
-                var semiTransparentColor = new Color(clr, 0.2f); // Semi-transparent color
-                g.FillRectangle(semiTransparentColor, rect);
-                //g.DrawRectangle(Colors.Gray, rect); // Draw the border
-            };
-
-            drawable.Content = control;
-            return drawable;
-        }
     }
 }

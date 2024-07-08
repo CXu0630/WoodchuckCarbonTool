@@ -34,6 +34,11 @@ namespace WoodchuckCarbonTool.src
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
+            return this.SearchEPD(doc);
+        }
+
+        public Result SearchEPD(RhinoDoc doc)
+        {
             MaterialFilter mf = new MaterialFilter();
 
             if (searchForm == null)
@@ -86,34 +91,6 @@ namespace WoodchuckCarbonTool.src
                 }
                 Application.Instance.Invoke(() => searchForm.RepopulateSearchResult(epds, avgEPD));
             };
-
-            // Event listener: an assign event is called
-            /*searchForm.AssignEvent += (s, e) =>
-            {
-                searchForm.WindowState = WindowState.Minimized;
-                if (qForm == null)
-                {
-                    qForm = new MaterialQuantityOptionsForm(e.epd) { Owner = RhinoEtoApp.MainWindow };
-                    qForm.Closed += OnQFormClosed;
-                    qForm.Show();
-                }
-
-                qForm.PercentageEvent += (s2, e2) =>
-                {
-                    qForm.Close();
-                    WCKSelector geoSelector = new WCKSelector(e2.epd.dimension);
-                    ObjRef[] objRefs = geoSelector.GetSelection();
-
-                    Result rslt = EPDManager.Assign(objRefs, e2.epd);
-                    if (rslt != Result.Success)
-                    {
-                        RhinoApp.WriteLine("Assignment canceled, No objects selected");
-                    }
-                    searchForm.WindowState = WindowState.Normal;
-                };
-            };*/
-
-            
 
             return Result.Success;
         }

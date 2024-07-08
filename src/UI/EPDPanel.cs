@@ -10,6 +10,7 @@ using static WoodchuckCarbonTool.src.UI.SearchForm;
 using Rhino;
 using Rhino.Commands;
 using Rhino.DocObjects;
+using Rhino.FileIO;
 
 namespace WoodchuckCarbonTool.src.UI
 {
@@ -18,18 +19,39 @@ namespace WoodchuckCarbonTool.src.UI
         public delegate void AssignEventHandler(object sender, AssignEventArgs e);
         public event AssignEventHandler AssignEvent;
         private MaterialQuantityOptionsForm qForm { get; set; }
+        private ObjRef[] AssignTargets { get; set; }
 
-        public EPDPanel(RhinoDoc doc, EPD epd, int width, Form parent = null)
+        public EPDPanel(RhinoDoc doc, EPD epd, int width = -1, Form parent = null)
         {
-            this.Width = width;
-            this.BackgroundColor = Colors.WhiteSmoke;
+            if(width > 0) this.Width = width;
+
+            // this should only occur when trying to access a unique EPD from the
+            // properties panel but retreives multiple different epds.
+            if (epd == null)
+            {
+                this.Content = EPDVariesLayout();
+                return;
+            }
+
+            string gwpText = epd.GetGwpConverted(UnitManager.GetSystemUnit(doc, epd.dimension))
+                + "CO2e/" + UnitManager.GetSystemUnitStr(doc, epd.dimension);
+            string[] gwpSplitText = gwpText.Split(' ');
 
             Label gwp = new Label
             {
-                Text = epd.GetGwpConverted(UnitManager.GetSystemUnit(doc, epd.dimension))
-                + "CO2e/" + UnitManager.GetSystemUnitStr(doc, epd.dimension),
+                Text = gwpSplitText[0],
                 Font = new Eto.Drawing.Font(SystemFonts.Default().FamilyName, 12)
             };
+            Label unit = new Label
+            {
+                Text = gwpSplitText[1],
+            };
+            DynamicLayout gwpLayout = new DynamicLayout { Spacing = new Size(5, 5) };
+            gwpLayout.Add(new Panel { Content = gwp });
+            gwpLayout.Add(new Panel { Content = unit });
+            gwpLayout.Add(null);
+
+
             Label epdName = new Label
             {
                 Text = epd.name,
@@ -48,9 +70,32 @@ namespace WoodchuckCarbonTool.src.UI
             Label description = new Label
             {
                 Text = epd.description,
-                Font = new Eto.Drawing.Font(SystemFonts.Default().FamilyName, 8),
-                TextColor = Colors.DarkSlateGray
+                Font = new Eto.Drawing.Font(SystemFonts.Default().FamilyName, 8)
             };
+            DynamicLayout descriptionLayout = new DynamicLayout
+            {
+                Spacing = new Size(5, 5),
+                Width = this.Width - gwpLayout.Width - 10
+            };
+            descriptionLayout.Add(new Panel { Content = epdName });
+            if (epd.manufacturer != null && epd.manufacturer != "")
+                descriptionLayout.Add(new Panel { Content = manufacturer });
+            if (epd.description != null && epd.description != "")
+                descriptionLayout.Add(new Panel { Content = description });
+
+            // Container for display information
+            DynamicLayout infoLayout = new DynamicLayout
+            {
+                Padding = new Padding(10),
+                Spacing = new Size (10, 5)
+            };
+            infoLayout.BeginHorizontal();
+            infoLayout.Add(descriptionLayout);
+            infoLayout.Add(gwpLayout);
+            infoLayout.EndBeginHorizontal();
+            infoLayout.Add(null);
+            infoLayout.EndHorizontal();
+
 
             Button browserView = new Button { Text = "View in Browser" };
             Button assignButton = new Button { Text = "Assign to Object" };
@@ -80,10 +125,14 @@ namespace WoodchuckCarbonTool.src.UI
                 qForm.PercentageEvent += (s2, e2) =>
                 {
                     qForm.Close();
-                    WCKSelector geoSelector = new WCKSelector(e2.epd.dimension);
-                    ObjRef[] objRefs = geoSelector.GetSelection();
 
-                    Result rslt = EPDManager.Assign(objRefs, e2.epd);
+                    if (AssignTargets == null || AssignTargets.Length == 0)
+                    {
+                        WCKSelector geoSelector = new WCKSelector(e2.epd.dimension);
+                        AssignTargets = geoSelector.GetSelection();
+                    }
+                    
+                    Result rslt = EPDManager.Assign(AssignTargets, e2.epd);
                     if (rslt != Result.Success)
                     {
                         RhinoApp.WriteLine("Assignment canceled, No objects selected");
@@ -94,28 +143,6 @@ namespace WoodchuckCarbonTool.src.UI
 
             // General container
             DynamicLayout epdLayout = new DynamicLayout();
-
-            // Container for display information
-            DynamicLayout infoLayout = new DynamicLayout
-            {
-                DefaultSpacing = new Size(5, 5),
-                Padding = new Padding(10),
-                Size = new Size(-1, -1)
-            };
-            infoLayout.BeginHorizontal();
-            infoLayout.Add(epdName);
-            infoLayout.Add(gwp);
-            infoLayout.EndBeginHorizontal();
-            if (epd.manufacturer != null && epd.manufacturer != "")
-                infoLayout.Add(manufacturer);
-            infoLayout.EndBeginHorizontal();
-            if (epd.description != null && epd.description != "")
-                infoLayout.Add(description);
-            infoLayout.EndBeginHorizontal();
-            // These spacer lines are to make sure that the EPD name does not extend off
-            // the screen... These are the times when I hate frontend.
-            infoLayout.Add(null);
-            infoLayout.Add(new Panel());
 
             // Maybe this layout should be put in a separate method to encapsulate it?
             DynamicLayout buttonLayout = new DynamicLayout
@@ -135,7 +162,18 @@ namespace WoodchuckCarbonTool.src.UI
             epdLayout.Add(null);
             epdLayout.Add(buttonLayout);
 
-            this.Content = epdLayout;
+            this.Content = UICommonElements.TransparentCell(epdLayout, Colors.White, 0.4f);
+        }
+
+        private DynamicLayout EPDVariesLayout()
+        {
+            Label label = new Label { Text = "Varies" };
+            DynamicLayout dl = new DynamicLayout();
+            dl.Add(null);
+            dl.AddRow(new Control[] { null, label, null });
+            dl.Add(null);
+
+            return dl;
         }
 
         private void OnQFormClosed(object sender, EventArgs e)

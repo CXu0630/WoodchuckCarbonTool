@@ -51,7 +51,7 @@ namespace WoodchuckCarbonTool.src.UI
                 numAssignedObjs++;
 
                 if (uniqueSource == null) { uniqueSource = epd.mf.dataBase; }
-                else if (!epd.mf.dataBase.Equals(uniqueSource)) { hasUniqueSource = false; continue; }
+                else if (!epd.mf.dataBase.Equals(uniqueSource)) { hasUniqueSource = false; }
 
                 if (uniqueEpd == null) { uniqueEpd = epd; }
                 else if (!epd.Equals(uniqueEpd)) { hasUniqueEpd = false; }
@@ -66,7 +66,7 @@ namespace WoodchuckCarbonTool.src.UI
 
             double totalGwp = GWPCalculator.GetTotalGwp(e.Document, objRefs.ToArray());
 
-            control.PopulateControl(numAssignedObjs, totalGwp, uniqueSource, uniqueEpd, uniquePercentSolid, epds);
+            control.PopulateControl(e.Document, numAssignedObjs, totalGwp, uniqueSource, uniqueEpd, uniquePercentSolid, objRefs.ToArray());
         }
     }
 }
