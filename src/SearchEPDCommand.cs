@@ -30,7 +30,7 @@ namespace WoodchuckCarbonTool.src
         }
 
         public static SearchEPDCommand Instance { get; private set; }
-        public override string EnglishName => "SearchEPD";
+        public override string EnglishName => "WoodchuckSearchEPD";
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {

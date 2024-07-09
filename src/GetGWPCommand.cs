@@ -25,7 +25,7 @@ namespace WoodchuckCarbonTool.src
         ///<summary>The only instance of the MyCommand command.</summary>
         public static GetGWPCommand Instance { get; private set; }
 
-        public override string EnglishName => "GetGWP";
+        public override string EnglishName => "WoodchuckGetGWP";
 
         /// <summary>
         /// The command asks for a user selection of Rhino Objects and draws up a textbox
