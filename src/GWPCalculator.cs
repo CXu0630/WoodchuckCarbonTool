@@ -37,5 +37,19 @@ namespace WoodchuckCarbonTool.src
 
             return totalGWP;
         }
+
+        public static string FormatDoubleWithLengthLimit(double number, int maxLength)
+        {
+            string fixedPoint = number.ToString("F2"); // Attempt with fixed-point
+            if (fixedPoint.Length <= maxLength)
+            {
+                return fixedPoint;
+            }
+            else
+            {
+                string scientific = number.ToString("E" + (maxLength - 6)); // Convert to scientific notation
+                return scientific.Length <= maxLength ? scientific : scientific.Substring(0, maxLength);
+            }
+        }
     }
 }

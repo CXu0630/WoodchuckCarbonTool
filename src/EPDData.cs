@@ -1,6 +1,7 @@
 using Rhino.DocObjects.Custom;
 using Rhino.FileIO;
 using System;
+using System.Diagnostics.Tracing;
 using System.Runtime.InteropServices;
 
 namespace WoodchuckCarbonTool.src
@@ -117,6 +118,18 @@ namespace WoodchuckCarbonTool.src
                 return true; // Successfully read all data
             }
             return false; // Return false if the dictionary is null
+        }
+
+        protected override void OnDuplicate(UserData source)
+        {
+            if(source.GetType() == typeof(EPDData))
+            {
+                EPDData data = source as EPDData;
+                if ( data.epd != null)
+                {
+                    this.epd = data.epd;
+                }
+            }
         }
 
         // Provide a unique type description for your custom user data

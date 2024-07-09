@@ -14,7 +14,7 @@ namespace WoodchuckCarbonTool.src.UI
         public void PopulateTable(Control[][] controlColumns, int width = -1)
         {
             if (width > 0) this.Width = width;
-            int cellWidth = (this.Width) / controlColumns.Length;
+            int cellWidth = Math.DivRem(this.Width, controlColumns.Length, out int a);
 
             int maxLength = controlColumns.Max(column => column.Length);
 

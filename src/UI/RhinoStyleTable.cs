@@ -47,5 +47,13 @@ namespace WoodchuckCarbonTool.src.UI
 
             this.Add(subtableLayout);
         }
+
+        public void AddBlankRow()
+        {
+            DynamicLayout blankRowLayout = new DynamicLayout();
+            Panel panel = new Panel { Height = 20 };
+            blankRowLayout.Add(panel);
+            this.Add(blankRowLayout);
+        }
     }
 }

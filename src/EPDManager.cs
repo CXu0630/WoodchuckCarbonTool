@@ -65,5 +65,14 @@ namespace WoodchuckCarbonTool.src
 
             return epd;
         }
+
+        public static bool UpdatePercentSolid(ObjRef objRef, int newPercent) 
+        {
+            EPD epd = Get(objRef);
+            if (epd == null) return false;
+
+            epd.percentageSolid = newPercent;
+            return true;
+        }
     }
 }
