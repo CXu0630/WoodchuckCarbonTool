@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using Rhino;
 using System;
 using System.Collections.Generic;
 using UnitsNet;
@@ -167,6 +168,12 @@ namespace WoodchuckCarbonTool.src
             if (unitReq.GetType() != unitMaterial.GetType()) { return new Mass(); }
             IQuantity convertedUnit = unitMaterial.ToUnit(unitReq.Unit);
             return gwp * (double)unitReq.Value / (double)convertedUnit.Value;
+        }
+
+        public Mass GetGwpPerSystemUnit(RhinoDoc doc)
+        {
+            IQuantity systemUnit = UnitManager.GetSystemUnit(doc, this.dimension);
+            return GetGwpConverted(systemUnit);
         }
 
         /// <summary>
