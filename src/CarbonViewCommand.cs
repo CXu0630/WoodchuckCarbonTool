@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Collections.Generic;
 using Rhino.Input;
 using System.Linq;
+using WoodchuckCarbonTool.src.UI;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -32,14 +33,31 @@ namespace WoodchuckCarbonTool.src
         // indicator...
         private bool MinMaxCalculated = false;
 
+        private static Color[] colors = {
+                Color.LightBlue,
+                Color.Yellow,
+                Color.Orange,
+                Color.DarkRed
+            };
+
+        double[] values = new double[colors.Length + 1];
+
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
             Reset();
             SaveCurrentColors(doc);
+            CarbonViewLegend legend;
 
             try
             {
                 AssignCarbonColors(doc);
+                for(int i = 0; i < colors.Length + 1; i++)
+                {
+                    values[i] = Math.Round(MinGwp + (MaxGwp - MinGwp)/colors.Length * i, 4);
+                }
+                legend = new CarbonViewLegend(colors, values);
+                legend.Enabled = true;
+                doc.Views.Redraw();
                 string out_str = null;
                 RhinoGet.GetString("Press <Enter> to continue", true, ref out_str);
             }
@@ -50,6 +68,7 @@ namespace WoodchuckCarbonTool.src
                 return Result.Failure;
             }
 
+            legend.Enabled = false;
             RevertOriginalColors(doc);
             return Result.Success;
         }
@@ -110,20 +129,24 @@ namespace WoodchuckCarbonTool.src
 
             EPD epd = EPDManager.Get(new ObjRef(obj));
             if (epd == null) { return Color.Gray; }
+
             double gwp = epd.GetGwpPerSystemUnit(doc).Value;
+
+            if (epd.dimension == 1) { return Color.DarkGray; }
+            if (epd.dimension == 2)
+            {
+                ObjRef objRef = new ObjRef(obj);
+                double volume = GeometryProcessor.GetDimensionalInfo(objRef, 3);
+                if (volume == 0 || volume == -1) { return Color.DarkGray; }
+
+                double objGwp = GWPCalculator.GetTotalGwp(doc, new ObjRef[] { new ObjRef(obj) });
+                gwp = objGwp / volume;
+            }
             
             if (MaxGwp == MinGwp) { return Color.Yellow; }
 
             // Normalize the GWP value
             double normalizedGwp = (gwp - MinGwp) / (MaxGwp - MinGwp);
-
-            Color[] colors = {
-                Color.LightBlue,
-                Color.Yellow,
-                Color.Orange,
-                Color.DarkRed
-            };
-
 
             // Determine the segment and interpolate
             int segmentCount = colors.Length - 1;
