@@ -5,7 +5,8 @@ namespace WoodchuckCarbonTool.src
 {
     /// <summary>
     /// This class is used to assign EPDs to Rhino objects and retreive those EPDs for
-    /// calculations
+    /// calculations. It makes use of EPDData as the wrapper class for EPD objects
+    /// so that EPDs can be read and written with the Rhino file.
     /// </summary>
     internal class EPDManager
     {
@@ -34,6 +35,7 @@ namespace WoodchuckCarbonTool.src
         {
             Result finalRslt = Result.Success;
 
+            if (objRefs == null) { return Result.Cancel; }
             if (objRefs.Length == 0) { return Result.Cancel; }
 
             foreach (ObjRef objRef in objRefs)
@@ -62,6 +64,15 @@ namespace WoodchuckCarbonTool.src
             EPD epd = epdData.epd;
 
             return epd;
+        }
+
+        public static bool UpdatePercentSolid(ObjRef objRef, int newPercent) 
+        {
+            EPD epd = Get(objRef);
+            if (epd == null) return false;
+
+            epd.percentageSolid = newPercent;
+            return true;
         }
     }
 }

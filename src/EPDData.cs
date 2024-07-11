@@ -1,12 +1,17 @@
 using Rhino.DocObjects.Custom;
 using Rhino.FileIO;
 using System;
+using System.Diagnostics.Tracing;
 using System.Runtime.InteropServices;
 
 namespace WoodchuckCarbonTool.src
 {
     [Serializable]
     [Guid("847b706e-f578-47eb-a8f0-b440584e5e2d")]
+
+    /// This class is specific to implementing EPD IO in Rhino. On file save, the data
+    /// from the EPD is serialized and stored, and on file load, is is read and
+    /// reconstructed into an EPD object.
     public class EPDData : UserData
     {
         public EPD epd { get; set; }
@@ -113,6 +118,18 @@ namespace WoodchuckCarbonTool.src
                 return true; // Successfully read all data
             }
             return false; // Return false if the dictionary is null
+        }
+
+        protected override void OnDuplicate(UserData source)
+        {
+            if(source.GetType() == typeof(EPDData))
+            {
+                EPDData data = source as EPDData;
+                if ( data.epd != null)
+                {
+                    this.epd = data.epd;
+                }
+            }
         }
 
         // Provide a unique type description for your custom user data
