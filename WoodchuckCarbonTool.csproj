@@ -1,11 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <Version>1.0</Version>
+    <Version>1.0.0-alpha</Version>
     <Title>WoodchuckCarbonTool</Title>
     <Description>Description of WoodchuckCarbonTool</Description>
     <TargetExt>.rhp</TargetExt>
+    <Configurations>Debug;Release;Test</Configurations>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +22,8 @@
   <ItemGroup>
     <None Include="Archive\AssignEPD.cs" />
     <None Include="C:\Users\chloe.xu\source\repos\WoodchuckCarbonTool\.editorconfig" />
+	<None Include="C:\Users\Colin.Matthews\source\repos\WoodchuckCarbonTool\.editorconfig" />
+    <None Include="src\Tester.cs" />
   </ItemGroup>
   
   <ItemGroup>
@@ -31,6 +35,7 @@
   
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\chloe.xu\source\repos\WoodchuckCarbonTool\.editorconfig" />
+	<EditorConfigFiles Remove="C:\Users\Colin.Matthews\source\repos\WoodchuckCarbonTool\.editorconfig" />
   </ItemGroup>
   
   <ItemGroup>
