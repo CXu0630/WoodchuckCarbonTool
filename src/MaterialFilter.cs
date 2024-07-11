@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using WoodchuckCarbonTool.src.EC3;
+using WoodchuckCarbonTool.src.Kaleidoscope;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -25,7 +26,21 @@ namespace WoodchuckCarbonTool.src
         public string state { get; private set; }
         public string expirationDate { get; private set; }
 
+        public bool includeBC = false;
+        public bool includeD = false;
+        public bool includeBiogen = false;
+
         public MaterialFilter() { }
+
+        public bool SetKaleidoscopeCategory(string category)
+        {
+            if (KaleidoscopeCategoryTree.categoryNames.Contains(category))
+            {
+                categoryName = category;
+                return true;
+            }
+            return false;
+        }
 
         public bool SetCLFCategory(string category)
         {

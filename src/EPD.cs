@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using Rhino;
 using System;
 using System.Collections.Generic;
 using UnitsNet;
@@ -169,6 +170,12 @@ namespace WoodchuckCarbonTool.src
             return gwp * (double)unitReq.Value / (double)convertedUnit.Value;
         }
 
+        public Mass GetGwpPerSystemUnit(RhinoDoc doc)
+        {
+            IQuantity systemUnit = UnitManager.GetSystemUnit(doc, this.dimension);
+            return GetGwpConverted(systemUnit);
+        }
+
         /// <summary>
         /// Converts the unitMaterial of this EPD from mass to volume based on defined
         /// density.
@@ -231,6 +238,24 @@ namespace WoodchuckCarbonTool.src
             }
             if (count == 0) { return sumDensity; }
             return sumDensity / count;
+        }
+
+        public bool Equals (EPD epd)
+        {
+            if (epd == null) { return false; }
+
+            if (
+                epd.name == name &&
+                epd.category == category && 
+                epd.dimension == dimension &&
+                epd.GetGwpPerUnit(unitMaterial.Unit) == this.GetGwpPerUnit(unitMaterial.Unit) &&
+                epd.manufacturer == manufacturer
+                )
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

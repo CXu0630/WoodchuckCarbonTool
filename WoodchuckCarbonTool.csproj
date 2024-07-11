@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <Compile Remove="Archive\AssignEPD.cs" />
-    <Compile Remove="src\Tester.cs" />
     <Compile Remove="Tester.cs" />
   </ItemGroup>
 
@@ -30,7 +29,7 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="32.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="RhinoCommon" Version="7.13.21348.13001" IncludeAssets="compile;build" />
+    <PackageReference Include="RhinoCommon" Version="8.8.24170.13001" IncludeAssets="compile;build" />
     <PackageReference Include="UnitsNet" Version="5.48.0" />
   </ItemGroup>
   
@@ -42,6 +41,7 @@
   <ItemGroup>
     <None Remove="EmbeddedResources\2023_04_CLF_CLFMaterialBaselines.csv" />
     <None Remove="EmbeddedResources\2023_04_CLF_USAReadyMixedConcreteRegional.csv" />
+    <None Remove="EmbeddedResources\2023_Kaleidoscope_AssemblyDatabase.csv" />
     <None Remove="EmbeddedResources\2024_05_CategoryDescriptions_v001.csv" />
   </ItemGroup>
   

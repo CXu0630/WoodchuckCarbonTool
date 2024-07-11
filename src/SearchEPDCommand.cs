@@ -9,6 +9,7 @@ using Rhino.UI;
 using System;
 using System.Collections.Generic;
 using UnitsNet;
+using WoodchuckCarbonTool.src.Kaleidoscope;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -17,27 +18,32 @@ namespace WoodchuckCarbonTool.src
     /// objects. It creates a search window and listens to events from the search window
     /// to perform requests through the EC3 API and to assign EPDs to objects.
     /// </summary>
-    public class SearchEPD : Rhino.Commands.Command
+    public class SearchEPDCommand : Rhino.Commands.Command
     {
         // ETO form that hosts the search window
         private SearchForm searchForm { get; set; }
         private MaterialQuantityOptionsForm qForm { get; set; }
 
-        public SearchEPD()
+        public SearchEPDCommand()
         {
             Instance = this;
         }
 
-        public static SearchEPD Instance { get; private set; }
-        public override string EnglishName => "SearchEPD";
+        public static SearchEPDCommand Instance { get; private set; }
+        public override string EnglishName => "WoodchuckSearchEPD";
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
+        {
+            return this.SearchEPD(doc);
+        }
+
+        public Result SearchEPD(RhinoDoc doc)
         {
             MaterialFilter mf = new MaterialFilter();
 
             if (searchForm == null)
             {
-                searchForm = new SearchForm(mf) { Owner = RhinoEtoApp.MainWindow };
+                searchForm = new SearchForm(doc, mf) { Owner = RhinoEtoApp.MainWindow };
                 searchForm.Closed += OnFormClosed;
                 searchForm.Show();
             }
@@ -61,6 +67,10 @@ namespace WoodchuckCarbonTool.src
                         epds = CLFSearch.Instance.Search(mf);
                         avgEPD = null;
                         break;
+                    case "Kaleidoscope":
+                        epds = KaleidoscopeSearch.Instance.Search(mf);
+                        avgEPD = null;
+                        break;
                 }
                 // ERROR: the server did not return anything, most likely than not an
                 // authentication error.
@@ -81,34 +91,6 @@ namespace WoodchuckCarbonTool.src
                 }
                 Application.Instance.Invoke(() => searchForm.RepopulateSearchResult(epds, avgEPD));
             };
-
-            // Event listener: an assign event is called
-            searchForm.AssignEvent += (s, e) =>
-            {
-                searchForm.WindowState = WindowState.Minimized;
-                if (qForm == null)
-                {
-                    qForm = new MaterialQuantityOptionsForm(e.epd) { Owner = RhinoEtoApp.MainWindow };
-                    qForm.Closed += OnQFormClosed;
-                    qForm.Show();
-                }
-
-                qForm.PercentageEvent += (s2, e2) =>
-                {
-                    qForm.Close();
-                    EC3Selector geoSelector = new EC3Selector(e2.epd.dimension);
-                    ObjRef[] objRefs = geoSelector.GetSelection();
-
-                    Result rslt = EPDManager.Assign(objRefs, e2.epd);
-                    if (rslt != Result.Success)
-                    {
-                        RhinoApp.WriteLine("Assignment canceled, No objects selected");
-                    }
-                    searchForm.WindowState = WindowState.Normal;
-                };
-            };
-
-            
 
             return Result.Success;
         }
