@@ -46,34 +46,43 @@ namespace WoodchuckCarbonTool.src.UI
 
             string titleText = "Global Waming Potential Per Unit Material";
 
-            var titleRect = e.Display.Measure2dText(titleText, new Point2d(0, 0), false, 0.0, 12, "Arial");
+            var titleRect = e.Display.Measure2dText(titleText, new Point2d(0, 0), false, 0.0, 36, "Arial");
             var titleHeight = Math.Abs(titleRect.Height);
             var titleLoc = new Point2d(left + xGap, top + yGap);
-            e.Display.Draw2dText(titleText, Color.Black, titleLoc, false, 12, "Arial");
+            e.Display.Draw2dText(titleText, Color.Black, titleLoc, false, 36, "Arial");
 
             string unitText = "kgCO2e/" + UnitManager.GetSystemUnitStr(e.RhinoDoc, 3);
 
-            var unitRect = e.Display.Measure2dText(unitText, new Point2d(0, 0), false, 0.0, 8, "Arial");
+            var unitRect = e.Display.Measure2dText(unitText, new Point2d(0, 0), false, 0.0, 24, "Arial");
             var unitHeight = Math.Abs(unitRect.Height);
             var unitLoc = new Point2d(left + xGap, top + yGap + titleHeight + spacing / 2);
-            e.Display.Draw2dText(unitText, Color.Black, unitLoc, false, 8, "Arial");
+            e.Display.Draw2dText(unitText, Color.Black, unitLoc, false, 24, "Arial");
 
             for(int i = 0; i < Values.Length; i++)
             {
-
+                string valStr = Values[i].ToString();
+                var valRect = e.Display.Measure2dText(valStr, new Point2d(0, 0), false, 0.0, 24, "Arial");
+                var valHeight = Math.Abs(valRect.Height);
+                var valLoc = new Point2d
+                    (
+                    left + xGap + legendBoxWidth + spacing,
+                    unitLoc.Y + unitHeight + spacing + (Values.Length - i - 1)*(legendBoxWidth * 2) - (1/2) * valHeight
+                    );
+                e.Display.Draw2dText(valStr, Color.Black, valLoc, false, 24, "Arial");
             }
 
             for (int i = 0; i < Colors.Length; i++)
             {
-                System.Drawing.Point boxLoc = new System.Drawing.Point(left + legendBoxWidth + xGap, top + yGap + 
-                    (Colors.Length - i - 1)*(legendBoxWidth * 2));
+                System.Drawing.Point boxLoc = new System.Drawing.Point
+                    (
+                    left + xGap, 
+                    (Colors.Length - i - 1)*(legendBoxWidth * 2) + (int)unitLoc.Y + unitHeight + spacing
+                    );
                 Size boxSize = new Size(legendBoxWidth, legendBoxWidth * 2);
                 Rectangle box = new Rectangle(boxLoc, boxSize);
 
                 e.Display.Draw2dRectangle(box, Color.Transparent, 0, Colors[i]);
             }
-
-
         }
     }
 }
