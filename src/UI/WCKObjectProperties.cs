@@ -19,6 +19,14 @@ namespace WoodchuckCarbonTool.src.UI
         public override string EnglishPageTitle => "Embodied Carbon Material";
         public override object PageControl => control ?? (control = new WCKObjectPropertiesControl());
 
+        public override System.Drawing.Icon PageIcon(System.Drawing.Size sizeInPixels)
+        {
+            var icon = Rhino.UI.DrawingUtilities.LoadIconWithScaleDown(
+              "WoodchuckCarbonTool.EmbeddedResources.WCK_Properties.ico",
+              sizeInPixels.Width,
+              GetType().Assembly);
+            return icon;
+        }
         public override bool ShouldDisplay(ObjectPropertiesPageEventArgs e)
         {
             return e.ObjectCount > 0;

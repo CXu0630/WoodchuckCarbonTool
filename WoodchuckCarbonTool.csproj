@@ -43,6 +43,7 @@
     <None Remove="EmbeddedResources\2023_04_CLF_USAReadyMixedConcreteRegional.csv" />
     <None Remove="EmbeddedResources\2023_Kaleidoscope_AssemblyDatabase.csv" />
     <None Remove="EmbeddedResources\2024_05_CategoryDescriptions_v001.csv" />
+    <None Remove="EmbeddedResources\WCK_Properties.ico" />
   </ItemGroup>
   
 </Project>
