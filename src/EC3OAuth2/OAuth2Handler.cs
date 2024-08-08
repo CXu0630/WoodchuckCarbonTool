@@ -9,10 +9,12 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
+using Rhino.FileIO;
+using Rhino.Geometry;
 
 namespace WoodchuckCarbonTool.src.EC3OAuth2
 {
-    internal class TestOAuthHandler
+    public class OAuth2Handler
     {
         private const string RedirectUri = "http://localhost:8000/callback";
         private const string ClientId = "e4XzLm6W9s61J59Q5pRIoly58Q0EARp2ZJESaqYq";
@@ -37,14 +39,19 @@ namespace WoodchuckCarbonTool.src.EC3OAuth2
                 // Extract the authorization code from the request
                 string authorizationCode = ExtractAuthorizationCode(context.Request.Url);
 
+                string message = "";
+                if (authorizationCode == null) message = "Authorization failed. Please close this window and try again.";
+                else message = "Authorization successful! You can close this window.";
+
                 // Respond to the browser
-                byte[] responseBuffer = Encoding.UTF8.GetBytes("Authorization successful! You can close this window.");
+                byte[] responseBuffer = Encoding.UTF8.GetBytes(message);
                 context.Response.ContentLength64 = responseBuffer.Length;
                 context.Response.OutputStream.Write(responseBuffer, 0, responseBuffer.Length);
                 context.Response.OutputStream.Close();
 
                 // Exchange the authorization code for an access token
                 string accessToken = await ExchangeCodeForTokenAsync(authorizationCode);
+                if (authorizationCode == null) return null;
                 return accessToken;
             }
         }

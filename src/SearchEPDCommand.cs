@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using UnitsNet;
 using WoodchuckCarbonTool.src.Kaleidoscope;
+using System.Security.Authentication;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -61,7 +62,7 @@ namespace WoodchuckCarbonTool.src
                 switch (mf.dataBase)
                 {
                     case "EC3":
-                        epds = RequestEC3(doc, mf, out avgEPD);
+                        epds = RequestEC3(doc, mf, out avgEPD);                        
                         break;
                     case "CLF":
                         epds = CLFSearch.Instance.Search(mf);
@@ -77,7 +78,8 @@ namespace WoodchuckCarbonTool.src
                 if (epds == null)
                 {
                     Application.Instance.Invoke(() =>
-                    searchForm.RepopulateResultMessage("There was an error accessing the EC3 server."));
+                    searchForm.RepopulateResultMessage("There was an error accessing the EC3 server, please try again. " +
+                    "\nIf this error persists, please contact me."));
                     return;
                 }
                 // NO RES: there weren't any EPDs found with these particular 

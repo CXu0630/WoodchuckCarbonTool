@@ -2,6 +2,7 @@ using Rhino;
 using System.IO;
 using System.Net;
 using System.Text;
+using WoodchuckCarbonTool.src.EC3OAuth2;
 
 namespace WoodchuckCarbonTool.src.EC3
 {
@@ -14,7 +15,6 @@ namespace WoodchuckCarbonTool.src.EC3
         // This is of course a temporary solution. The plan is to build a "public client"
         // system for authentication. Let's see if we get there.Reference information:
         // https://buildingtransparency.org/ec3/manage-apps/api-doc/guide#/02_Accessing_API/03_Dev_oauth2_app.md
-        static string apiKey = "zjQ5yUsKYWTiAaQWMWoJSz7c4LnZOU";
 
         public EC3Request() { }
 
@@ -49,11 +49,24 @@ namespace WoodchuckCarbonTool.src.EC3
             return SendGetRequest(url);
         }
 
+        public static string GetUserStatus(string apiKey)
+        {
+            var url = "https://buildingtransparency.org/api/users/me/status";
+            return SendGetRequest(url, apiKey);
+        }
+
+        private static string SendGetRequest(string url)
+        {
+            EC3Authenticator authenticator = EC3Authenticator.Instance;
+            string apiKey = authenticator.GetAPIKey();
+            return SendGetRequest(url, apiKey);
+        }
+
         /// <summary>
         /// Once requests are formatted by the corresponding methods, this class deals
         /// with the actual sending of the request.
         /// </summary>
-        private static string SendGetRequest(string url)
+        private static string SendGetRequest(string url, string apiKey)
         {
             string response = null;
             try
