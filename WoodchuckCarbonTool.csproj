@@ -30,6 +30,7 @@
     <PackageReference Include="CsvHelper" Version="32.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="RhinoCommon" Version="8.8.24170.13001" IncludeAssets="compile;build" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="UnitsNet" Version="5.48.0" />
   </ItemGroup>
   
@@ -44,6 +45,10 @@
     <None Remove="EmbeddedResources\2023_Kaleidoscope_AssemblyDatabase.csv" />
     <None Remove="EmbeddedResources\2024_05_CategoryDescriptions_v001.csv" />
     <None Remove="EmbeddedResources\WCK_Properties.ico" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="System.Web" />
   </ItemGroup>
   
 </Project>
