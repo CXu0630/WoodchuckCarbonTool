@@ -105,7 +105,7 @@ namespace WoodchuckCarbonTool.src.UI
             // opens a tab on an existing window if there is one already.
             browserView.Click += (s, e) =>
             {
-                System.Diagnostics.Process.Start("https://buildingtransparency.org/ec3/epds/" + epd.id);
+                System.Diagnostics.Process.Start("https://buildingtransparency.org/ec3/epds/" + epd.ec3id);
             };
 
             // The assign button is pressed. Non-UI events are not delt with in this class.
@@ -152,7 +152,7 @@ namespace WoodchuckCarbonTool.src.UI
             };
             buttonLayout.BeginHorizontal();
             buttonLayout.Add(null);
-            if (epd.id != null)
+            if (epd.ec3id != null)
             {
                 buttonLayout.Add(browserView);
             }

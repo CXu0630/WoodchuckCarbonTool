@@ -48,8 +48,7 @@ namespace WoodchuckCarbonTool.src.EC3OAuth2
 
         public void StoreKey()
         {
-            List<string> keyContainer = new List<string>();
-            keyContainer.Add(apiKey);
+            List<string> keyContainer = new List<string> { apiKey };
             File.WriteAllLines(filePath, keyContainer);
         }
 

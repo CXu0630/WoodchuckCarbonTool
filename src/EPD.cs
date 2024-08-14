@@ -15,12 +15,13 @@ namespace WoodchuckCarbonTool.src
     {
         JObject JObj;
         public string name { get; set; }
+        public string id { get; set; }
 
         public Mass gwp;
         public IQuantity unitMaterial;
         public Density density;
 
-        public string id { get; }
+        public string ec3id { get; }
         public string category { get; }
         public string manufacturer { get; }
         public int dimension { get; }
@@ -51,7 +52,7 @@ namespace WoodchuckCarbonTool.src
 
             // basic stuff
             name = obj["name"]?.ToString();
-            id = obj["id"]?.ToString();
+            ec3id = obj["id"]?.ToString();
             category = mf.categoryName?.ToString();
             manufacturer = obj["manufacturer"]["name"]?.ToString();
 
@@ -103,7 +104,7 @@ namespace WoodchuckCarbonTool.src
             mf = searchPar;
             this.manufacturer = manufacturer;
             this.dimension = dimension;
-            this.id = id;
+            this.ec3id = id;
 
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg");
 

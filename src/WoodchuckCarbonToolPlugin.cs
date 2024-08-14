@@ -1,5 +1,9 @@
+using Rhino;
+using Rhino.FileIO;
 using Rhino.PlugIns;
 using Rhino.UI;
+using System.IO.Ports;
+using System.Linq;
 using WoodchuckCarbonTool.src.UI;
 
 namespace WoodchuckCarbonTool.src
@@ -14,9 +18,12 @@ namespace WoodchuckCarbonTool.src
     ///</summary>
     public class WoodchuckCarbonToolPlugin : Rhino.PlugIns.PlugIn
     {
+        public DocumentEPDData DocumentEPDs;
+
         public WoodchuckCarbonToolPlugin()
         {
             Instance = this;
+            DocumentEPDs = new DocumentEPDData();
         }
 
         ///<summary>Gets the only instance of the WoodchuckCarbonToolPlugin plug-in.</summary>
@@ -38,5 +45,43 @@ namespace WoodchuckCarbonTool.src
         {
             return base.OnLoad(ref errorMessage);
         }
+
+        private void OnCloseDocument(object sender, DocumentEventArgs e)
+        {
+            DocumentEPDs.Clear();
+        }
+
+        protected override bool ShouldCallWriteDocument(FileWriteOptions options)
+        {
+            return !options.WriteGeometryOnly && !options.WriteSelectedObjectsOnly;
+        }
+
+        protected override void WriteDocument(RhinoDoc doc, BinaryArchiveWriter archive, FileWriteOptions options)
+        {
+            DocumentEPDs.WriteDocument(archive);
+        }
+
+        protected override void ReadDocument(RhinoDoc doc, BinaryArchiveReader archive, FileReadOptions options)
+        {
+            DocumentEPDData epdDict = new DocumentEPDData();
+            epdDict.ReadDocument(archive);
+
+            if (!options.ImportMode && !options.ImportReferenceMode)
+            {
+                foreach (var pair in epdDict)
+                {
+                    if (DocumentEPDs.Keys.Contains(pair.Key))
+                    {
+                        string newId = pair.Value.AssignNewId();
+                        DocumentEPDs.Add(newId, pair.Value);
+                    }
+                    else
+                    {
+                        DocumentEPDs.Add(pair.Key, pair.Value);
+                    }
+                }
+            }
+        }
+
     }
 }
