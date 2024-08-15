@@ -127,7 +127,7 @@ namespace WoodchuckCarbonTool.src
         {
             if (!MinMaxCalculated) PopulateMinMaxGwp(doc);
 
-            EPD epd = EPDManager.Get(new ObjRef(obj));
+            EPD epd = EpdManager.Get(new ObjRef(obj));
             if (epd == null) { return Color.Gray; }
 
             double gwp = epd.GetGwpPerSystemUnit(doc).Value;
@@ -139,7 +139,7 @@ namespace WoodchuckCarbonTool.src
                 double volume = GeometryProcessor.GetDimensionalInfo(objRef, 3);
                 if (volume == 0 || volume == -1) { return Color.DarkGray; }
 
-                double objGwp = GWPCalculator.GetTotalGwp(doc, new ObjRef[] { new ObjRef(obj) });
+                double objGwp = GwpCalculator.GetTotalGwp(doc, new ObjRef[] { new ObjRef(obj) });
                 gwp = objGwp / volume;
             }
             
@@ -172,7 +172,7 @@ namespace WoodchuckCarbonTool.src
 
             foreach (RhinoObject obj in doc.Objects)
             {
-                EPD epd = EPDManager.Get(new ObjRef(obj));
+                EPD epd = EpdManager.Get(new ObjRef(obj));
                 if (epd == null) { continue; }
 
                 double currentGwp = epd.GetGwpPerSystemUnit(doc).Value;

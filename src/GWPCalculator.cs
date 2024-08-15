@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using UnitsNet;
 using Rhino;
+using Rhino.DocObjects;
 
 namespace WoodchuckCarbonTool.src
 {
-    internal class GWPCalculator
+    internal class GwpCalculator
     {
         /// <summary>
         /// Retreives the total GWP of a selection of Rhino Object References.
@@ -24,7 +25,7 @@ namespace WoodchuckCarbonTool.src
             foreach (Rhino.DocObjects.ObjRef objRef in objRefs)
             {
                 EPD epd = null;
-                if (objRef != null) { epd = EPDManager.Get(objRef); }
+                if (objRef != null) { epd = EpdManager.Get(objRef); }
                 if (epd == null) { continue; }
 
                 IQuantity unit = UnitManager.GetSystemUnit(doc, epd.dimension);
@@ -50,6 +51,12 @@ namespace WoodchuckCarbonTool.src
                 string scientific = number.ToString("E" + (maxLength - 6)); // Convert to scientific notation
                 return scientific.Length <= maxLength ? scientific : scientific.Substring(0, maxLength);
             }
+        }
+
+        public static int GetPercentageSolid(RhinoObject obj)
+        {
+            int pctg = 100;
+            if (obj == null) { return pctg; }
         }
     }
 }

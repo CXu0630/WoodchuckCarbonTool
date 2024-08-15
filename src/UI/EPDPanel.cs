@@ -14,14 +14,14 @@ using Rhino.FileIO;
 
 namespace WoodchuckCarbonTool.src.UI
 {
-    internal class EPDPanel : Panel
+    internal class EpdPanel : Panel
     {
         public delegate void AssignEventHandler(object sender, AssignEventArgs e);
         public event AssignEventHandler AssignEvent;
         private MaterialQuantityOptionsForm qForm { get; set; }
         private ObjRef[] AssignTargets { get; set; }
 
-        public EPDPanel(RhinoDoc doc, EPD epd, int width = -1, Form parent = null)
+        public EpdPanel(RhinoDoc doc, EPD epd, int width = -1, Form parent = null)
         {
             if(width > 0) this.Width = width;
 
@@ -117,7 +117,7 @@ namespace WoodchuckCarbonTool.src.UI
 
                 if (qForm == null)
                 {
-                    qForm = new MaterialQuantityOptionsForm(epd) { Owner = RhinoEtoApp.MainWindow };
+                    qForm = new MaterialQuantityOptionsForm() { Owner = RhinoEtoApp.MainWindow };
                     qForm.Closed += OnQFormClosed;
                     qForm.Show();
                 }
@@ -128,11 +128,11 @@ namespace WoodchuckCarbonTool.src.UI
 
                     if (AssignTargets == null || AssignTargets.Length == 0)
                     {
-                        WCKSelector geoSelector = new WCKSelector(e2.epd.dimension);
+                        WckSelector geoSelector = new WckSelector(epd.dimension);
                         AssignTargets = geoSelector.GetSelection();
                     }
                     
-                    Result rslt = EPDManager.Assign(AssignTargets, e2.epd);
+                    Result rslt = EpdManager.Assign(AssignTargets, epd, e2.pctgSolid);
                     if (rslt != Result.Success)
                     {
                         RhinoApp.WriteLine("Assignment canceled, No objects selected");

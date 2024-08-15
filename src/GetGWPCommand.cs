@@ -13,17 +13,17 @@ namespace WoodchuckCarbonTool.src
     /// it can build data plots for selected geometry and create a custom display of the
     /// model based on GWP data.
     /// </summary>
-    public class GetGWPCommand : Command
+    public class GetGwpCommand : Command
     {
         private ResultForm form { get; set; }
 
-        public GetGWPCommand()
+        public GetGwpCommand()
         {
             Instance = this;
         }
 
         ///<summary>The only instance of the MyCommand command.</summary>
-        public static GetGWPCommand Instance { get; private set; }
+        public static GetGwpCommand Instance { get; private set; }
 
         public override string EnglishName => "WoodchuckGetGWP";
 
@@ -39,7 +39,7 @@ namespace WoodchuckCarbonTool.src
             getSelector.SetPrompt("Select geometry to calculate GWP for");
             Rhino.DocObjects.ObjRef[] objRefs = getSelector.GetSelection();
 
-            double totalGWP = GWPCalculator.GetTotalGwp(doc, objRefs);
+            double totalGWP = GwpCalculator.GetTotalGwp(doc, objRefs);
 
             string rsltStr = "Total GWP of Selected Objects: \n" + totalGWP.ToString("F3") +
                 "kgCO2e";

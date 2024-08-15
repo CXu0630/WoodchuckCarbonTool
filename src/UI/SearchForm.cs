@@ -288,7 +288,7 @@ namespace WoodchuckCarbonTool.src.UI
 
             if (avgEPD != null)
             {
-                EPDPanel avgPanel = new UI.EPDPanel(this.doc, avgEPD, this.resPanel.Width - 40, this);
+                EpdPanel avgPanel = new UI.EpdPanel(this.doc, avgEPD, this.resPanel.Width - 40, this);
                 epdLayout.Add(avgPanel);
                 epdLayout.Add(Spacer(Colors.WhiteSmoke));
             }
@@ -298,7 +298,7 @@ namespace WoodchuckCarbonTool.src.UI
             foreach (EPD epd in epds.Take(30))
             {
                 if (epd == null) { continue; }
-                EPDPanel epdPanel = new UI.EPDPanel(this.doc, epd, this.resPanel.Width - 40, this);
+                EpdPanel epdPanel = new UI.EpdPanel(this.doc, epd, this.resPanel.Width - 40, this);
                 epdLayout.Add(epdPanel);
             }
 

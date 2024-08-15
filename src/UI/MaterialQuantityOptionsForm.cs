@@ -16,7 +16,7 @@ namespace WoodchuckCarbonTool.src.UI
 
         public Panel errorPanel;
 
-        public MaterialQuantityOptionsForm(EPD epd) 
+        public MaterialQuantityOptionsForm() 
         {
             WindowStyle = WindowStyle.Default;
             Maximizable = false;
@@ -47,6 +47,15 @@ namespace WoodchuckCarbonTool.src.UI
                 Width = 60
             };
 
+            Label noteLbl = new Label
+            {
+                Text = "The percentage you enter will be applied to objects selected" +
+                "/nwhen calculating their carbon. You may enter a number larger" +
+                "/nthan 100.",
+                Width = 100,
+                Font = new Eto.Drawing.Font(SystemFonts.Default().FamilyName, 10)
+            };
+
             Button confirm = new Button
             {
                 Text = "Confirm",
@@ -58,8 +67,7 @@ namespace WoodchuckCarbonTool.src.UI
 
                 if (percentage != -1)
                 {
-                    epd.percentageSolid = percentage;
-                    PercentageEvent.Invoke(confirm, new PercentageEventArgs(epd));
+                    PercentageEvent.Invoke(confirm, new PercentageEventArgs(percentage));
                 }
             };
 
@@ -67,6 +75,9 @@ namespace WoodchuckCarbonTool.src.UI
             layout.BeginHorizontal();
             layout.Add(lbl);
             layout.Add(textBox);
+            layout.EndBeginHorizontal();
+            layout.Add(noteLbl);
+            layout.Add(null);
             layout.EndBeginHorizontal();
             layout.Add(null);
             layout.Add(new Panel());
@@ -88,8 +99,8 @@ namespace WoodchuckCarbonTool.src.UI
             }
             if (int.TryParse(text, out var percentage))
             {
-                if (percentage > 0 && percentage <= 100) return percentage;
-                RepopulateErrorPanel("Please enter a number between 1 to 100.");
+                if (percentage > 0) return percentage;
+                RepopulateErrorPanel("Please enter a positive number.");
                 return -1;
             }
             RepopulateErrorPanel("Please enter a number.");
@@ -114,10 +125,10 @@ namespace WoodchuckCarbonTool.src.UI
 
         internal class PercentageEventArgs : EventArgs
         {
-            public EPD epd;
-            public PercentageEventArgs(EPD epd)
+            public int pctgSolid;
+            public PercentageEventArgs(int pctgSolid)
             {
-                this.epd = epd;
+                this.pctgSolid = pctgSolid;
             }
         }
     }

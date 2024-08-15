@@ -11,13 +11,13 @@ using Eto.Forms;
 
 namespace WoodchuckCarbonTool.src.UI
 {
-    internal class WCKObjectProperties: ObjectPropertiesPage
+    internal class WckObjectProperties: ObjectPropertiesPage
     {
-        WCKObjectPropertiesControl control;
+        WckObjectPropertiesControl control;
         private ObjectPropertiesPageEventArgs prevEventArgs;
 
         public override string EnglishPageTitle => "Embodied Carbon Material";
-        public override object PageControl => control ?? (control = new WCKObjectPropertiesControl());
+        public override object PageControl => control ?? (control = new WckObjectPropertiesControl());
 
         public override System.Drawing.Icon PageIcon(System.Drawing.Size sizeInPixels)
         {
@@ -61,7 +61,7 @@ namespace WoodchuckCarbonTool.src.UI
                 objRefs.Add(new ObjRef(obj));
 
                 EPD epd = null;
-                epd = EPDManager.Get(new ObjRef(obj));
+                epd = EpdManager.Get(new ObjRef(obj));
                 if (epd == null) { continue; }
                 epds.Add(epd);
 
@@ -81,7 +81,7 @@ namespace WoodchuckCarbonTool.src.UI
             if (!hasUniqueSource) { uniqueSource = null; }
             if (!hasUniquePercentSolid) { uniquePercentSolid = -1; }
 
-            double totalGwp = GWPCalculator.GetTotalGwp(e.Document, objRefs.ToArray());
+            double totalGwp = GwpCalculator.GetTotalGwp(e.Document, objRefs.ToArray());
 
             control.SetParent(this);
             control.SetEventArgs(e);

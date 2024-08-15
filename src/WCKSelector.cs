@@ -11,11 +11,11 @@ namespace WoodchuckCarbonTool.src
     /// method... These specific customizations might become unnecessary once we use a
     /// more robust system for getting material quantity.
     /// </summary>
-    internal class WCKSelector : SimpleSelector
+    internal class WckSelector : SimpleSelector
     {
         int dimension = 3;
 
-        public WCKSelector(int dimension)
+        public WckSelector(int dimension)
         {
             this.dimension = dimension;
         }

@@ -18,12 +18,12 @@ namespace WoodchuckCarbonTool.src
     ///</summary>
     public class WoodchuckCarbonToolPlugin : Rhino.PlugIns.PlugIn
     {
-        public DocumentEPDData DocumentEPDs;
+        public DocumentEpdMap DocumentEPDs;
 
         public WoodchuckCarbonToolPlugin()
         {
             Instance = this;
-            DocumentEPDs = new DocumentEPDData();
+            DocumentEPDs = new DocumentEpdMap();
         }
 
         ///<summary>Gets the only instance of the WoodchuckCarbonToolPlugin plug-in.</summary>
@@ -37,7 +37,7 @@ namespace WoodchuckCarbonTool.src
 
         protected override void ObjectPropertiesPages(ObjectPropertiesPageCollection collection)
         {
-            var sample_page = new WCKObjectProperties();
+            var sample_page = new WckObjectProperties();
             collection.Add(sample_page);
         }
 
@@ -63,7 +63,7 @@ namespace WoodchuckCarbonTool.src
 
         protected override void ReadDocument(RhinoDoc doc, BinaryArchiveReader archive, FileReadOptions options)
         {
-            DocumentEPDData epdDict = new DocumentEPDData();
+            DocumentEpdMap epdDict = new DocumentEpdMap();
             epdDict.ReadDocument(archive);
 
             if (!options.ImportMode && !options.ImportReferenceMode)

@@ -9,9 +9,9 @@ namespace WoodchuckCarbonTool.src
     /// calculations. It makes use of EPDData as the wrapper class for EPD objects
     /// so that EPDs can be read and written with the Rhino file.
     /// </summary>
-    internal class EPDManager
+    internal class EpdManager
     {
-        public static Result Assign(ObjRef objRef, EPD epd)
+        public static Result Assign(ObjRef objRef, EPD epd, int pctg)
         {
             if (objRef == null) { return Result.Failure; }
             RhinoObject obj = objRef.Object();
@@ -21,12 +21,13 @@ namespace WoodchuckCarbonTool.src
             bool exists = CheckEPDExists(epd, out id);
             if (!exists)
             {
-                EPDData epdData = new EPDData(epd);
+                DocumentEpdData epdData = new DocumentEpdData(epd);
                 id = epdData.epd.id;
                 WoodchuckCarbonToolPlugin.Instance.DocumentEPDs.Add(id, epdData);
             }
 
             obj.Attributes.UserDictionary["WCK_EPD_ID"] = id;
+            obj.Attributes.UserDictionary["WCK_PCTG"] = pctg;
 
             obj.CommitChanges();
 
@@ -36,7 +37,7 @@ namespace WoodchuckCarbonTool.src
         /// <summary>
         /// Assigns an EPD to an array of Object References
         /// </summary>
-        public static Result Assign(ObjRef[] objRefs, EPD epd)
+        public static Result Assign(ObjRef[] objRefs, EPD epd, int pctg)
         {
             Result finalRslt = Result.Success;
 
@@ -47,7 +48,7 @@ namespace WoodchuckCarbonTool.src
             {
                 if (objRef == null) continue;
 
-                Result rslt = Assign(objRef, epd);
+                Result rslt = Assign(objRef, epd, pctg);
                 if (rslt != Result.Success) finalRslt = rslt;
             }
 
@@ -75,7 +76,7 @@ namespace WoodchuckCarbonTool.src
                 return null;
             }
 
-            EPDData epdData = WoodchuckCarbonToolPlugin.Instance.DocumentEPDs[id];
+            DocumentEpdData epdData = WoodchuckCarbonToolPlugin.Instance.DocumentEPDs[id];
 
             EPD epd = epdData.epd;
 
@@ -84,18 +85,25 @@ namespace WoodchuckCarbonTool.src
 
         public static bool UpdatePercentSolid(ObjRef objRef, int newPercent) 
         {
-            EPD epd = Get(objRef);
-            if (epd == null) return false;
+            RhinoObject obj = objRef.Object();
+            obj.Attributes.UserDictionary["WCK_PCTG"] = newPercent;
 
-            epd.percentageSolid = newPercent;
             return true;
+        }
+
+        public static int GetPercentSolid(ObjRef objRef)
+        {
+            if (objRef == null) { return -1; }
+            RhinoObject obj = objRef.Object();
+
+            obj
         }
 
         public static bool CheckEPDExists(EPD epd, out string id)
         {
             id = "";
             if (epd == null) { return true; }
-            foreach(EPDData epdData in WoodchuckCarbonToolPlugin.Instance.DocumentEPDs.Values)
+            foreach(DocumentEpdData epdData in WoodchuckCarbonToolPlugin.Instance.DocumentEPDs.Values)
             {
                 if (epdData.epd.Equals(epd))
                 {

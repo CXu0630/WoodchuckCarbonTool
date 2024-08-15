@@ -14,7 +14,7 @@ using Rhino.UI;
 
 namespace WoodchuckCarbonTool.src.UI
 {
-    internal class WCKObjectPropertiesControl : Panel
+    internal class WckObjectPropertiesControl : Panel
     {
         private ObjectPropertiesPage parent;
         private ObjectPropertiesPageEventArgs eventArgs;
@@ -34,7 +34,7 @@ namespace WoodchuckCarbonTool.src.UI
             Control numAssignedRsp = new Label { Text = numAssignedObjs.ToString() };
 
             Control totalGwpTxt = new Label { Text = "Total GWP" };
-            Control totalGwpRsp = new Label { Text = GWPCalculator.FormatDoubleWithLengthLimit(totalGwp, 12) };
+            Control totalGwpRsp = new Label { Text = GwpCalculator.FormatDoubleWithLengthLimit(totalGwp, 12) };
 
             if (numAssignedObjs == 0) { database = "None"; }
 
@@ -56,14 +56,14 @@ namespace WoodchuckCarbonTool.src.UI
                 Button searchEpdButton = new Button { Text = "Search EPDs" };
                 searchEpdButton.Click += (sender, e) =>
                 {
-                    SearchEPDCommand.Instance.SearchEPD(doc);
+                    SearchEpdCommand.Instance.SearchEPD(doc);
                 };
 
                 propertiesTable.AddSubtable(new Control[][] { new Control[] { noEpdLabel }, new Control[] { searchEpdButton } });
             }
             else
             {
-                EPDPanel uniqueEpdPanel = new EPDPanel(doc, uniqueEpd, this.Width - 20);
+                EpdPanel uniqueEpdPanel = new EpdPanel(doc, uniqueEpd, this.Width - 20);
                 propertiesTable.AddSubtable(new Control[][] { new Control[] { uniqueEpdPanel } });
             }
 
@@ -93,7 +93,7 @@ namespace WoodchuckCarbonTool.src.UI
                     previousText = percentageSolidTextBox.Text;
                     foreach (ObjRef objRef in selectedObjs)
                     {
-                        EPDManager.UpdatePercentSolid(objRef, val);
+                        EpdManager.UpdatePercentSolid(objRef, val);
                     }
                 }
             };
