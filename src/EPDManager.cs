@@ -1,5 +1,6 @@
 using Rhino.Commands;
 using Rhino.DocObjects;
+using System.Linq;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -16,12 +17,16 @@ namespace WoodchuckCarbonTool.src
             RhinoObject obj = objRef.Object();
             if (epd == null) { return Result.Failure; }
 
-            bool reassign = false;
-            EPDData epdData = obj.Geometry.UserData.Find(typeof(EPDData)) as EPDData;
-            if (epdData == null) { epdData = new EPDData(epd); reassign = true; }
-            else { epdData.epd = epd; }
+            string id;
+            bool exists = CheckEPDExists(epd, out id);
+            if (!exists)
+            {
+                EPDData epdData = new EPDData(epd);
+                id = epdData.epd.id;
+                WoodchuckCarbonToolPlugin.Instance.DocumentEPDs.Add(id, epdData);
+            }
 
-            if (reassign) obj.Geometry.UserData.Add(epdData);
+            obj.Attributes.UserDictionary["WCK_EPD_ID"] = id;
 
             obj.CommitChanges();
 
@@ -58,8 +63,19 @@ namespace WoodchuckCarbonTool.src
 
             RhinoObject obj = objRef.Object();
 
-            EPDData epdData = obj.Geometry.UserData.Find(typeof(EPDData)) as EPDData;
-            if (epdData == null) return null;
+            if (!obj.Attributes.UserDictionary.Keys.Contains("WCK_EPD_ID"))
+            {
+                return null;
+            }
+
+            string id = (string)obj.Attributes.UserDictionary["WCK_EPD_ID"];
+            
+            if (!WoodchuckCarbonToolPlugin.Instance.DocumentEPDs.Keys.Contains(id))
+            {
+                return null;
+            }
+
+            EPDData epdData = WoodchuckCarbonToolPlugin.Instance.DocumentEPDs[id];
 
             EPD epd = epdData.epd;
 
@@ -73,6 +89,21 @@ namespace WoodchuckCarbonTool.src
 
             epd.percentageSolid = newPercent;
             return true;
+        }
+
+        public static bool CheckEPDExists(EPD epd, out string id)
+        {
+            id = "";
+            if (epd == null) { return true; }
+            foreach(EPDData epdData in WoodchuckCarbonToolPlugin.Instance.DocumentEPDs.Values)
+            {
+                if (epdData.epd.Equals(epd))
+                {
+                    id = epdData.epd.id;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

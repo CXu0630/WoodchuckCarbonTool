@@ -19,18 +19,36 @@ namespace WoodchuckCarbonTool.src
         {
             bool rc = false;
 
+            archive.WriteInt(Keys.Count);
             foreach(var epdData in this.Values)
             {
                 epdData.Write(archive);
             }
-            return true;
+
+            rc = archive.WriteErrorOccured;
+            return !rc;
         }
 
         public bool ReadDocument(BinaryArchiveReader archive)
         {
             bool rc = false;
 
+            try
+            {
+                var count = archive.ReadInt();
+                for (var i = 0; i < count; i++)
+                {
+                    var data = new EPDData();
+                    if (data.Read(archive)) { Add(data.epd.id, data); }
 
+                }
+                rc = archive.ReadErrorOccured;
+
+                return !rc;
+            } catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
