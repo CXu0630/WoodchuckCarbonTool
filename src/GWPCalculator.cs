@@ -33,7 +33,10 @@ namespace WoodchuckCarbonTool.src
                 double unitGWP = epd.GetGwpConverted(unit).Value;
                 if (dimension == -1) dimension = epd.dimension;
 
-                totalGWP += quantity * unitGWP * epd.percentageSolid / 100;
+                int pctgSolid = EpdManager.GetPercentSolid(objRef);
+                if (pctgSolid < 0) { pctgSolid = 100; }
+
+                totalGWP += quantity * unitGWP * pctgSolid / 100;
             }
 
             return totalGWP;
@@ -51,12 +54,6 @@ namespace WoodchuckCarbonTool.src
                 string scientific = number.ToString("E" + (maxLength - 6)); // Convert to scientific notation
                 return scientific.Length <= maxLength ? scientific : scientific.Substring(0, maxLength);
             }
-        }
-
-        public static int GetPercentageSolid(RhinoObject obj)
-        {
-            int pctg = 100;
-            if (obj == null) { return pctg; }
         }
     }
 }

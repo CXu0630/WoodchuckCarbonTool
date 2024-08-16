@@ -25,7 +25,7 @@ namespace WoodchuckCarbonTool.src.UI
             Resizable = false;
             ShowInTaskbar = true;
             Title = "Material Quantity Options";
-            MinimumSize = new Size(300, 200);
+            MinimumSize = new Size(300, 250);
 
             errorPanel = new Panel();
 
@@ -53,7 +53,7 @@ namespace WoodchuckCarbonTool.src.UI
                 "/nwhen calculating their carbon. You may enter a number larger" +
                 "/nthan 100.",
                 Width = 100,
-                Font = new Eto.Drawing.Font(SystemFonts.Default().FamilyName, 10)
+                Font = new Eto.Drawing.Font(SystemFonts.Default().FamilyName, 6)
             };
 
             Button confirm = new Button

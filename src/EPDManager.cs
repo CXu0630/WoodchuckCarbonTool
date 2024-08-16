@@ -27,7 +27,9 @@ namespace WoodchuckCarbonTool.src
             }
 
             obj.Attributes.UserDictionary["WCK_EPD_ID"] = id;
-            obj.Attributes.UserDictionary["WCK_PCTG"] = pctg;
+
+            if (pctg <= 0) { pctg = 100; }
+            obj.Attributes.UserDictionary["WCK_PCTG"] = pctg.ToString();
 
             obj.CommitChanges();
 
@@ -86,7 +88,7 @@ namespace WoodchuckCarbonTool.src
         public static bool UpdatePercentSolid(ObjRef objRef, int newPercent) 
         {
             RhinoObject obj = objRef.Object();
-            obj.Attributes.UserDictionary["WCK_PCTG"] = newPercent;
+            obj.Attributes.UserDictionary["WCK_PCTG"] = newPercent.ToString();
 
             return true;
         }
@@ -96,7 +98,14 @@ namespace WoodchuckCarbonTool.src
             if (objRef == null) { return -1; }
             RhinoObject obj = objRef.Object();
 
-            obj
+            if (obj.Attributes.UserDictionary.Keys.Contains("WCK_PCTG"))
+            {
+                int pctg = -1;
+                int.TryParse((string)obj.Attributes.UserDictionary["WCK_PCTG"], out pctg);
+                return pctg;
+            }
+
+            return -1;
         }
 
         public static bool CheckEPDExists(EPD epd, out string id)

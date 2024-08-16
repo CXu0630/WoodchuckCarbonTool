@@ -73,8 +73,10 @@ namespace WoodchuckCarbonTool.src.UI
                 if (uniqueEpd == null) { uniqueEpd = epd; }
                 else if (!epd.Equals(uniqueEpd)) { hasUniqueEpd = false; }
 
-                if (uniquePercentSolid == -1) { uniquePercentSolid = epd.percentageSolid; }
-                else if (!(epd.percentageSolid == uniquePercentSolid)) { hasUniquePercentSolid = false; }
+                int pctg = EpdManager.GetPercentSolid(new ObjRef(obj));
+                if (pctg <= 0) { pctg = 100; }
+                if (uniquePercentSolid == -1) { uniquePercentSolid = pctg; }
+                else if (!(pctg == uniquePercentSolid)) { hasUniquePercentSolid = false; }
             }
 
             if (!hasUniqueEpd) { uniqueEpd = null; }
