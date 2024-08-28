@@ -2,12 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <Version>1.0.0-alpha</Version>
+    <Version>2.0.0-alpha</Version>
     <Title>WoodchuckCarbonTool</Title>
-    <Description>Description of WoodchuckCarbonTool</Description>
+    <Description>Woodchuck is used to provide easy access to various embodied carbon 
+	databases from within Rhino. It includes calculator functionality that can be 
+	used to quickly calculate embodied carbon of modeled geometry.</Description>
     <TargetExt>.rhp</TargetExt>
-    <Configurations>Debug;Release;Test</Configurations>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Configurations>Release</Configurations>
+    <Platforms>Windows;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
