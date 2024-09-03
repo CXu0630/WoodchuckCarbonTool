@@ -1,0 +1,104 @@
+ConstructionMaterials,00 00 00 No Masterformat Code,cb0a37f098f547a58fffb297eebe333a,3
+Aggregates,32 10 00 Bases Ballasts and Paving,f4b20196cf844933b4222809f51386fa,3
+Concrete,03 00 00 Concrete,484df282d43f4b0e855fad6b351ce006,3
+CementGrout,03 61 00 Cementitious Grouting,95793235b70c4b89b30d6a881ab8aee2,3
+Shotcrete,03 37 13 Shotcrete,cca4044f110c43aab149b8387c28f749,3
+ReadyMix,03 30 00 Cast-in-Place Concrete,b03dba1dca5b49acb1a5aa4daab546b4,3
+FlowableFill,31 23 23 Fill,8cce29c179d249afb3f2e1b9c1bce877,3
+PrecastConcrete,03 40 00 Precast Concrete,3d6ccdcd4a83401e96ae385d568dc339,3
+ArchitecturalPrecast,03 45 00 Precast Architectural Concrete,14453b4c250b4c5eb0e6b223cf5174c1,3
+StructuralPrecast,03 41 00 Precast Structural Concrete,19ea8ae36e314a3095e82c340f68eb46,3
+UtilityUndergroundPrecast,33 00 00 Site Utilities,4107bf633aa54d1f867ddc409cca1b30,3
+CivilPrecast,03 48 00 Precast Concrete Specialties,f535ba9603d8452f8af258f91200ae9a,3
+Masonry,04 20 00 Unit Masonry,3fc5526e02864303b5a24b05506a308a,3
+Brick,04 21 00 Clay Unit Masonry,41ff8f44d89c4cdbbcdf2671a35286f5,3
+CMU,04 22 00 Concrete Unit Masonry,4ec837a26a0a493786442296f4cb2730,3
+ManufacturingInputs,00 00 00 No Masterformat Code,37cb27a5c76a41fab817a8efb99955e8,3
+CementitiousMaterials,00 00 00 No Masterformat Code,c75fcf155c324377a4fc622744d112ea,3
+SupplementaryCementitiousMaterials,00 00 00 No Masterformat Code,bd6b3efb17b246788c67d94467bb59a7,3
+Cement,00 00 00 No Masterformat Code,8aff83d8d78249a0b3a78bfeca4b9720,3
+Steel,05 00 00 Metals,db641aa0dbc34d6096547da02bf73f3a,3
+RebarSteel,03 21 00 Reinforcement Bars,4e82b07fff2e40aeb1b72b695e9ac279,3
+WireMeshSteel,03 22 00 Fabric and Grid Reinforcing,139d996de52d4999a269aabecb2d4912,3
+StructuralSteel,05 12 00 Structural Steel Framing,820e86326d2945fb9322246fd4690fc8,3
+HotRolledSections,05 12 00 Structural Steel Framing,de95ab7d6ab5488bb87d20177f942d2a,3
+HollowSections,05 12 00 Structural Steel Framing,e96e409053534524b18ca57b992bb328,3
+PlateSteel,05 12 00 STRUCTURAL STEEL FRAMING,3c2208e79d954872af198013ae046a26,3
+ColdFormedSteel,05 00 00 METALS,df6ecf896ab5433b8d180099b3c43940,3
+DeckingSteel,05 31 00 Steel Decking,05d49f750eed4648b7f72e3bbfc8b8e4,3
+SteelSuspensionAssembly,09 53 00 Suspension Assemblies,403a3d004f25416eac881a89f40e90a8,3
+ColdFormedFraming,05 40 00 COLD-FORMED METAL FRAMING,5102ecc070414ff0a4b7c104ddecef45,3
+PrefabricatedSteelAssemblies,05 00 00 Metals,db705527616d4e62afaf56cf27c57bc3,3
+OpenWebMembranes,05 21 19 Open Web Steel Joist Framing,c10083005b9842e4b3d1649f90d82b54,3
+MBQSteel,00 00 00 No Masterformat Code,45b76cb5048447bead88a38fddc3e365,3
+CoilSteel,05 00 00 Metals,1a894216acf240e3977de4a5c28db7cc,3
+NetworkInfrastructure,27 00 00 Communications,2f96713d8b61400caf60b58f75730e55,3
+DataCabling,27 10 00 Structured Cabling,d1505e841ff6428a9a2d9f91c0813a63,1
+Finishes,09 00 00 Finishes,9152dd8544d6438fb388b66c2bd272f8,2
+Flooring,09 60 00 Flooring,ef8454f31b064e4ea7452a29d1018b70,2
+ResilientFlooring,09 65 00 Resilient Flooring,8ab304f186094beda76ff15fb15d0081,2
+Carpet,09 68 00 Carpeting,b43b707159f044bc90352dcb2b2778e3,2
+CementBoard,09 28 13 Cementitious Backing Board,088ba9fc78a24ab1b5b1f93c0c44a96a,2
+Tiling,09 30 00 Tiling,322f5fe92dc14206868213d0f800fe80,2
+GaugedTile,09 31 00 Ceramic Tile,b9b2720cfd824629ab5e2149ba6f597e,2
+GlassTile,09 35 00 Glass Mosaic Tile,f7a855e15d0242c5949457a5f5b9d0cf,2
+CeramicTile,09 31 00 Ceramic Tile,e7a0bc114c934f3f815d922bf1e689f9,2
+Gypsum,09 29 00 Gypsum Board,0d1d4544c70f4a82938c79d88f86ec5d,2
+CeilingPanel,09 50 00 Ceilings,237ca52c30ba4a1bbe214e10a2dee3fe,2
+AcousticalCeilings,09 51 00 Acoustical Ceilings,342ccbc46fc1418c8db86016753807d5,2
+PaintingAndCoating,09 90 00 Painting and Coating,2ff19307f5684468996d16f69808b592,2
+PaintByVolume,09 90 00 Painting and Coating,f73a720b9d7a4485aa8c434f7529bbde,3
+PaintByMass,09 90 00 Painting and Coating,9068d53b399b479f8277ad297a99ac31,3
+PaintByArea,09 90 00 Painting and Coating,39f098d4c80648cbb524169224288ad5,2
+Aluminium,05 00 00 METALS,26021028190540229c4994c0ea5ea476,3
+AluminiumExtrusions,05 00 00 METALS,973c3b55a5704f6e9cf5a2ad3d0d875b,3
+Wood,06 10 00 Rough Carpentry,fd14efc8874c4a55ac30d84a5612feb1,3
+DimensionLumber,06 11 00 Wood Framing,bdc042c5cca3498bbf6bf039d8a97261,3
+WoodFraming,06 11 00 Wood Framing,ce2498926db44d0d9177c7bfdf3520c0,3
+SheathingPanels,06 16 00 Sheathing,e4aa9c1808ad41b6944db88e51d877ba,3
+MassTimber,06 18 00 Glued-Laminated Construction,ef49fef3f7c240e18d6f32dfd9583bfc,3
+CompositeLumber,06 17 00 Shop-Fabricated Structural Wood,9717c6b40208445fbea4c7c5fbfb9557,3
+PrefabricatedWood,06 10 00 Rough Carpentry,6495a039f98f42bdbec921121d48dbc4,3
+NonStructuralWood,06 20 00 Finish Carpentry,d113c0063bcf41f0af23277b8b6362f0,3
+WoodJoists,06 17 33 Wood I-Joists,470b6ba66fda46f3b85a33bfc4fef4b1,1
+FireAndSmokeProtection,07 80 00 Fire and Smoke Protection,bbdf16b3cb5e48cbb5e73a0798fc63c0,3
+AppliedFireproofing,07 81 00 Applied Fireproofing,888ccf25e69e425ebe8c607f5b4958bc,3
+IntumescentFireproofing,07 81 20 Intumescent Fireproofing,4c87eada0a794e2b95e4f8d40495d5a8,3
+SprayFireproofing,07 81 10 Spray-Applied Fireproofing,cb8840cb2f21459c824dc501c2f00297,3
+ConveyingEquipment,14 00 00 Conveying Equipment,d4c6a9e6e4c04f6e9d6f1e9c9f6b9c3d,0
+Elevators,14 20 00 Elevators,1a9cc72827924cc98ad38fbcadc7fa7f,0
+ThermalMoistureProtection,07 00 00 Thermal and Moisture,34f64d921a3745c69f8ea7c6c0ec318c,2
+Insulation,07 21 00 Thermal Insulation,bf1c8882d7784db4b10d9d5698b8b5cc,2
+BlownInsulation,07 21 26 Blown Insulation,6fd418c8ff92415c833e6327638d8482,2
+BoardInsulation,07 21 13 Board Insulation,56f3c898f94b459eb18feadeb792ab88,2
+BlanketInsulation,07 21 16 Blanket Insulation,53a5d5bee64545f1bdd60e102a4a6ddf,2
+FoamedInPlace,07 21 19 Foamed-In-Place Insulation,712c2265bfe248e5aa58ad17bb3c92ea,2
+MembraneRoofing,07 50 00 Membrane Roofing,d4f59a8702314e84b683dde20c2a8a47,2
+SinglePlyKEE,07 50 00 Membrane Roofing,34d34329c1964de4a9b67437ef00c4ea,2
+BituminousRoofing,07 50 00 Membrane Roofing,a9fd6c7eca5a4d5382ece6423f0326ec,2
+SinglePlyPVC,07 50 00 Membrane Roofing,eea8edb2c0f84d77abfab5a6241cbae1,2
+Sheathing,06 16 00 Sheathing,2ba88414ca7344f6bf4140ca1bd536de,2
+GypsumSheathingBoard,06 16 43 Gypsum Sheathing,4063336edfe749b480a9f932d4109fe6,2
+CementitiousSheathingBoard,06 16 63 Cementitious Sheathing,c56db9d02dfe4fb2bb8cf0eb5f35a446,2
+Cladding,07 40 00 Roofing and Siding Panels,e0e179593b504a1b986e849cade3ff15,2
+WallPanels,07 42 00 Wall Panels,154ea9e0d9964ddc873cacd7c1968327,2
+RoofPanels,07 41 00 Roof Panels,b9bd97e8c55b49288eb9d672882f72a8,2
+InsulatedRoofPanels,07 41 00 Roof Panels,335621cd7eec42e89c2b76bb2a05e4fa,2
+InsulatedWallPanels,07 42 00 Wall Panels,8eb6a511c7d94f4f89e673b6e9badd3c,2
+Asphalt,32 12 16 Asphalt Paving,aa61ba9aeb2a4566942554362bb496d3,3
+Openings,08 00 00 Openings,fac0fe7a97774bd99b173c6f92394ef7,2
+Glazing,08 80 00 Glazing,3aa3a34fae9a400fa297339ba88e1fab,2
+InsulatingGlazingUnits,08 81 23 Exterior Glass Glazing,ade3ad3405124279955e7d3085f59383,2
+FenestrationParts,08 80 00 Glazing,28fadfb499484f5bb8f86ed4aa34be9a,2
+FenestrationAccessories,08 85 00 Glazing Accessories,2d40b2387b6845d3866c83bdc20f8f05,2
+GlassPanes,08 80 00 Glazing,09a7964b7e4f4c9b99890436b28af9c1,2
+ProcessedNonInsulatingGlassPanes,08 81 00 Glass Glazing,6daae3d967104f5c8c85199b259f58c8,2
+FlatGlassPanes,08 81 00 Glass Glazing,ca0d30f6f7e04106afbf0124f0ae35f3,3
+Placeholders,00 00 00 No Masterformat Code,e4fba377eec44294ab67fbbdf1d7d7e7,3
+ReusedComponent,00 00 00 No Masterformat Code,87d1f476534348439d062ca217b64827,3
+Negligible,00 00 00 No Masterformat Code,dfbf31cad8bb432890053b51a48c99ba,3
+MassPlaceholder,00 00 00 No Masterformat Code,e9fb7a16bf254f77b7cbc4c8818cb71e,3
+VolumePlaceholder,00 00 00 No Masterformat Code,7d107f8642f045a1ba1d83fecaf4663d,3
+LengthPlaceholder,00 00 00 No Masterformat Code,1fd14dd3207147c98c365c0c3549b01d,1
+AreaPlaceholder,00 00 00 No Masterformat Code,9fb5c916c0f147f29a77ff2a13015758,2
+Airspace,00 00 00 No Masterformat Code,7640566ef71245418c1bb4a8f99e2a7f,3

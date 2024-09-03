@@ -8,8 +8,8 @@
 	databases from within Rhino. It includes calculator functionality that can be 
 	used to quickly calculate embodied carbon of modeled geometry.</Description>
     <TargetExt>.rhp</TargetExt>
-    <Configurations>Release</Configurations>
-    <Platforms>Windows;x64</Platforms>
+    <Configurations>Debug;Release;Test</Configurations>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

@@ -23,7 +23,6 @@ namespace WoodchuckCarbonTool.src
     {
         // ETO form that hosts the search window
         private SearchForm searchForm { get; set; }
-        private MaterialQuantityOptionsForm qForm { get; set; }
 
         public SearchEpdCommand()
         {
@@ -101,12 +100,6 @@ namespace WoodchuckCarbonTool.src
         {
             searchForm.Dispose();
             searchForm = null;
-        }
-
-        private void OnQFormClosed(object sender, EventArgs e)
-        {
-            qForm.Dispose();
-            qForm = null;
         }
 
         /// <summary>

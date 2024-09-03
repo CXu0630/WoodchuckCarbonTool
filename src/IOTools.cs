@@ -42,11 +42,15 @@ namespace WoodchuckCarbonTool.src
         static string ReadCsvFromEmbeddedResource(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
+            try
             {
-                return reader.ReadToEnd();
+                using (var stream = assembly.GetManifestResourceStream(resourceName))
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
             }
+            catch (Exception) { return null; }
         }
 
         static List<List<string>> ParseCsv(string csvData)

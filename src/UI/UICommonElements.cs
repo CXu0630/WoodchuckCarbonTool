@@ -58,18 +58,27 @@ namespace WoodchuckCarbonTool.src.UI
             return drawable;
         }
 
-        public static Control SpacerLine(Color clr, float alpha)
+        public static Control SpacerLine(Color clr, float alpha, int spacerHeight)
         {
             DynamicLayout spacer = new DynamicLayout();
 
-            Panel blank1 = new Panel { Height = 10 };
-            Panel blank2 = new Panel { Height = 10 };
+            Panel blank1 = new Panel { Height = spacerHeight };
+            Panel blank2 = new Panel { Height = spacerHeight };
 
             spacer.Add(blank1);
             spacer.Add(SeparationLine(clr, alpha));
             spacer.Add(blank2);
 
             return spacer;
+        }
+
+        public static Control RequiredInfilLabel(string text)
+        {
+            DynamicLayout dl = new DynamicLayout();
+            Label lbl = new Label { Text = text };
+            Label astrisk = new Label { Text = "*", TextColor = Colors.Red };
+            dl.AddRow(new Control[] { lbl, astrisk });
+            return dl;
         }
     }
 }

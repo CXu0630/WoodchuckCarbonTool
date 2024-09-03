@@ -44,11 +44,12 @@ namespace WoodchuckCarbonTool.src.EC3
 
         private EC3CategoryTree()
         {
-            // update csv path to be in the same folder as the dll
-            string rhpLocation = IOTools.GetRhpLocation();
+            // This is not in use at the moment, but at some point, updating the category
+            // tree might be implemented
+            /*string rhpLocation = IOTools.GetRhpLocation();
             string[] locationSplit = rhpLocation.Split('/');
             locationSplit[locationSplit.Length - 1] = "EC3Categories.csv";
-            filePath = string.Join("/", locationSplit);
+            filePath = string.Join("/", locationSplit);*/
 
             // if there is currently no csv containing the information, retreive current
             // category information from EC3 and populate a csv with that info
@@ -64,24 +65,21 @@ namespace WoodchuckCarbonTool.src.EC3
         /// <returns></returns>
         public bool ReadCategoryCSV()
         {
-            if (!File.Exists(filePath)) return false;
-            var allLines = File.ReadAllLines(filePath).ToList();
-            if (allLines.Count == 0) return false;
-            foreach (string line in allLines)
+            List<List<string>> allLines = IOTools.ReadCSVFromEmbedded("2024_08_EC3Categories");
+            foreach (List<string> line in allLines)
             {
-                string[] catData = line.Split(',');
-                if (catData.Length != 4) continue;
-                names.Add(catData[0]);
-                masterformats.Add(catData[1]);
-                ids.Add(catData[2]);
-                dimensions.Add(int.Parse(catData[3]));
+                if (line.Count != 4) continue;
+                names.Add(line[0]);
+                masterformats.Add(line[1]);
+                ids.Add(line[2]);
+                dimensions.Add(int.Parse(line[3]));
             }
             return true;
         }
 
         /// <summary>
         /// Updates category data stored within this object with the most recent data
-        /// from EC3.
+        /// from EC3. This is not in use at the moment...
         /// </summary>
         public void UpdateEC3Categories()
         {
@@ -101,7 +99,7 @@ namespace WoodchuckCarbonTool.src.EC3
         /// <summary>
         /// Updates category data stored within thsi object as well as category data
         /// stored within the csv at the indicated file location with the most recent
-        /// data from EC3.
+        /// data from EC3. This is not in use at the moment...
         /// </summary>
         public void UpdateEC3CategoriesToFile()
         {

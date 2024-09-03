@@ -84,7 +84,7 @@ namespace WoodchuckCarbonTool.src.UI
                     previousText = percentageSolidTextBox.Text;
                 }
                 else if (!int.TryParse(percentageSolidTextBox.Text, out val) ||
-                val < 0 || val > 100)
+                val < 0)
                 {
                     percentageSolidTextBox.Text = previousText;
                 }

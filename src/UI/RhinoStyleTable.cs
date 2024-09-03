@@ -31,7 +31,7 @@ namespace WoodchuckCarbonTool.src.UI
             this.Add(UICommonElements.SeparationLine(Colors.Gray, 0.8f));
         }
 
-        public void AddSubtable(Control[][] subtableControls)
+        public void AddSubtable(Control[][] subtableControls, double[] distribution = null)
         {
             DynamicLayout subtableLayout = new DynamicLayout();
             Panel leftSpacer = new Panel { Width = this.leftSpacerWidth };
@@ -39,7 +39,17 @@ namespace WoodchuckCarbonTool.src.UI
             {
                 Spacing = this.Spacing
             };
-            subtable.PopulateTable(subtableControls, this.Width - this.leftSpacerWidth);
+
+            if (distribution == null)
+            {
+                double width = (double) 1 / subtableControls.Length;
+                distribution = new double[subtableControls.Length];
+                for(int i = 0; i < subtableControls.Length; i++)
+                {
+                    distribution[i] = width;
+                }
+            }
+            subtable.PopulateTable(subtableControls, distribution, this.Width - this.leftSpacerWidth);
             subtableLayout.BeginHorizontal();
             subtableLayout.Add(leftSpacer);
             subtableLayout.Add(subtable);

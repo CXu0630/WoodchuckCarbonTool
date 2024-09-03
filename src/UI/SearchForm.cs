@@ -86,7 +86,7 @@ namespace WoodchuckCarbonTool.src.UI
             searchPanel = new Panel();
             // Two basic layouts: one for search parameters, one for search results
             DynamicLayout searchLayout = SearchLayout();
-
+            
             // Sends an event signal to listeners in other classes when a search is 
             // performed.
             search.Click += async (s, e) =>

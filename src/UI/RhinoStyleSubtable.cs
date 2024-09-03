@@ -11,10 +11,16 @@ namespace WoodchuckCarbonTool.src.UI
 {
     internal class RhinoStyleSubtable : DynamicLayout
     {
-        public void PopulateTable(Control[][] controlColumns, int width = -1)
+        public void PopulateTable(Control[][] controlColumns, double[] distribution, int width = -1)
         {
             if (width > 0) this.Width = width;
-            int cellWidth = Math.DivRem(this.Width, controlColumns.Length, out int a);
+            if (distribution.Length < controlColumns.Length)
+            {
+                double[] newDistribution = new double[controlColumns.Length];
+                Array.Copy(distribution, newDistribution, distribution.Length);
+                distribution = newDistribution;
+            }
+            //int cellWidth = Math.DivRem(this.Width, controlColumns.Length, out int a);
 
             int maxLength = controlColumns.Max(column => column.Length);
 
@@ -25,11 +31,11 @@ namespace WoodchuckCarbonTool.src.UI
                 {
                     if (i < controlColumns[j].Length)
                     {
-                        controlRow[j] = UICommonElements.FixedWidthCell(controlColumns[j][i], cellWidth);
+                        controlRow[j] = UICommonElements.FixedWidthCell(controlColumns[j][i], (int)Math.Round(distribution[j] * this.Width));
                     }
                     else
                     {
-                        controlRow[j] = UICommonElements.FixedWidthCell(null, cellWidth);
+                        controlRow[j] = UICommonElements.FixedWidthCell(null, (int)Math.Round(distribution[j] * this.Width));
                     }
                 }
                 DynamicLayout rowLayout = RhinoStyleRow(controlRow);
@@ -37,7 +43,7 @@ namespace WoodchuckCarbonTool.src.UI
 
                 if (i != maxLength - 1)
                 {
-                    this.Add(UICommonElements.SeparationLine(Colors.Gray, 0.8f));
+                    this.Add(UICommonElements.SpacerLine(Colors.Gray, 0.8f, 3));
                 }
             }
         }

@@ -16,7 +16,6 @@ namespace WoodchuckCarbonTool.src
     public class MaterialFilter
     {
         // CategoryTree and GeographyCodes classes used to ensure validity of input params
-        EC3CategoryTree ec3CategoryTree = EC3CategoryTree.Instance;
         GeographyCodes geoCodes = GeographyCodes.Instance;
 
         // Stored search criterea
@@ -64,10 +63,10 @@ namespace WoodchuckCarbonTool.src
 
         public bool SetEC3Category(string category)
         {
-            int idx = ec3CategoryTree.GetCategoryIdx(category);
+            int idx = EC3CategoryTree.Instance.GetCategoryIdx(category);
             if (idx == -1) { return false; }
 
-            categoryName = ec3CategoryTree.names[idx];
+            categoryName = EC3CategoryTree.Instance.names[idx];
             return true;
         }
 

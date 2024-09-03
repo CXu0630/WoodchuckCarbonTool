@@ -3,12 +3,14 @@
     "Rhino 6 - .net 4.8": {
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\Rhino 6\\System\\Rhino.exe",
-      "commandLineArgs": "$(TargetPath)"
+      "commandLineArgs": "$(TargetPath)",
+      "nativeDebugging": true
     },
     "Rhino 8 - .net 4.8": {
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\Rhino 8\\System\\Rhino.exe",
-      "commandLineArgs": "/netfx /nosplash"
+      "commandLineArgs": "/netfx /nosplash",
+      "nativeDebugging": false
     },
     "Rhino 8 - .net 7": {
       "commandName": "Executable",

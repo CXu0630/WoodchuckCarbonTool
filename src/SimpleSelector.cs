@@ -1,4 +1,4 @@
-﻿/*
+/*
 -----------------------------------------------------------------------------------------
 
 This class accesses user-selected geometry. It accepts both preselected and postselected 
