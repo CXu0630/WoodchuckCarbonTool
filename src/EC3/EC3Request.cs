@@ -8,14 +8,6 @@ namespace WoodchuckCarbonTool.src.EC3
 {
     internal class EC3Request
     {
-        // To Colin (or whoever else is working on this):
-        // This API Key is linked to my account on EC3. It's set to expire in may in 2025,
-        // if there are server related errors, it is almost certainly due to this key.
-        // Feel free to ask me for a new one if needed (guangyu.xu0630@gmail.com).
-        // This is of course a temporary solution. The plan is to build a "public client"
-        // system for authentication. Let's see if we get there.Reference information:
-        // https://buildingtransparency.org/ec3/manage-apps/api-doc/guide#/02_Accessing_API/03_Dev_oauth2_app.md
-
         public EC3Request() { }
 
         /// <summary>

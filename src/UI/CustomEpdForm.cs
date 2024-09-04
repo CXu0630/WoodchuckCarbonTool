@@ -10,6 +10,7 @@ using Eto.Forms;
 using Rhino;
 using Rhino.Commands;
 using Rhino.DocObjects;
+using Rhino.Geometry;
 using Rhino.UI;
 
 namespace WoodchuckCarbonTool.src.UI
@@ -18,7 +19,7 @@ namespace WoodchuckCarbonTool.src.UI
     {
         private MaterialQuantityOptionsForm qForm { get; set; }
 
-        Panel infoPanel;
+        EpdDetailsControl infoPanel;
         Panel buttonPanel;
         Panel errorPanel;
 
@@ -43,8 +44,7 @@ namespace WoodchuckCarbonTool.src.UI
 
         public void PopulateForm()
         {
-            infoPanel = new Panel();
-            infoPanel.Content = infoLayout();
+            infoPanel = new EpdDetailsControl(doc, this.Width);
 
             buttonPanel = new Panel();
             DynamicLayout buttonLayout = new DynamicLayout();
@@ -65,102 +65,16 @@ namespace WoodchuckCarbonTool.src.UI
             formLayout.Add(buttonPanel);
 
             this.Content = formLayout;
-        }
-
-        private DynamicLayout infoLayout()
-        {
-            RhinoStyleTable infoTable = new RhinoStyleTable();
-            if (this.Width < 0) { infoTable.Width = this.Width - 20; }
-            else { infoTable.Width = this.Width;}
-            infoTable.AddTitle("Basic Information");
-            
-            Control nameLbl = new Label { Text = "Name"};
-            Control gwpLbl = UICommonElements.RequiredInfilLabel("GWP");
-            Control dimensionLbl = UICommonElements.RequiredInfilLabel("Dimension");
-            Control[] labelCtrl = new Control[] { nameLbl, gwpLbl, dimensionLbl };
-
-            TextBox nameTb = new TextBox{ShowBorder = false};
-
-            // this is a text box for inputing gwp values followed by the unit text label
-            Panel gwpUnitPanel = new Panel();
-            Label gwpUnitLabel = new Label { Text = "KgCO2e / " + UnitManager.GetSystemUnitStr(doc, 3) };
-            gwpUnitPanel.Content = gwpUnitLabel;
-            TextBox gwpTb = new TextBox{ShowBorder = false, Width = (this.Width - 40) / 2 - 60};
-
-            DynamicLayout gwpLayout = new DynamicLayout { DefaultSpacing = new Size(5, 5) };
-            gwpLayout.BeginHorizontal();
-            gwpLayout.Add(gwpTb);
-            gwpLayout.Add(gwpUnitPanel);
-            gwpLayout.EndHorizontal();
-
-            string previousText = gwpTb.Text;
-
-            // ensure that the inputs are double values that can be used as GWP
-            gwpTb.TextChanged += (sender, e) =>
-            {
-                double val;
-                if (gwpTb.Text == "")
-                {
-                    previousText = gwpTb.Text;
-                }
-                else if (!double.TryParse(gwpTb.Text, out val))
-                {
-                    gwpTb.Text = previousText;
-                }
-                else
-                {
-                    previousText = gwpTb.Text;
-                }
-            };
-
-            // Dropdown for dimension
-            List<ListItem> dimensionOptions = new List<ListItem>
-            {
-                new ListItem
-                {
-                    Text = "Volume",
-                    Key = "3"
-                },
-                new ListItem
-                {
-                    Text = "Area",
-                    Key = "2"
-                },
-                new ListItem
-                {
-                    Text = "Length",
-                    Key = "1"
-                }
-            };
-            DropDown dimensionDd = new DropDown { 
-                ShowBorder = false, 
-                BackgroundColor = Colors.White};
-            dimensionDd.DataStore = dimensionOptions;
-            dimensionDd.SelectedIndex = 0;
-            dimensionDd.SelectedValueChanged += (s, e) =>
-            {
-                int selectedDimension;
-                int.TryParse(dimensionDd.SelectedKey, out selectedDimension);
-                Label newGwpUnitLabel = new Label
-                {
-                    Text = "KgCO2e / " + UnitManager.GetSystemUnitStr(doc, selectedDimension)
-                };
-                gwpUnitPanel.Content = newGwpUnitLabel;
-            };
 
             assignButton.Click += (s, e) =>
             {
-                if (nameTb.Text == null || gwpTb.Text == null)
+                EPD epd = infoPanel.GetInfillEpd();
+                if (epd == null)
                 {
                     Label errorMsg = new Label { Text = "Please fill out mandatory sections.", TextColor = Colors.Red };
                     errorPanel.Content = errorMsg;
+                    return;
                 }
-                double gwp = 0;
-                double.TryParse(gwpTb.Text, out gwp);
-                int dimension = 3;
-                int.TryParse(dimensionDd.SelectedKey, out dimension);
-
-                EPD epd = new EPD(nameTb.Text, gwp, UnitManager.GetSystemUnitStr(doc, dimension), 0, null, null, dimension, new MaterialFilter(), null);
 
                 this.WindowState = WindowState.Minimized;
 
@@ -190,14 +104,8 @@ namespace WoodchuckCarbonTool.src.UI
 
                 this.Close();
             };
-
-            Control[] inputCtrl = new Control[] { nameTb, gwpLayout, dimensionDd };
-
-            Control[][] infoSubtableCtrls = new Control[][] { labelCtrl, inputCtrl };
-            infoTable.AddSubtable(infoSubtableCtrls, new double[] {0.3, 0.7});
-
-            return infoTable;
         }
+
         private void OnQFormClosed(object sender, EventArgs e)
         {
             qForm.Dispose();
