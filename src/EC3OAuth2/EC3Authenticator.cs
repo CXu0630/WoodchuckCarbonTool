@@ -31,7 +31,7 @@ namespace WoodchuckCarbonTool.src.EC3OAuth2
             locationSplit[locationSplit.Length - 1] = "EC3Key.txt";
             filePath = string.Join("/", locationSplit);
 
-            if (!ReadStoredKey()) GetStoreNewAPIKey();
+            ReadStoredKey();
         }
 
         public bool ReadStoredKey()
@@ -63,9 +63,9 @@ namespace WoodchuckCarbonTool.src.EC3OAuth2
 
         public static string GetNewAPIKey()
         {
-            Task<string> keyTask = OAuth2Handler.GetAccessTokenAsync();
-            keyTask.Wait();
-            string key = keyTask.Result;
+            OAuth2Handler handler = new OAuth2Handler();
+
+            string key = handler.GetAccessTokenAsync();
 
             if (key == null || !VerifyEC3Key(key))
             {

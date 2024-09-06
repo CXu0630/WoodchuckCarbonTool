@@ -84,11 +84,14 @@ namespace WoodchuckCarbonTool.src.EC3
                     // Handle the non-200 status code (e.g., log, throw, or return an error message)
                     RhinoApp.WriteLine($"Non-200 Status Code: {(int)statusCode} ({statusCode})");
                     RhinoApp.WriteLine($"Error: {ex.Message}");
+
+                    return null;
                 }
                 else
                 {
                     // Handle other exceptions (e.g., network issues)
                     RhinoApp.WriteLine($"Error: {ex.Message}");
+                    return null;
                 }
             }
 

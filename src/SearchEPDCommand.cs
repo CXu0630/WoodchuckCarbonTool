@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using UnitsNet;
 using WoodchuckCarbonTool.src.Kaleidoscope;
 using System.Security.Authentication;
+using System.Net;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -61,7 +62,7 @@ namespace WoodchuckCarbonTool.src
                 switch (mf.dataBase)
                 {
                     case "EC3":
-                        epds = RequestEC3(doc, mf, out avgEPD);                        
+                        epds = RequestEC3(doc, mf, out avgEPD);
                         break;
                     case "CLF":
                         epds = CLFSearch.Instance.Search(mf);
@@ -122,7 +123,10 @@ namespace WoodchuckCarbonTool.src
                 RhinoApp.WriteLine(str);
             }
 
-            string matData = EC3Request.GetMaterialData(mf.GetEC3MaterialFilter());
+            string matData;
+
+            matData = EC3Request.GetMaterialData(mf.GetEC3MaterialFilter());
+
             // this mostly happens when there is an authentication error. Error is
             // handled by the "main method" of the command
             if (matData == null)
