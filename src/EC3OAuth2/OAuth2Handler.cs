@@ -20,7 +20,7 @@ namespace WoodchuckCarbonTool.src.EC3OAuth2
         private const string ClientId = "e4XzLm6W9s61J59Q5pRIoly58Q0EARp2ZJESaqYq";
         private const string AuthorizationEndpoint = "https://buildingtransparency.org/oauth2/authorize";
         private const string TokenEndpoint = "https://buildingtransparency.org/api/oauth2/token";
-        private string accessToken;
+        private static string accessToken;
         private bool isAuthenticating = false;
 
         private static HttpListener listener;

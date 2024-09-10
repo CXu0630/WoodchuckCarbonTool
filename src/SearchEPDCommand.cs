@@ -78,8 +78,8 @@ namespace WoodchuckCarbonTool.src
                 if (epds == null)
                 {
                     Application.Instance.Invoke(() =>
-                    searchForm.RepopulateResultMessage("There was an error accessing the EC3 server, please try again. " +
-                    "\nIf this error persists, please contact me."));
+                    searchForm.RepopulateResultMessage("Please authenticate and try again." +
+                    "\nIf you have trouble authenticating, please contact me."));
                     return;
                 }
                 // NO RES: there weren't any EPDs found with these particular 
