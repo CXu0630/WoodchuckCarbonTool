@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Rhino.Input;
 using System.Linq;
 using WoodchuckCarbonTool.src.UI;
+using Rhino.Input.Custom;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -97,6 +98,7 @@ namespace WoodchuckCarbonTool.src
         protected void AssignCarbonColors(RhinoDoc doc)
         {
             Rhino.ApplicationSettings.AppearanceSettings.ViewportBackgroundColor = Color.White;
+            if (!MinMaxCalculated) PopulateMinMaxGwp(doc);
 
             foreach (RhinoObject obj in doc.Objects)
             {
@@ -125,8 +127,6 @@ namespace WoodchuckCarbonTool.src
 
         protected Color GetCarbonColor(RhinoDoc doc, RhinoObject obj)
         {
-            if (!MinMaxCalculated) PopulateMinMaxGwp(doc);
-
             EPD epd = EpdManager.Get(new ObjRef(obj));
             if (epd == null) { return Color.Gray; }
 
@@ -180,10 +180,25 @@ namespace WoodchuckCarbonTool.src
                 gwps.Add(currentGwp);
             }
 
-            MaxGwp = gwps.Max();
-            MinGwp = gwps.Min();
+            if (gwps.Count > 0)
+            {
+                MaxGwp = gwps.Max();
+                MinGwp = gwps.Min();
+            } else
+            {
+                MaxGwp = 0;
+                MinGwp = 0;
+            }
+            
 
             MinMaxCalculated = true;
+        }
+
+        protected void GetCustomMinMaxGwp()
+        {
+            GetOption getMinMax = new GetOption();
+            
+            
         }
     }
 }
