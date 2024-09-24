@@ -1,4 +1,4 @@
-﻿using Rhino.DocObjects;
+using Rhino.DocObjects;
 using Rhino.Geometry;
 
 namespace WoodchuckCarbonTool.src
@@ -23,17 +23,40 @@ namespace WoodchuckCarbonTool.src
         public static double GetVolume(ObjRef obj)
         {
             Brep brep = obj.Brep();
-            if (brep == null)
+            if (brep != null)
             {
-                return -1;
+                return brep.GetVolume();
             }
-            return brep.GetVolume();
+            Mesh mesh = obj.Mesh();
+            if (mesh != null)
+            {
+                return mesh.Volume();
+            }
+            return -1;
         }
 
         public static double GetArea(ObjRef obj)
         {
             Brep brep = obj.Brep();
-            if (brep != null) { return brep.GetArea(); }
+            
+            if (brep != null) 
+            {
+                var faces = brep.Faces;
+                BrepFace largestFace;
+                double largestFaceArea = -1;
+                foreach (var brepFace in faces)
+                {
+                    double faceArea = 0;
+                    brepFace.GetSurfaceSize(out double h, out double w);
+                    faceArea = h * w;
+                    if (faceArea > largestFaceArea)
+                    {
+                        largestFace = brepFace;
+                        largestFaceArea = faceArea;
+                    }
+                }
+                return largestFaceArea;
+            }
             BrepFace face = obj.Face();
             if (face != null)
             {
@@ -56,20 +79,35 @@ namespace WoodchuckCarbonTool.src
             Brep brep = obj.Brep();
             if (brep != null)
             {
-                double len = 0;
+                double maxLen = -1;
                 Curve[] edges = brep.DuplicateEdgeCurves();
                 foreach (Curve brepEdge in edges)
                 {
-                    len += brepEdge.GetLength();
+                    if(brepEdge.GetLength() > maxLen)
+                    {
+                        maxLen = brepEdge.GetLength();
+                    }
                 }
-                return len;
+                return maxLen;
             }
             Curve crv = obj.Curve();
             if (crv != null) { return crv.GetLength(); }
             BrepEdge edge = obj.Edge();
             if (edge != null) { return edge.GetLength(); }
             BrepFace face = obj.Face();
-            if (face != null) { return face.OuterLoop.To3dCurve().GetLength(); }
+            if (face != null) 
+            {
+                double maxLen = -1;
+                Line[] lines = face.GetBoundingBox(true).GetEdges();
+                foreach (Line line in lines)
+                {
+                    if (line.Length > maxLen)
+                    {
+                        maxLen = line.Length;
+                    }
+                }
+                return maxLen;
+            }
             return -1;
         }
     }

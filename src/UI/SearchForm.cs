@@ -390,28 +390,54 @@ namespace WoodchuckCarbonTool.src.UI
             };
             Label whatLabel = new Label
             {
-                Text = "This tool is used to provide easy access to the Carbon Leadership" +
-                " Forum material baselines database and EC3 carbon database. It includes" +
-                " geometric calculator functionalities that can be used to quickly calculate" +
-                " emboded carbon of modeled Rhino geometry. This is not a reporting tool. " +
-                "This is not a whole building life cycle assessment tool.",
+                Text = "This tool is used to provide easy access to the EC3 carbon database, " +
+                "Carbon Leadership Forum material baselines database, and the Kaleidoscope " +
+                "assemblies database. It includes geometric calculator functionalities " +
+                "that can be used to quickly calculate emboded carbon of modeled " +
+                "Rhino geometry. This is not a reporting tool. This is not a whole " +
+                "building life cycle assessment tool. Reach out to me at gx7@rice.edu or " +
+                "guangyu.xu0630@gmail.com with any questions, feedback, or bug reports.",
                 Width = this.resPanel.Width - 40
             };
-            Label howTitle = new Label
+            Label searchTitle = new Label
             {
-                Text = "How do I use this tool?",
+                Text = "WoodchuckSearchEPD",
                 Font = new Font(SystemFonts.Default().FamilyName, 12),
                 Width = this.resPanel.Width - 40
             };
-            Label howLabel = new Label
+            Label searchLabel = new Label
             {
-                Text = "Use the SearchEPD command to search carbon databases for materials " +
+                Text = "Search carbon databases for materials " +
                 "that fit your requirements. More details can be seen by hovering over " +
                 "material names or clicking View in Browser when available. Embodied " +
                 "carbon materials can be assigned to Rhino geometry (similar to rendering " +
-                "materials) by clicking the Assign to Object button. Once materials are " +
-                "assigned, the Global Warming Potential of the modeled object is retreived " +
-                "with the GetGWP command.",
+                "materials) by clicking the Assign to Object button. Once materials are" +
+                "assigned, they will apprear as an object property under the Woodchuck properties " +
+                "tab.",
+                Width = this.resPanel.Width - 40
+            };
+            Label viewTitle = new Label
+            {
+                Text = "WoodchuckCarbonView",
+                Font = new Font(SystemFonts.Default().FamilyName, 12),
+                Width = this.resPanel.Width - 40
+            };
+            Label viewLabel = new Label
+            {
+                Text = "Generate a diagramatic view of carbon densities in your model. " +
+                "Objects are color coded based on their carbon content.",
+                Width = this.resPanel.Width - 40
+            };
+            Label customTitle = new Label
+            {
+                Text = "WoodchuckCustomEPD",
+                Font = new Font(SystemFonts.Default().FamilyName, 12),
+                Width = this.resPanel.Width - 40
+            };
+            Label customLabel = new Label
+            {
+                Text = "If your material is not present in any of the databases, " +
+                "create a custom EPD for your material.",
                 Width = this.resPanel.Width - 40
             };
             Label carbonTitle = new Label
@@ -484,12 +510,33 @@ namespace WoodchuckCarbonTool.src.UI
                 "embodied carbon. This tool uses the CLF's Material Baseline Report from 2023.",
                 Width = this.resPanel.Width - 40
             };
+            Label kldsTitle = new Label
+            {
+                Text = "What is Kaleidoscope?",
+                Font = new Font(SystemFonts.Default().FamilyName, 12),
+                Width = this.resPanel.Width - 40
+            };
+            Label kldsLabel = new Label
+            {
+                Text = "Kaleidoscope provides a comparative analysis of different " +
+                "assemblies’ environmental impacts, allowing designers to " +
+                "think in terms of embodied carbon early in the design process. " +
+                "Kaleidoscope includes information for wall, ceiling, floor, and " +
+                "partition assemblies. It does not include structure.",
+                Width = this.resPanel.Width - 40
+            };
 
             dl.Add(whatTitle);
             dl.Add(whatLabel);
             dl.Add(Spacer(Colors.WhiteSmoke));
-            dl.Add(howTitle);
-            dl.Add(howLabel);
+            dl.Add(searchTitle);
+            dl.Add(searchLabel);
+            dl.Add(Spacer(Colors.WhiteSmoke));
+            dl.Add(customTitle);
+            dl.Add(customLabel);
+            dl.Add(Spacer(Colors.WhiteSmoke));
+            dl.Add(viewTitle);
+            dl.Add(viewLabel);
             dl.Add(Spacer(Colors.WhiteSmoke));
             dl.Add(carbonTitle);
             dl.Add(carbonLabel);
@@ -505,6 +552,9 @@ namespace WoodchuckCarbonTool.src.UI
             dl.Add(Spacer(Colors.WhiteSmoke));
             dl.Add(clfTitle);
             dl.Add(clfLabel);
+            dl.Add(Spacer(Colors.WhiteSmoke));
+            dl.Add(kldsTitle);
+            dl.Add(kldsLabel);
             dl.Add(null);
 
             this.resPanel.Content = dl;
