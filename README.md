@@ -1,27 +1,42 @@
 ## What is Woodchuck?
 
-Woodchuck is used to provide easy access to various embodied carbon databases from within Rhino. It includes calculator functionality that can be used to quickly calculate embodied carbon of modeled geometry.
+Woodchuck is used to provide easy access to the EC3 carbon database, Carbon Leadership Forum material baselines database, and the Kaleidoscope assemblies database. It includes geometric calculator functionalities that can be used to quickly calculate embodied carbon of modeled Rhino geometry. This is not a reporting tool. This is not a whole building life cycle assessment tool. 
 
-## How to use this tool?
-
-Use the SearchEPD command to search the carbon databases for materials that fit your requirement. Embodied carbon materials can be assigned to Rhino Objects similar to rendering materials. To assign a material to geometry, use the Assign to Geometry button and pick out the geometry you want to assign to. The embodied carbon properties tab displays total embodied carbon and assigned EPDs of selected objects.
+Reach out to me at gx7@rice.edu or guangyu.xu0630@gmail.com with any questions, feedback, or bug reports.
 
 ## Details
 
-### What does it do?
-- __Database connection__
-  - makes various carbon databases available from Rhino (all the current tools in the carbon => Rhino / Grasshopper category are either no longer maintained or not yet well developed)
-  - EC3 (real-time-ish data from manufacturers), CLF Materials Baseline (compiled industry-wide material data), Kaleidoscope (compiled industry-wide assembly data)
-- __Geometric calculator__
-  - extracts material quantities from Rhino geometry and quickly calculates carbon
-- __Carbon information tool__
-  - tooltips and material-specific information that is not in the Embodied Carbon Playbook
-  - graphics and captions for descriptions
-- __Graphics generation__
-  - generate graphs / custom views of carbon intensities of modeled components
+### System Requirements
+Windows machine running Rhino 7 & 8
+* Note: when using with Rhino 7, there may be an error with the rui file, this does not impact plugin use.
 
-### What is being worked on
-- __Carbon information__
-  - we're working to provide information on carbon origins within the production process of different materials and material-specific tips for cutting down on carbon.
-- __Carbon view__
-  - we're working on a way to graphically represent carbon intensity of building components and generate custom diagrams.
+### Installation
+1. Press win+R
+2. Enter “cmd”
+3. Copy the following line into the window that pops up, include the quotation marks, and replace “Rhino 7” with “Rhino 8” if that is what you’re using.
+
+__"C:\Program Files\Rhino 7\System\Yak.exe" install woodchuck__
+
+4. Once the window displays install success, restart Rhino if you have it open
+
+### Updates
+Woodchuck is under regular development, so you may want to check for updates every now and then. There are two ways to download an update:
+1. Repeat the installation process (you don’t need to uninstall beforehand)
+2. In the PackageManager in Rhino, look for Woodchuck in your installed plugins and select an update
+
+### Operations
+__WoodchuckSearchEPD__
+Search carbon databases for materials that fit your requirements. More details can be seen by hovering over material names or clicking View in Browser when available. Embodied carbon materials can be assigned to Rhino geometry (similar to rendering materials) by clicking the Assign to Object button. Once materials are assigned, they will appear as an object property under the Woodchuck properties tab.
+
+__WoodchuckCustomEPD__
+If your material is not present in any of the databases, create a custom EPD for your material. Input your material name, carbon intensity per unit, and dimension of unit, then assign your custom material to modeled objects. For now, the only way to reuse custom materials is to view them by checking the object properties of an object already assigned with that material and clicking assign to object from the properties panel.
+
+__WoodchuckCarbonView__
+Generate a diagrammatic view of carbon densities in your model. Objects are color-coded based on their carbon content. You can set the min and max values for your legend for consistency across diagrams. Right now, carbon intensities that are calculated per unit length or per unit area can only be displayed if the modeled object is a volume. Carbon intensities will be displayed per unit volume of the modeled object.
+
+__Properties: Embodied Carbon Material__
+Look for the woodchuck icon under the object properties tab to the right of your screen. This is where you can view the carbon properties of selected objects, such as assigned material, percentage solid, and total GWP.
+
+
+Note 1: if you downloaded before 09/26/2024, there have been updates to the way EPDs declared with per unit area and per unit length are calculated. Consider updating to 2.0.5-alpha.
+Note 2: if your Rhino software is installed somewhere other than the default location, you may need to locate the Yak.exe for installation instruction step 3.
