@@ -4,6 +4,8 @@ Woodchuck is used to provide easy access to the EC3 carbon database, Carbon Lead
 
 Reach out to me at gx7@rice.edu or guangyu.xu0630@gmail.com with any questions, feedback, or bug reports.
 
+![240730_WCKSearchGraphic_v001-01](https://github.com/user-attachments/assets/5e97d8d6-7c54-4af3-9703-0d420be7499c)
+
 ## Details
 
 ### System Requirements
