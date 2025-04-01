@@ -226,10 +226,10 @@ namespace WoodchuckCarbonTool.src
             switch (dimension)
             {
                 case 2:
-                    unit += "\u00B2";
+                    unit += "^2";
                     break;
                 case 3:
-                    unit += "\u00B3";
+                    unit += "^3";
                     break;
             }
 

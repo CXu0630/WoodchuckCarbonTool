@@ -9,6 +9,7 @@ using Rhino.Input;
 using System.Linq;
 using WoodchuckCarbonTool.src.UI;
 using Rhino.Input.Custom;
+using System.Runtime.Remoting;
 
 namespace WoodchuckCarbonTool.src
 {
@@ -49,8 +50,20 @@ namespace WoodchuckCarbonTool.src
             SaveCurrentColors(doc);
             CarbonViewLegend legend;
 
+            RhinoApp.WriteLine("NOTE: only objects with volume will be colored in this view.");
+
             try
             {
+                PopulateMinMaxGwp(doc);
+
+                var minMaxOptions = new MinMaxGwpOption(((int)this.MinGwp), ((int)this.MaxGwp));
+                Result res = minMaxOptions.GetMinMax(out int intMin, out int intMax);
+
+                if (res == Result.Cancel) { return Result.Cancel; }
+
+                this.MinGwp = intMin;
+                this.MaxGwp = intMax;
+
                 AssignCarbonColors(doc);
                 for(int i = 0; i < colors.Length + 1; i++)
                 {
@@ -64,7 +77,8 @@ namespace WoodchuckCarbonTool.src
             }
             catch (Exception)
             {
-                RhinoApp.WriteLine("Could not switch to carbon view");
+                RhinoApp.WriteLine("Could not switch to carbon view, obejcts may not be assigned" +
+                    "carbon materials yet.");
                 RevertOriginalColors(doc);
                 return Result.Failure;
             }
@@ -127,23 +141,26 @@ namespace WoodchuckCarbonTool.src
 
         protected Color GetCarbonColor(RhinoDoc doc, RhinoObject obj)
         {
-            EPD epd = EpdManager.Get(new ObjRef(obj));
+            EPD epd = EpdManager.Get(new Rhino.DocObjects.ObjRef(obj));
             if (epd == null) { return Color.Gray; }
 
             double gwp = epd.GetGwpPerSystemUnit(doc).Value;
 
-            if (epd.dimension == 1) { return Color.DarkGray; }
-            if (epd.dimension == 2)
-            {
-                ObjRef objRef = new ObjRef(obj);
-                double volume = GeometryProcessor.GetDimensionalInfo(objRef, 3);
-                if (volume == 0 || volume == -1) { return Color.DarkGray; }
+            Rhino.DocObjects.ObjRef objRef = new Rhino.DocObjects.ObjRef(obj);
+            double volume = GeometryProcessor.GetDimensionalInfo(objRef, 3);
+            if (volume == 0 || volume == -1) { return Color.DarkGray; }
 
-                double objGwp = GwpCalculator.GetTotalGwp(doc, new ObjRef[] { new ObjRef(obj) });
+            if (epd.dimension == 2 || epd.dimension == 1)
+            {
+                double objGwp = GwpCalculator.GetTotalGwp(doc, 
+                    new Rhino.DocObjects.ObjRef[] { new Rhino.DocObjects.ObjRef(obj) });
                 gwp = objGwp / volume;
             }
             
             if (MaxGwp == MinGwp) { return Color.Yellow; }
+
+            if (gwp <= MinGwp) { return colors[0]; }
+            if (gwp >= MaxGwp) { return colors[colors.Length - 1]; }
 
             // Normalize the GWP value
             double normalizedGwp = (gwp - MinGwp) / (MaxGwp - MinGwp);
@@ -172,7 +189,7 @@ namespace WoodchuckCarbonTool.src
 
             foreach (RhinoObject obj in doc.Objects)
             {
-                EPD epd = EpdManager.Get(new ObjRef(obj));
+                EPD epd = EpdManager.Get(new Rhino.DocObjects.ObjRef(obj));
                 if (epd == null) { continue; }
 
                 double currentGwp = epd.GetGwpPerSystemUnit(doc).Value;
@@ -189,16 +206,59 @@ namespace WoodchuckCarbonTool.src
                 MaxGwp = 0;
                 MinGwp = 0;
             }
-            
 
             MinMaxCalculated = true;
         }
+    }
 
-        protected void GetCustomMinMaxGwp()
+    internal class MinMaxGwpOption
+    {
+        int max;
+        int min;
+
+        OptionInteger optMin;
+        OptionInteger optMax;
+
+        public MinMaxGwpOption(int defaultMin, int defaultMax)
+        {
+            min = defaultMin;
+            max = defaultMax;
+        }
+
+        public Result GetMinMax(out int min, out int max)
         {
             GetOption getMinMax = new GetOption();
-            
-            
+            getMinMax.SetCommandPrompt("Set a custom minimum and maximum GWP for your view");
+
+            optMin = new OptionInteger(this.min);
+            optMax = new OptionInteger(this.max);
+
+            getMinMax.AddOptionInteger("Legend_Min", ref optMin, "Set Legend Min");
+            getMinMax.AddOptionInteger("Legend_Max", ref optMax, "Set Legend Max");
+
+            for (; ; )
+            {
+                GetResult res = getMinMax.Get();
+                if (res == GetResult.Option)
+                {
+                    this.min = optMin.CurrentValue;
+                    this.max = optMax.CurrentValue;
+                    continue;
+                }
+                //else if (res == GetResult.Cancel)
+                //{
+                //    min = this.min;
+                //    max = this.max;
+                //    return Result.Cancel;
+                //}
+                // This does not work as intended: the result is cancel regardless of if 
+                // esc or enter was pressed.
+                break;
+            }
+
+            min = this.min;
+            max = this.max;
+            return Result.Success;
         }
     }
 }

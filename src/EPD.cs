@@ -107,7 +107,8 @@ namespace WoodchuckCarbonTool.src
 
             this.gwp = (Mass)Quantity.FromUnitAbbreviation(gwp, "kg");
 
-            unitMaterial = UnitManager.ParseQuantity("1 " + unit, out bool valid);
+            bool valid;
+            unitMaterial = UnitManager.ParseQuantity("1 " + unit, out valid);
 
             if (density != 0 && densityUnit != null)
             {
