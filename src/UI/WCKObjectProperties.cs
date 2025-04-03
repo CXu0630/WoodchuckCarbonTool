@@ -68,7 +68,7 @@ namespace WoodchuckCarbonTool.src.UI
                 numAssignedObjs++;
 
                 if (uniqueSource == null) { uniqueSource = epd.mf.dataBase; }
-                else if (!epd.mf.dataBase.Equals(uniqueSource)) { hasUniqueSource = false; }
+                else if (epd.mf.dataBase != null && !epd.mf.dataBase.Equals(uniqueSource)) { hasUniqueSource = false; }
 
                 if (uniqueEpd == null) { uniqueEpd = epd; }
                 else if (!epd.Equals(uniqueEpd)) { hasUniqueEpd = false; }

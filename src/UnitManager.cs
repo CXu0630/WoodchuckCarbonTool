@@ -145,6 +145,12 @@ namespace WoodchuckCarbonTool.src
                 string unitMat = unitMultiplier.ToString() + " " + unit;
                 valid = Quantity.TryParse(typeof(Area), unitMat, out unitMaterial);
             }
+            else if (unit == "m" + "\u00B2")
+            {
+                unit = "m^2";
+                string unitMat = unitMultiplier.ToString() + " " + unit;
+                valid = Quantity.TryParse(typeof(Area), unitMat, out unitMaterial);
+            }
             else
             {
                 try
